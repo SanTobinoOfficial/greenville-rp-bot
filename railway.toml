@@ -1,0 +1,37 @@
+# Konfiguracja deploymentu Railway
+# Trzy osobne usługi: bot, dashboard, baza danych
+
+[build]
+builder = "NIXPACKS"
+
+# ==================== BOT ====================
+[[services]]
+name = "greenville-bot"
+source = "bot"
+
+[services.build]
+buildCommand = "npm install && npx prisma generate"
+
+[services.deploy]
+startCommand = "npm start"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+[[services.envs]]
+name = "NODE_ENV"
+value = "production"
+
+# ==================== DASHBOARD ====================
+[[services]]
+name = "greenville-dashboard"
+source = "dashboard"
+
+[services.build]
+buildCommand = "npm install && npx prisma generate && npm run build"
+
+[services.deploy]
+startCommand = "npm start"
+
+[[services.envs]]
+name = "NODE_ENV"
+value = "production"
