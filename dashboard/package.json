@@ -34,7 +34,8 @@
     "axios": "^1.7.2",
     "date-fns": "^3.6.0",
     "sonner": "^1.5.0",
-    "recharts": "^2.12.7"
+    "recharts": "^2.12.7",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",
