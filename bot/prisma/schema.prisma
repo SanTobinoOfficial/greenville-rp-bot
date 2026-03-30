@@ -1,0 +1,336 @@
+// Schemat bazy danych Greenville RP
+// Prisma ORM + PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== UŻYTKOWNICY ====================
+
+model User {
+  id              String    @id @default(cuid())
+  discordId       String    @unique
+  discordUsername String
+  robloxId        String?   @unique
+  robloxUsername  String?
+  phoneNumber     String?   @unique
+  quizScore       Int?
+  quizAttempts    Int       @default(0)
+  quizLastAttempt DateTime?
+  verifiedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  character      Character?
+  vehicles       Vehicle[]
+  licenses       License[]
+  casesAsTarget  Case[]          @relation("TargetUser")
+  casesAsMod     Case[]          @relation("ModeratorUser")
+  applications   Application[]
+  tickets        Ticket[]
+  smsSent        SMS[]           @relation("Sender")
+  smsReceived    SMS[]           @relation("Receiver")
+  finesReceived  Fine[]          @relation("TargetFine")
+  finesIssued    Fine[]          @relation("IssuedFine")
+  sessionSignups SessionSignup[]
+  quizTokens     QuizToken[]
+}
+
+// ==================== POSTAĆ (DOWÓD OSOBISTY) ====================
+
+model Character {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  firstName  String
+  lastName   String
+  birthDate  DateTime
+  gender     String
+  eyeColor   String?
+  hairColor  String?
+  photoUrl   String?
+  peselRp    String   @unique
+  documentId String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ==================== POJAZDY ====================
+
+model Vehicle {
+  id        String   @id @default(cuid())
+  userId    String
+  marka     String
+  model     String
+  rok       Int
+  kolor     String
+  tablica   String   @unique
+  opis      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ==================== PRAWO JAZDY ====================
+
+model License {
+  id              String        @id @default(cuid())
+  userId          String
+  kategoria       String
+  status          LicenseStatus @default(ACTIVE)
+  suspendedAt     DateTime?
+  suspendedUntil  DateTime?
+  suspendedReason String?
+  issuedAt        DateTime      @default(now())
+  examinatorId    String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, kategoria])
+}
+
+enum LicenseStatus {
+  ACTIVE
+  SUSPENDED
+  REVOKED
+}
+
+// ==================== MANDATY RP ====================
+
+model Fine {
+  id        String   @id @default(cuid())
+  targetId  String
+  issuerId  String
+  type      FineType
+  amount    Int?
+  reason    String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  target User @relation("TargetFine", fields: [targetId], references: [id], onDelete: Cascade)
+  issuer User @relation("IssuedFine", fields: [issuerId], references: [id], onDelete: Cascade)
+}
+
+enum FineType {
+  MANDAT
+  GRZYWNA
+  ARESZT
+}
+
+// ==================== CASES MODERACYJNE ====================
+
+model Case {
+  id          String     @id @default(cuid())
+  caseNumber  Int        @unique @default(autoincrement())
+  type        CaseType
+  targetId    String
+  moderatorId String
+  reason      String
+  duration    Int?
+  expiresAt   DateTime?
+  status      CaseStatus @default(ACTIVE)
+  createdAt   DateTime   @default(now())
+
+  target    User @relation("TargetUser", fields: [targetId], references: [id], onDelete: Cascade)
+  moderator User @relation("ModeratorUser", fields: [moderatorId], references: [id], onDelete: Cascade)
+}
+
+enum CaseType {
+  WARN
+  BAN
+  KICK
+  MUTE
+  UNBAN
+  UNMUTE
+}
+
+enum CaseStatus {
+  ACTIVE
+  EXPIRED
+  REMOVED
+  APPEALED
+}
+
+// ==================== PODANIA ====================
+
+model Application {
+  id         String            @id @default(cuid())
+  userId     String
+  type       ApplicationType
+  position   String
+  answers    Json
+  status     ApplicationStatus @default(PENDING)
+  reviewedBy String?
+  reviewNote String?
+  createdAt  DateTime          @default(now())
+  reviewedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum ApplicationType {
+  SERVICE
+  JOB_PUBLIC
+  JOB_PRIVATE
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  INCOMPLETE
+}
+
+// ==================== TICKETY ====================
+
+model Ticket {
+  id           String       @id @default(cuid())
+  ticketNumber Int          @unique @default(autoincrement())
+  userId       String
+  channelId    String       @unique
+  category     String
+  status       TicketStatus @default(OPEN)
+  agentId      String?
+  transcript   String?
+  createdAt    DateTime     @default(now())
+  closedAt     DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum TicketStatus {
+  OPEN
+  CLAIMED
+  CLOSED
+}
+
+// ==================== TELEFON RP ====================
+
+model SMS {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  type       SMSType  @default(MESSAGE)
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("Sender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+enum SMSType {
+  MESSAGE
+  CALL
+}
+
+// ==================== SESJE RP ====================
+
+model Session {
+  id          String        @id @default(cuid())
+  hostId      String
+  date        DateTime
+  maxPlayers  Int
+  description String?
+  status      SessionStatus @default(UPCOMING)
+  peacetime   Int           @default(0)
+  messageId   String?
+  channelId   String?
+  createdAt   DateTime      @default(now())
+  startedAt   DateTime?
+  endedAt     DateTime?
+
+  signups SessionSignup[]
+}
+
+enum SessionStatus {
+  UPCOMING
+  ONGOING
+  ENDED
+  CANCELLED
+}
+
+model SessionSignup {
+  id        String   @id @default(cuid())
+  sessionId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, userId])
+}
+
+// ==================== QUIZ ====================
+
+model QuizQuestion {
+  id       String   @id @default(cuid())
+  question String
+  answers  String[]
+  correct  Int
+  active   Boolean  @default(true)
+  order    Int      @default(0)
+}
+
+model QuizToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  used      Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ApplicationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  type      String
+  position  String
+  used      Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// ==================== USTAWIENIA GLOBALNE ====================
+
+model Settings {
+  id                    String @id @default("global")
+  maxVehiclesBase       Int    @default(5)
+  maxVehiclesSupporter  Int    @default(9)
+  maxVehiclesBooster    Int    @default(10)
+  quizPassScore         Int    @default(8)
+  quizTotalQuestions    Int    @default(10)
+  quizCooldownHours     Int    @default(24)
+  robloxGroupId         String @default("")
+  frpSpeedLimit         Int    @default(131)
+  maxMandaty            Int    @default(10)
+  maxGrzywny            Int    @default(5)
+  maxAreszty            Int    @default(5)
+  licenseSuspensionDays Int    @default(30)
+  radioUrl              String @default("https://www.youtube.com/watch?v=9WIfFbHmhkI")
+  warnAutoMuteCount     Int    @default(3)
+  warnAutoBanCount      Int    @default(5)
+  setupCompleted        Boolean @default(false)
+  guildId               String @default("")
+}
+
+// ==================== LOGI BOTA ====================
+
+model BotLog {
+  id        String   @id @default(cuid())
+  type      String
+  userId    String?
+  guildId   String?
+  message   String
+  data      Json?
+  createdAt DateTime @default(now())
+}
