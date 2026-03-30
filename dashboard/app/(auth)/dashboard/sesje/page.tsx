@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions, ACCESS_LEVELS } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import type { SessionStatus } from '@prisma/client';
 
 const STATUS_INFO: Record<string, { label: string; badge: string; dot: string }> = {
   UPCOMING:  { label: 'Nadchodząca', badge: 'bg-blue-500/20 text-blue-300 border-blue-500/30',   dot: 'bg-blue-400'  },
@@ -22,7 +23,7 @@ export default async function SessionsPage({
 
   const statusFilter = searchParams.status ?? '';
 
-  const where = statusFilter ? { status: statusFilter } : {};
+  const where = statusFilter ? { status: statusFilter as SessionStatus } : {};
 
   const [sessions, upcoming, ongoing, total] = await Promise.all([
     prisma.session.findMany({
