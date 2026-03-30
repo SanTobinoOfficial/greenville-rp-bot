@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions, ACCESS_LEVELS } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import type { FineType } from '@prisma/client';
 
 const TYPE_INFO: Record<string, { emoji: string; badge: string; label: string }> = {
   MANDAT:  { emoji: '📜', badge: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30', label: 'Mandat' },
@@ -31,11 +32,9 @@ export default async function MandatyPage({
         OR: [
           { target: { discordUsername: { contains: q, mode: 'insensitive' as const } } },
           { reason:  { contains: q, mode: 'insensitive' as const } },
-          { target: { character: { firstName: { contains: q, mode: 'insensitive' as const } } } },
-          { target: { character: { lastName:  { contains: q, mode: 'insensitive' as const } } } },
         ],
       } : {},
-      type ? { type: { equals: type } } : {},
+      type ? { type: type as FineType } : {},
     ],
   };
 

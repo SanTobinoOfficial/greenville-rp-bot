@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions, ACCESS_LEVELS } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import type { LicenseStatus } from '@prisma/client';
 
 const STATUS_BADGE: Record<string, string> = {
   ACTIVE:    'bg-green-500/20 text-green-300 border-green-500/30',
@@ -35,11 +36,9 @@ export default async function LicensesPage({
       q ? {
         OR: [
           { user: { discordUsername: { contains: q, mode: 'insensitive' as const } } },
-          { user: { character: { firstName: { contains: q, mode: 'insensitive' as const } } } },
-          { user: { character: { lastName:  { contains: q, mode: 'insensitive' as const } } } },
         ],
       } : {},
-      status ? { status }              : {},
+      status ? { status: status as LicenseStatus } : {},
       kat    ? { kategoria: { equals: kat, mode: 'insensitive' as const } } : {},
     ],
   };

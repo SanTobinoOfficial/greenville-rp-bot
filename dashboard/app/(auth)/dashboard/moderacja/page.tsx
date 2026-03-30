@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions, ACCESS_LEVELS } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import type { CaseType, CaseStatus } from '@prisma/client';
 
 const TYPE_BADGE: Record<string, string> = {
   WARN:   'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
@@ -21,7 +22,8 @@ const TYPE_EMOJI: Record<string, string> = {
 const STATUS_BADGE: Record<string, string> = {
   ACTIVE:   'bg-green-500/20 text-green-300',
   EXPIRED:  'bg-gray-500/20 text-gray-400',
-  REVOKED:  'bg-red-500/20 text-red-300',
+  REMOVED:  'bg-red-500/20 text-red-300',
+  APPEALED: 'bg-blue-500/20 text-blue-300',
 };
 
 const PER_PAGE = 50;
@@ -48,8 +50,8 @@ export default async function ModerationPage({
           { reason:    { contains: q, mode: 'insensitive' as const } },
         ],
       } : {},
-      type   ? { type   } : {},
-      status ? { status } : {},
+      type   ? { type:   type   as CaseType   } : {},
+      status ? { status: status as CaseStatus } : {},
     ],
   };
 
@@ -113,7 +115,8 @@ export default async function ModerationPage({
           <option value="">Wszystkie statusy</option>
           <option value="ACTIVE">Aktywny</option>
           <option value="EXPIRED">Wygasły</option>
-          <option value="REVOKED">Anulowany</option>
+          <option value="REMOVED">Usunięty</option>
+          <option value="APPEALED">Odwołany</option>
         </select>
         <button type="submit" className="bg-[#5865F2] hover:bg-[#4752C4] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
           Filtruj

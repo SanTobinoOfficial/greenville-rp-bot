@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions, ACCESS_LEVELS } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import type { TicketStatus } from '@prisma/client';
 
 const STATUS_BADGE: Record<string, string> = {
   OPEN:    'bg-green-500/20 text-green-300 border-green-500/30',
@@ -38,8 +39,8 @@ export default async function TicketsPage({
           { category: { contains: q, mode: 'insensitive' as const } },
         ],
       } : {},
-      status   ? { status }   : {},
-      category ? { category } : {},
+      status   ? { status: status as TicketStatus } : {},
+      category ? { category }                       : {},
     ],
   };
 
