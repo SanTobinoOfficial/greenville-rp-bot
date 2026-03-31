@@ -44,6 +44,7 @@ model User {
   dutyLogs       DutyLog[]
   arrests        Arrest[]        @relation("ArrestTarget")
   arrestsMade    Arrest[]        @relation("ArrestOfficer")
+  news           News[]
 }
 
 // ==================== POSTAĆ (DOWÓD OSOBISTY) ====================
@@ -368,6 +369,23 @@ model Arrest {
 
   target  User @relation("ArrestTarget",  fields: [targetId],  references: [id], onDelete: Cascade)
   officer User @relation("ArrestOfficer", fields: [officerId], references: [id], onDelete: Cascade)
+}
+
+// ==================== NEWSY / OGŁOSZENIA ====================
+
+model News {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  imageUrl    String?
+  category    String   @default("Ogłoszenie")
+  authorId    String
+  published   Boolean  @default(true)
+  pinned      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author User @relation(fields: [authorId], references: [id])
 }
 
 // ==================== LOGI BOTA ====================

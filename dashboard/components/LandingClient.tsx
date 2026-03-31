@@ -13,7 +13,7 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
     if (target === 0) return;
     let start = 0;
     const duration = 2000;
-    const step = Math.ceil(target / (duration / 16));
+    const step = Math.max(1, Math.ceil(target / (duration / 16)));
     const timer = setInterval(() => {
       start += step;
       if (start >= target) {
@@ -29,18 +29,27 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
   return <span ref={ref}>{count.toLocaleString('pl-PL')}{suffix}</span>;
 }
 
-// ─── News card ───────────────────────────────────────────────────────────────
-function NewsCard({ title, date, desc }: { title: string; date: string; desc: string }) {
-  return (
-    <div className="bg-[#0d1117] border border-[#30d158]/20 rounded-xl p-5 hover:border-[#30d158]/50 transition-all hover:-translate-y-0.5">
-      <div className="text-xs text-[#30d158] mb-2 font-mono">{date}</div>
-      <div className="font-semibold text-white mb-1">{title}</div>
-      <div className="text-sm text-white/50 line-clamp-2">{desc}</div>
-    </div>
-  );
-}
+const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
+  Ogłoszenie:   { bg: 'bg-blue-500/15',   text: 'text-blue-300'   },
+  Sesja:        { bg: 'bg-green-500/15',  text: 'text-green-300'  },
+  Aktualizacja: { bg: 'bg-purple-500/15', text: 'text-purple-300' },
+  Ważne:        { bg: 'bg-red-500/15',    text: 'text-red-300'    },
+  Rekrutacja:   { bg: 'bg-yellow-500/15', text: 'text-yellow-300' },
+  Wydarzenie:   { bg: 'bg-cyan-500/15',   text: 'text-cyan-300'   },
+};
 
 // ─── Props ───────────────────────────────────────────────────────────────────
+interface NewsItem {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  imageUrl: string | null;
+  pinned: boolean;
+  createdAt: Date | string;
+  author: { discordUsername: string };
+}
+
 interface Props {
   stats: {
     memberCount: number;
@@ -48,42 +57,28 @@ interface Props {
     totalSessions: number;
     ongoingSession: boolean;
   };
-  news: Array<{
-    id: string;
-    description: string | null;
-    endedAt: Date | string | null;
-    startedAt: Date | string | null;
-  }>;
+  news: NewsItem[];
   isLoggedIn: boolean;
   userName: string | null;
   userAvatar: string | null;
   accessLevel: number;
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+function formatDate(d: Date | string) {
+  return new Date(d).toLocaleDateString('pl-PL', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+// ─── Main ────────────────────────────────────────────────────────────────────
 export default function LandingClient({ stats, news, isLoggedIn, userName, userAvatar, accessLevel }: Props) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  // suppress unused warning — userAvatar may be used in future
+  void userAvatar; void accessLevel;
 
   const navLinks = [
-    { label: 'Start',    href: '#hero' },
-    { label: 'O nas',    href: '#about' },
+    { label: 'Start',    href: '#hero'   },
+    { label: 'O nas',    href: '#about'  },
     { label: 'Służby',   href: '#sluzby' },
-    { label: 'Newsy',    href: '#news' },
+    { label: 'Newsy',    href: '#news'   },
   ];
-
-  const staticNews = [
-    { title: '🚔 Nowe regulacje drogowe', date: 'Marzec 2026', desc: 'Zaktualizowano przepisy o prędkości maksymalnej i nowe strefy zakazane dla ruchu ulicznego.' },
-    { title: '🚒 Rekrutacja do Straży Pożarnej', date: 'Marzec 2026', desc: 'Otwarto nabór do jednostki Straży Pożarnej. Złóż podanie przez panel gracza!' },
-    { title: '🏥 EMS — nowe procedury', date: 'Luty 2026', desc: 'Dział EMS wprowadza nowe protokoły ratownicze dla lepszej obsługi graczy.' },
-  ];
-
-  const displayNews = news.length > 0
-    ? news.map((s, i) => ({
-        title: `🎪 Sesja RP #${i + 1}`,
-        date: s.endedAt ? new Date(s.endedAt).toLocaleDateString('pl-PL') : '—',
-        desc: s.description || 'Zakończona sesja roleplay na serwerze Greenville RP.',
-      }))
-    : staticNews;
 
   return (
     <div className="min-h-screen bg-[#070d14] text-white font-sans overflow-x-hidden">
@@ -91,10 +86,9 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
       {/* ── Thin accent bar ── */}
       <div className="h-[2px] bg-gradient-to-r from-[#30d158] via-[#00c8ff] to-[#30d158]" />
 
-      {/* ── Navbar ────────────────────────────────────────────────────────── */}
+      {/* ── Navbar ── */}
       <nav className="sticky top-0 z-40 bg-[#070d14]/90 backdrop-blur-md border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo */}
           <a href="#hero" className="flex items-center gap-3 group">
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#30d158] to-[#00c8ff] flex items-center justify-center font-black text-black text-sm shadow-lg shadow-[#30d158]/30">
               G
@@ -105,7 +99,6 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
             </span>
           </a>
 
-          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map(l => (
               <a key={l.href} href={l.href} className="text-sm text-white/60 hover:text-[#30d158] transition-colors font-medium">
@@ -114,7 +107,6 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
             ))}
           </div>
 
-          {/* Auth */}
           <div className="flex items-center gap-3">
             {isLoggedIn ? (
               <>
@@ -124,11 +116,6 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
                 >
                   Mój Panel
                 </Link>
-                {accessLevel >= 1 && (
-                  <Link href="/dashboard" className="hidden sm:inline-flex text-xs text-white/40 hover:text-white px-3 py-2 transition-colors">
-                    Staff →
-                  </Link>
-                )}
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
                   className="text-xs text-white/30 hover:text-white/60 transition-colors"
@@ -141,9 +128,7 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
                 onClick={() => signIn('discord')}
                 className="flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752c4] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-lg shadow-[#5865F2]/30"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.053a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
-                </svg>
+                <DiscordIcon className="w-4 h-4" />
                 Login z Discord
               </button>
             )}
@@ -151,16 +136,13 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
         </div>
       </nav>
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      {/* ── Hero ── */}
       <section id="hero" className="relative min-h-[88vh] flex items-center justify-center overflow-hidden">
-        {/* Background glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(48,209,88,0.08)_0%,transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_80%,rgba(0,200,255,0.05)_0%,transparent_60%)]" />
-        {/* Grid lines */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(48,209,88,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(48,209,88,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
 
         <div className="relative text-center px-6 max-w-5xl mx-auto">
-          {/* Status pill */}
           <div className="inline-flex items-center gap-2 bg-[#30d158]/10 border border-[#30d158]/25 rounded-full px-4 py-1.5 text-sm text-[#30d158] font-medium mb-8">
             <span className="w-2 h-2 rounded-full bg-[#30d158] animate-pulse" />
             {stats.ongoingSession ? 'Sesja RP aktywna' : 'Serwer aktywny'}
@@ -175,8 +157,8 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
           </h1>
 
           <p className="text-white/50 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-            Największy polski serwer Roleplay na Roblox. Dołącz do tysięcy graczy,
-            buduj swoją postać, zdobywaj uprawnienia i kształtuj miasto!
+            Największy polski serwer Roleplay na Roblox. Dołącz, buduj swoją postać,
+            zdobywaj uprawnienia i kształtuj miasto Greenville!
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
@@ -186,12 +168,17 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold px-8 py-4 rounded-xl text-sm transition-all shadow-xl shadow-[#5865F2]/30 hover:scale-105"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.053a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
-              </svg>
-              Dołącz do serwera Discord
+              <DiscordIcon className="w-5 h-5" />
+              Dołącz do Discord
             </a>
-            {!isLoggedIn && (
+            {isLoggedIn ? (
+              <Link
+                href="/portal"
+                className="inline-flex items-center gap-2 bg-[#30d158]/15 hover:bg-[#30d158]/25 text-[#30d158] font-bold px-8 py-4 rounded-xl text-sm transition-all border border-[#30d158]/30 hover:scale-105"
+              >
+                ▶ Mój Panel gracza
+              </Link>
+            ) : (
               <button
                 onClick={() => signIn('discord')}
                 className="inline-flex items-center gap-2 bg-[#30d158]/15 hover:bg-[#30d158]/25 text-[#30d158] font-bold px-8 py-4 rounded-xl text-sm transition-all border border-[#30d158]/30 hover:scale-105"
@@ -204,10 +191,10 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
           {/* Live stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
             {[
-              { label: 'Członkowie Discord',  value: stats.memberCount,  suffix: '+' },
-              { label: 'Zweryfikowani gracze', value: stats.verifiedUsers, suffix: '' },
-              { label: 'Przeprowadzonych sesji', value: stats.totalSessions, suffix: '' },
-              { label: 'Dostępność serwera',  value: 99,                 suffix: '%' },
+              { label: 'Członkowie Discord',    value: stats.memberCount,  suffix: '+' },
+              { label: 'Zweryfikowani gracze',  value: stats.verifiedUsers, suffix: '' },
+              { label: 'Przeprowadzone sesje',  value: stats.totalSessions, suffix: '' },
+              { label: 'Uptime serwera',        value: 99,                  suffix: '%' },
             ].map(s => (
               <div key={s.label} className="bg-white/3 border border-white/8 rounded-xl p-4 text-center backdrop-blur-sm">
                 <div className="text-2xl font-black text-[#30d158]">
@@ -220,7 +207,7 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
         </div>
       </section>
 
-      {/* ── O nas ─────────────────────────────────────────────────────────── */}
+      {/* ── O nas ── */}
       <section id="about" className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -234,12 +221,12 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: '🪪', title: 'Tożsamość RP', desc: 'Stwórz unikalną postać z dowodem osobistym, PESEL-em i historią.' },
-              { icon: '🚔', title: 'Służby mundurowe', desc: 'Dołącz do Policji, EMS, Straży Pożarnej lub DOT i patroluj ulice.' },
+              { icon: '🪪', title: 'Tożsamość RP',       desc: 'Stwórz unikalną postać z dowodem osobistym, PESEL-em i historią.' },
+              { icon: '🚔', title: 'Służby mundurowe',   desc: 'Dołącz do Policji, EMS, Straży Pożarnej lub DOT i patroluj ulice.' },
               { icon: '🚗', title: 'Rejestracja pojazdów', desc: 'Zarejestruj swój samochód, zdobądź prawo jazdy i korzystaj z dróg legalnie.' },
-              { icon: '⚖️', title: 'System prawny', desc: 'Mandaty, grzywny, areszty — pełen system prawny inspirowany rzeczywistością.' },
-              { icon: '📱', title: 'Telefon RP', desc: 'Dzwoń i pisz SMS-y do innych graczy przez własny numer telefonu.' },
-              { icon: '🎪', title: 'Sesje RP', desc: 'Regularne sesje organizowane przez Hostów z ogłoszeniami i zapisami.' },
+              { icon: '⚖️', title: 'System prawny',      desc: 'Mandaty, grzywny, areszty — pełen system prawny inspirowany rzeczywistością.' },
+              { icon: '📱', title: 'Telefon RP',          desc: 'Dzwoń i pisz SMS-y do innych graczy przez własny numer telefonu.' },
+              { icon: '🎪', title: 'Sesje RP',            desc: 'Regularne sesje organizowane przez Hostów z ogłoszeniami i zapisami.' },
             ].map(f => (
               <div key={f.title} className="bg-[#0d1117] border border-white/8 rounded-xl p-6 hover:border-[#30d158]/30 transition-all group">
                 <div className="text-3xl mb-3">{f.icon}</div>
@@ -251,13 +238,13 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
         </div>
       </section>
 
-      {/* ── Służby ────────────────────────────────────────────────────────── */}
+      {/* ── Służby ── */}
       <section id="sluzby" className="py-24 px-6 bg-[#0a0f18]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <div className="text-[#00c8ff] text-xs font-mono uppercase tracking-widest mb-3">SŁUŻBY</div>
             <h2 className="text-4xl font-black">Dołącz do <span className="text-[#00c8ff]">służb mundurowych</span></h2>
-            <p className="text-white/50 mt-3 max-w-lg mx-auto">Każda służba ma własny panel, procedury i możliwości. Złóż podanie przez bot.</p>
+            <p className="text-white/50 mt-3 max-w-lg mx-auto">Każda służba ma własny panel, procedury i możliwości. Złóż podanie przez bot Discord.</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
@@ -280,54 +267,86 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
             ))}
           </div>
           <div className="text-center mt-10">
-            <button
-              onClick={() => signIn('discord')}
-              className="inline-flex items-center gap-2 bg-[#00c8ff]/15 hover:bg-[#00c8ff]/25 text-[#00c8ff] border border-[#00c8ff]/30 font-semibold px-8 py-3 rounded-xl text-sm transition-all"
-            >
-              Złóż podanie → /aplikuj w bocie
-            </button>
+            <p className="text-sm text-white/40">Wejdź na Discord i użyj komendy <code className="text-[#00c8ff]">/aplikuj</code> aby złożyć podanie</p>
           </div>
         </div>
       </section>
 
-      {/* ── Newsy / Ogłoszenia ────────────────────────────────────────────── */}
+      {/* ── Newsy ── */}
       <section id="news" className="py-24 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <div className="text-[#30d158] text-xs font-mono uppercase tracking-widest mb-3">AKTUALNOŚCI</div>
             <h2 className="text-4xl font-black">Najnowsze <span className="text-[#30d158]">ogłoszenia</span></h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {displayNews.map((n, i) => (
-              <NewsCard key={i} title={n.title} date={n.date} desc={n.desc} />
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <a
-              href="https://discord.gg/greenvillerp"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-white/40 hover:text-[#30d158] transition-colors"
-            >
-              Więcej ogłoszeń na Discordzie →
-            </a>
-          </div>
+
+          {news.length === 0 ? (
+            <div className="text-center py-16 text-white/30">
+              <div className="text-5xl mb-4">📋</div>
+              <p className="text-lg">Brak ogłoszeń — sprawdź nasz Discord po najnowsze informacje.</p>
+              <a
+                href="https://discord.gg/greenvillerp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-4 text-sm text-[#5865F2] hover:underline"
+              >
+                Przejdź na Discord →
+              </a>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {news.map((n) => {
+                  const colors = CATEGORY_COLORS[n.category] ?? { bg: 'bg-white/10', text: 'text-white/60' };
+                  return (
+                    <div
+                      key={n.id}
+                      className={`bg-[#0d1117] border rounded-xl p-5 hover:border-[#30d158]/50 transition-all hover:-translate-y-0.5 ${
+                        n.pinned ? 'border-[#30d158]/30' : 'border-white/8'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        {n.pinned && <span className="text-[#30d158] text-xs">📌</span>}
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors.bg} ${colors.text}`}>
+                          {n.category}
+                        </span>
+                        <span className="text-xs text-white/30 ml-auto">{formatDate(n.createdAt)}</span>
+                      </div>
+                      {n.imageUrl && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={n.imageUrl} alt={n.title} className="w-full h-32 object-cover rounded-lg mb-3" />
+                      )}
+                      <div className="font-semibold text-white mb-1">{n.title}</div>
+                      <div className="text-sm text-white/50 line-clamp-3">{n.content}</div>
+                      <div className="text-xs text-white/20 mt-3">— {n.author.discordUsername}</div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="text-center mt-8">
+                <a
+                  href="https://discord.gg/greenvillerp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-white/40 hover:text-[#30d158] transition-colors"
+                >
+                  Więcej ogłoszeń na Discordzie →
+                </a>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
-      {/* ── CTA Login ─────────────────────────────────────────────────────── */}
+      {/* ── CTA Login ── */}
       <section className="py-24 px-6 bg-[#0a0f18]">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="text-5xl mb-6">
-            <svg className="w-16 h-16 mx-auto text-[#5865F2]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.053a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
-            </svg>
-          </div>
+          <DiscordIcon className="w-16 h-16 mx-auto text-[#5865F2] mb-6" />
           <h2 className="text-3xl font-black mb-4">
             Zaloguj się <span className="text-[#5865F2]">Discordem</span>
           </h2>
           <p className="text-white/50 mb-8">
-            Bot automatycznie zsynchronizuje Twoje role i dane z serwera Discord.
+            Bot automatycznie zsynchronizuje Twoje role z serwera Discord.
             Zyskasz dostęp do panelu gracza dopasowanego do Twojej roli.
           </p>
           {isLoggedIn ? (
@@ -348,19 +367,17 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
               onClick={() => signIn('discord')}
               className="inline-flex items-center gap-3 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold px-10 py-4 rounded-xl text-base transition-all shadow-xl shadow-[#5865F2]/30 hover:scale-105"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.053a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
-              </svg>
+              <DiscordIcon className="w-5 h-5" />
               Zaloguj się z Discord
             </button>
           )}
           <div className="mt-4 text-xs text-white/20">
-            Bot weryfikuje Twoje role i dane automatycznie.
+            Synchronizacja ról następuje automatycznie po zalogowaniu.
           </div>
         </div>
       </section>
 
-      {/* ── Footer ────────────────────────────────────────────────────────── */}
+      {/* ── Footer ── */}
       <footer className="border-t border-white/5 px-6 py-10">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -379,5 +396,13 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
         </div>
       </footer>
     </div>
+  );
+}
+
+function DiscordIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.053a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+    </svg>
   );
 }

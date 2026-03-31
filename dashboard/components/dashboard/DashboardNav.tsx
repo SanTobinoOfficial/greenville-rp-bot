@@ -22,6 +22,7 @@ import {
   Shield,
   StickyNote,
   Lock,
+  Newspaper,
 } from 'lucide-react';
 
 interface NavItem {
@@ -44,6 +45,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/dashboard/mandaty',        label: 'Mandaty',      icon: FileText,      minLevel: ACCESS_LEVELS.HELPER },
   { href: '/dashboard/tickety',        label: 'Tickety',      icon: Ticket,        minLevel: ACCESS_LEVELS.HELPER },
   { href: '/dashboard/sesje',          label: 'Sesje',        icon: Theater,       minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/newsy',          label: 'Newsy',        icon: Newspaper,     minLevel: ACCESS_LEVELS.MOD    },
   { href: '/dashboard/quiz',           label: 'Quiz',         icon: HelpCircle,    minLevel: ACCESS_LEVELS.ADMIN  },
   { href: '/dashboard/logi',           label: 'Logi',         icon: FolderOpen,    minLevel: ACCESS_LEVELS.ADMIN  },
   { href: '/dashboard/ustawienia',     label: 'Ustawienia',   icon: Settings,      minLevel: ACCESS_LEVELS.OWNER  },

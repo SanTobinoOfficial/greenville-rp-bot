@@ -1,7 +1,6 @@
 // Publiczna strona główna Greenville RP
 // Inspiracja: anro.pages.dev — dark theme, neon accents, member counter, news, login
 
-import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -36,14 +35,22 @@ async function getServerStats() {
 
 async function getNews() {
   try {
-    // Pobierz 3 ostatnie zakończone sesje jako "newsy"
-    const lastSessions = await prisma.session.findMany({
-      where: { status: 'ENDED' },
-      orderBy: { endedAt: 'desc' },
-      take: 3,
-      select: { id: true, description: true, endedAt: true, startedAt: true },
+    // Tylko prawdziwe newsy tworzone przez staffa — bez fallbacków
+    return await prisma.news.findMany({
+      where: { published: true },
+      orderBy: [{ pinned: 'desc' }, { createdAt: 'desc' }],
+      take: 6,
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        category: true,
+        imageUrl: true,
+        pinned: true,
+        createdAt: true,
+        author: { select: { discordUsername: true } },
+      },
     });
-    return lastSessions;
   } catch {
     return [];
   }

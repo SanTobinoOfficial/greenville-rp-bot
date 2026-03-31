@@ -68,11 +68,6 @@ export default async function PortalPage() {
             <span className="font-bold text-sm"><span className="text-[#30d158]">GREENVILLE</span> RP</span>
           </Link>
           <div className="flex items-center gap-4">
-            {isStaff && (
-              <Link href="/dashboard" className="text-xs text-[#30d158] hover:text-[#30d158]/70 transition-colors border border-[#30d158]/30 px-3 py-1.5 rounded-lg">
-                Panel Staffu →
-              </Link>
-            )}
             <div className="flex items-center gap-2">
               {session.user.image && (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -104,14 +99,14 @@ export default async function PortalPage() {
             <div className="text-5xl mb-4">⚠️</div>
             <h2 className="text-xl font-bold text-yellow-400 mb-2">Konto niezweryfikowane</h2>
             <p className="text-white/50 text-sm max-w-md mx-auto mb-6">
-              Aby korzystać z panelu gracza, musisz zweryfikować swoje konto Roblox na naszym serwerze Discord.
+              Aby dołączyć do serwera RP i korzystać z panelu gracza, musisz połączyć swoje konto Roblox na naszym serwerze Discord.
             </p>
             <div className="bg-[#070d14] border border-white/8 rounded-lg p-4 text-left max-w-sm mx-auto text-sm space-y-2 mb-6">
-              <div className="font-semibold text-white/70 mb-2">Jak się zweryfikować:</div>
+              <div className="font-semibold text-white/70 mb-2">Jak dołączyć do serwera RP:</div>
               <div>1. Dołącz do serwera Discord</div>
-              <div>2. Idź na kanał <span className="text-[#30d158]">#weryfikacja</span></div>
-              <div>3. Kliknij przycisk <span className="text-[#30d158]">&quot;Zweryfikuj konto Roblox&quot;</span></div>
-              <div>4. Odpowiedz na quiz z regulaminu</div>
+              <div>2. Przejdź na kanał <span className="text-[#30d158]">#weryfikacja</span></div>
+              <div>3. Wpisz komendę <span className="text-[#30d158]">/weryfikacja</span> i podaj nazwę Roblox</div>
+              <div>4. Poczekaj na przyjęcie przez staffa</div>
             </div>
             <a
               href="https://discord.gg/greenvillerp"
@@ -287,21 +282,6 @@ export default async function PortalPage() {
               </div>
             )}
 
-            {/* ── STAFF link ── */}
-            {isStaff && (
-              <div className="bg-[#0d1117] border border-[#30d158]/30 rounded-xl p-6 flex items-center justify-between">
-                <div>
-                  <div className="font-bold text-[#30d158] mb-1">🛡️ Panel Staffu</div>
-                  <div className="text-sm text-white/50">Masz dostęp do panelu administracyjnego z pełnymi statystykami.</div>
-                </div>
-                <Link
-                  href="/dashboard"
-                  className="bg-[#30d158] hover:bg-[#27ae60] text-black font-bold px-6 py-3 rounded-lg text-sm transition-all"
-                >
-                  Otwórz Panel →
-                </Link>
-              </div>
-            )}
           </>
         )}
       </div>
