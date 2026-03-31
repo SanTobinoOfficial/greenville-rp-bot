@@ -1,404 +1,313 @@
-// Tworzenie struktury serwera Discord
-// Tworzy wszystkie role, kategorie i kanały zgodnie ze specyfikacją
+// setupServer.js — tworzy pełną strukturę serwera Greenville RP
+// Uruchamiane przez komendę /setup (tylko Owner)
+// Usuwa istniejące kanały i role, tworzy nowe
 
-const { ChannelType, PermissionFlagsBits, OverwriteType } = require('discord.js');
 const logger = require('../utils/logger');
 
-// ==================== ROLE ====================
+const delay = ms => new Promise(r => setTimeout(r, ms));
 
-const ROLES_CONFIG = [
-  // Nazwa, kolor hex (jako integer), hoisted
-  { name: 'Owner',           color: 0xFFD700, hoist: true,  position: 11 },
-  { name: 'Co-Owner',        color: 0xFF6B00, hoist: true,  position: 10 },
-  { name: 'Administrator',   color: 0xE74C3C, hoist: true,  position: 9  },
-  { name: 'Moderator',       color: 0xE67E22, hoist: true,  position: 8  },
-  { name: 'Helper',          color: 0xF1C40F, hoist: true,  position: 7  },
-  { name: 'Host',            color: 0x9B59B6, hoist: true,  position: 6  },
-  { name: 'HR',              color: 0x3498DB, hoist: true,  position: 5  },
-  { name: 'Mieszkaniec',     color: 0x2ECC71, hoist: false, position: 4  },
-  { name: 'Booster',         color: 0xFF73FA, hoist: false, position: 3  },
-  { name: 'Wspierający',     color: 0xA855F7, hoist: false, position: 3  },
-  { name: 'Policja',         color: 0x3B82F6, hoist: false, position: 2  },
-  { name: 'Straż Pożarna',   color: 0xEF4444, hoist: false, position: 2  },
-  { name: 'EMS',             color: 0x10B981, hoist: false, position: 2  },
-  { name: 'DOT',             color: 0xF59E0B, hoist: false, position: 2  },
-  { name: 'Straż Miejska',   color: 0x6366F1, hoist: false, position: 2  },
-  { name: 'Taksówkarz',      color: 0xEAB308, hoist: false, position: 2  },
-  { name: 'Kat. AM',         color: 0x94A3B8, hoist: false, position: 1  },
-  { name: 'Kat. A1',         color: 0x94A3B8, hoist: false, position: 1  },
-  { name: 'Kat. A2',         color: 0x94A3B8, hoist: false, position: 1  },
-  { name: 'Kat. A',          color: 0x94A3B8, hoist: false, position: 1  },
-  { name: 'Kat. B',          color: 0x94A3B8, hoist: false, position: 1  },
-  { name: 'Kat. C',          color: 0x94A3B8, hoist: false, position: 1  },
-  { name: 'Kat. D',          color: 0x94A3B8, hoist: false, position: 1  },
-  { name: 'Niezweryfikowany',color: 0x71717A, hoist: false, position: 0  },
+// ─── Role ────────────────────────────────────────────────────────────────────
+
+const ROLE_DEFS = [
+  { name: 'Niezweryfikowany', color: 0x6B7280, hoist: false, mentionable: false },
+  { name: 'Mieszkaniec',      color: 0x4ADE80, hoist: false, mentionable: false },
+  { name: 'Kat. AM',          color: 0x94A3B8, hoist: false, mentionable: false },
+  { name: 'Kat. A1',          color: 0x94A3B8, hoist: false, mentionable: false },
+  { name: 'Kat. A2',          color: 0x94A3B8, hoist: false, mentionable: false },
+  { name: 'Kat. A',           color: 0x94A3B8, hoist: false, mentionable: false },
+  { name: 'Kat. B',           color: 0x94A3B8, hoist: false, mentionable: false },
+  { name: 'Kat. C',           color: 0x94A3B8, hoist: false, mentionable: false },
+  { name: 'Kat. D',           color: 0x94A3B8, hoist: false, mentionable: false },
+  { name: 'Kat. T',           color: 0x94A3B8, hoist: false, mentionable: false },
+  { name: '🔔 Powiadomienia', color: 0xFFFFFF, hoist: false, mentionable: false },
+  { name: 'Wspierający',      color: 0xA855F7, hoist: false, mentionable: false },
+  { name: 'Nitro Booster',    color: 0xFF73FA, hoist: false, mentionable: false },
+  { name: 'Taksówkarz',       color: 0xEAB308, hoist: false, mentionable: true  },
+  { name: 'Straż Miejska',    color: 0x6366F1, hoist: false, mentionable: true  },
+  { name: 'DOT',              color: 0xF59E0B, hoist: false, mentionable: true  },
+  { name: 'Straż Pożarna',    color: 0xDC2626, hoist: false, mentionable: true  },
+  { name: 'EMS',              color: 0x10B981, hoist: false, mentionable: true  },
+  { name: 'Policja',          color: 0x1D4ED8, hoist: false, mentionable: true  },
+  { name: 'Helper',           color: 0xF1C40F, hoist: true,  mentionable: true  },
+  { name: 'HR',               color: 0x3B82F6, hoist: true,  mentionable: true  },
+  { name: 'Host',             color: 0x9B59B6, hoist: true,  mentionable: true  },
+  { name: 'Moderator',        color: 0xE67E22, hoist: true,  mentionable: true  },
+  { name: 'Administrator',    color: 0xE74C3C, hoist: true,  mentionable: true  },
+  { name: 'Co-Owner',         color: 0xFF6B00, hoist: true,  mentionable: true  },
+  { name: 'Owner',            color: 0xFFD700, hoist: true,  mentionable: true  },
 ];
 
-// ==================== KANAŁY ====================
+// ─── Buduj strukturę kanałów ─────────────────────────────────────────────────
 
-// Każdy kanał to obiekt z: name, type, topic, nsfw, userLimit, permissionOverwrites, rateLimitPerUser
-// type: 'text' | 'voice' | 'category'
+function buildStructure(roles, everyoneId) {
+  const STAFF  = ['Helper','HR','Host','Moderator','Administrator','Co-Owner','Owner'];
+  const MEMBER = ['Mieszkaniec','Nitro Booster','Wspierający',...STAFF];
 
-function buildChannelStructure(roles, everyoneRole) {
-  const staffRoles = ['Helper', 'HR', 'Host', 'Moderator', 'Administrator', 'Co-Owner', 'Owner'];
+  const VIEW      = String(1n << 10n);
+  const SEND      = String(1n << 11n);
+  const CONNECT   = String(1n << 20n);
+  const VIEW_SEND = String((1n << 10n) | (1n << 11n));
+  const VIEW_HIST = String((1n << 10n) | (1n << 16n));
 
-  const getStaffIds = () => staffRoles.map(n => roles[n]).filter(Boolean);
+  const ow = (id, allow, deny) => ({ id, type: 0, allow: allow || '0', deny: deny || '0' });
+  const ids = names => names.map(n => roles[n]).filter(Boolean);
 
-  // Uprawnienia tylko dla staffu (niewidoczne dla reszty)
-  const staffOnly = () => [
-    {
-      id: everyoneRole.id,
-      type: OverwriteType.Role,
-      deny: [PermissionFlagsBits.ViewChannel],
-    },
-    ...getStaffIds().map(r => ({
-      id: r.id,
-      type: OverwriteType.Role,
-      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages],
-    })),
+  const only = names => [
+    ow(everyoneId, '0', VIEW),
+    ...ids(names).map(r => ow(r.id, VIEW_SEND, '0')),
   ];
-
-  // Tylko do odczytu dla wszystkich
-  const readOnly = () => [
-    {
-      id: everyoneRole.id,
-      type: OverwriteType.Role,
-      deny: [PermissionFlagsBits.SendMessages],
-      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory],
-    },
+  const readOnly = (extraWrite = []) => [
+    ow(everyoneId, VIEW_HIST, SEND),
+    ...ids(extraWrite).map(r => ow(r.id, SEND, '0')),
   ];
-
-  // Tylko staff może pisać
-  const staffWrite = () => [
-    {
-      id: everyoneRole.id,
-      type: OverwriteType.Role,
-      deny: [PermissionFlagsBits.SendMessages],
-      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory],
-    },
-    ...getStaffIds().map(r => ({
-      id: r.id,
-      type: OverwriteType.Role,
-      allow: [PermissionFlagsBits.SendMessages, PermissionFlagsBits.ViewChannel],
-    })),
-  ];
-
-  // Tylko Booster i Wspierający
-  const boosterOnly = () => {
-    const perms = [
-      {
-        id: everyoneRole.id,
-        type: OverwriteType.Role,
-        deny: [PermissionFlagsBits.ViewChannel],
-      },
-    ];
-    if (roles['Booster']) perms.push({
-      id: roles['Booster'].id, type: OverwriteType.Role,
-      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages],
-    });
-    if (roles['Wspierający']) perms.push({
-      id: roles['Wspierający'].id, type: OverwriteType.Role,
-      allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages],
-    });
-    return perms;
-  };
-
-  // Tylko zweryfikowani (Mieszkaniec+)
-  const verifiedOnly = () => {
-    const verifiedRoles = ['Mieszkaniec', 'Booster', 'Wspierający', ...staffRoles];
-    return [
-      {
-        id: everyoneRole.id,
-        type: OverwriteType.Role,
-        deny: [PermissionFlagsBits.ViewChannel],
-      },
-      ...verifiedRoles.map(n => roles[n]).filter(Boolean).map(r => ({
-        id: r.id, type: OverwriteType.Role,
-        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages],
-      })),
-    ];
-  };
-
-  // Kanał głosowy tylko do odczytu (statystyki)
-  const voiceReadOnly = () => [
-    {
-      id: everyoneRole.id,
-      type: OverwriteType.Role,
-      deny: [PermissionFlagsBits.Connect],
-      allow: [PermissionFlagsBits.ViewChannel],
-    },
-  ];
+  const staffOnly    = () => only(STAFF);
+  const serviceOnly  = names => only([...STAFF, ...names]);
+  const memberOnly   = () => only(MEMBER);
+  const vipOnly      = () => only(['Nitro Booster','Wspierający',...STAFF]);
+  const voiceReadOnly = () => [ow(everyoneId, VIEW, CONNECT)];
 
   return [
-    // ============ STATYSTYKI ============
     {
-      name: '📊 ──── Statystyki ────',
-      type: 'category',
+      name: '📊 ──── Statystyki ────', type: 4,
       children: [
-        { name: '👥│Mieszkańcy: 0', type: 'voice', permissionOverwrites: voiceReadOnly() },
-        { name: '🤖│Boty: 0',       type: 'voice', permissionOverwrites: voiceReadOnly() },
+        { name: '👥│Mieszkańcy: 0', type: 2, perm: voiceReadOnly() },
+        { name: '🟢│Sesja: Brak',   type: 2, perm: voiceReadOnly() },
+        { name: '🤖│Boty: 0',       type: 2, perm: voiceReadOnly() },
       ],
     },
-
-    // ============ WERYFIKACJA ============
     {
-      name: '✅ ──── Weryfikacja ────',
-      type: 'category',
+      name: '✅ ──── Weryfikacja ────', type: 4,
       children: [
-        { name: '📋│weryfikacja', type: 'text', topic: 'Weryfikacja nicku Roblox i quiz' },
+        { name: '📋│zacznij-tutaj',    type: 0, topic: 'Zweryfikuj się — powiąż konto Roblox i zdaj quiz', perm: [ow(everyoneId, VIEW_HIST, SEND)] },
+        { name: '🪪│logi-weryfikacji', type: 0, topic: 'Logi weryfikacji — tylko staff', perm: staffOnly() },
       ],
     },
-
-    // ============ INFORMACJE ============
     {
-      name: '❗ ──── Informacje ────',
-      type: 'category',
+      name: '❗ ──── Informacje ────', type: 4,
       children: [
-        { name: '❗│regulamin',                 type: 'text', permissionOverwrites: readOnly() },
-        { name: '📖│pojęcia-rp',               type: 'text', permissionOverwrites: readOnly() },
-        { name: '✈️│przyloty',                 type: 'text', permissionOverwrites: readOnly() },
-        { name: '🛫│odloty',                   type: 'text', permissionOverwrites: readOnly() },
-        { name: '📢│ogłoszenia',               type: 'text', permissionOverwrites: staffWrite() },
-        { name: '🚗│przecieki-i-aktualizacje', type: 'text', permissionOverwrites: staffWrite() },
-        { name: '🔑│kody',                     type: 'text', permissionOverwrites: staffWrite() },
-        { name: '💎│sekrety',                  type: 'text', permissionOverwrites: verifiedOnly() },
-        { name: '📜│mandaty',                  type: 'text', permissionOverwrites: readOnly() },
+        { name: '📢│ogłoszenia',        type: 0, perm: readOnly(STAFF), topic: 'Oficjalne ogłoszenia serwera Greenville RP' },
+        { name: '❗│regulamin',         type: 0, perm: readOnly(),       topic: 'Regulamin serwera — przeczytaj przed weryfikacją' },
+        { name: '📖│słownik-rp',       type: 0, perm: readOnly(),       topic: 'Pojęcia RP: FRP, NLR, metagaming i inne' },
+        { name: '🗺️│o-greenville',     type: 0, perm: readOnly(),       topic: 'Informacje o mapie i lokacjach w Greenville' },
+        { name: '🔔│rola-powiadomień',  type: 0, perm: readOnly(),       topic: 'Kliknij przycisk aby otrzymywać powiadomienia o sesjach' },
+        { name: '🏆│rankingi',         type: 0, perm: readOnly(STAFF),   topic: 'Rankingi graczy i służb' },
       ],
     },
-
-    // ============ KANAŁY TEKSTOWE ============
     {
-      name: '💬 ──── Kanały tekstowe ────',
-      type: 'category',
+      name: '💬 ──── Ogólne ────', type: 4,
       children: [
-        { name: '💬│czat-ogólny',            type: 'text' },
-        { name: '🎮│roblox-chat',            type: 'text' },
-        { name: '🚗│rejestrowanie-samochodu',type: 'text' },
-        { name: '🪪│dowód-osobisty',         type: 'text' },
-        { name: '💼│podanie-o-pracę',        type: 'text' },
-        { name: '📸│zdjecia-z-rp',           type: 'text' },
-        { name: '💡│sugestie',               type: 'text' },
-        { name: '💜│boosterzy',              type: 'text', permissionOverwrites: boosterOnly() },
-        { name: '😡│skargi-pytania',         type: 'text' },
-        { name: '📱│telefon',                type: 'text' },
-        { name: '🔒│chat-priv',              type: 'text', permissionOverwrites: verifiedOnly() },
+        { name: '💬│ogólny',            type: 0, perm: memberOnly(), topic: 'Główny kanał rozmów' },
+        { name: '🎮│roblox-off-topic',  type: 0, perm: memberOnly(), topic: 'Rozmowy o Roblox' },
+        { name: '📸│screenshoty',       type: 0, perm: memberOnly(), topic: 'Zdjęcia z sesji — tylko screenshoty!' },
+        { name: '😂│memy',              type: 0, perm: memberOnly(), topic: 'Memy związane z RP' },
+        { name: '🏆│osiągnięcia',       type: 0, perm: memberOnly(), topic: 'Pochwal się swoimi osiągnięciami!' },
+        { name: '💡│sugestie',          type: 0, perm: memberOnly(), topic: 'Sugestie — 1 sugestia per wiadomość' },
+        { name: '💜│vip-lounge',        type: 0, perm: vipOnly(),    topic: 'Kanał dla Wspierających i Boosterów 💜' },
       ],
     },
-
-    // ============ KANAŁY GŁOSOWE ============
     {
-      name: '🔊 ──── Kanały głosowe ────',
-      type: 'category',
+      name: '🎪 ──── Sesje RP ────', type: 4,
       children: [
-        { name: 'Ogólne',               type: 'voice' },
-        { name: 'Kanał 2 osobowy [1]',  type: 'voice', userLimit: 2 },
-        { name: 'Kanał 2 osobowy [2]',  type: 'voice', userLimit: 2 },
-        { name: 'Kanał 3 osobowy [1]',  type: 'voice', userLimit: 3 },
-        { name: 'Kanał 3 osobowy [2]',  type: 'voice', userLimit: 3 },
-        { name: 'Kanał 4 osobowy',      type: 'voice', userLimit: 4 },
-        { name: 'Kanał 5 osobowy',      type: 'voice', userLimit: 5 },
-        { name: '🎵 RMF MAXX',          type: 'voice' },
+        { name: '📅│plan-sesji',         type: 0, perm: readOnly(),      topic: 'Harmonogram nadchodzących sesji' },
+        { name: '📢│ogłoszenia-sesji',   type: 0, perm: readOnly(STAFF), topic: 'Ogłoszenia o sesjach' },
+        { name: '✅│zapisy-na-sesję',    type: 0, perm: memberOnly(),    topic: 'Zapisz się na sesję komendą /sesja zapisy' },
+        { name: '📊│wyniki-sesji',       type: 0, perm: readOnly(STAFF), topic: 'Podsumowania zakończonych sesji' },
+        { name: '💬│rozmowy-o-sesjach', type: 0, perm: memberOnly(),    topic: 'Dyskusje i pytania o sesje' },
       ],
     },
-
-    // ============ LOGI ============
     {
-      name: '📝 ──── Logi ────',
-      type: 'category',
-      permissionOverwrites: staffOnly(),
+      name: '👤 ──── Postacie & Pojazdy ────', type: 4,
       children: [
-        { name: '🤖│logi-rover' },
-        { name: '🔊│logi-głosowe' },
-        { name: '👥│logi-członków' },
-        { name: '✏️│logi-nicków' },
-        { name: '🗑️│logi-wiadomości' },
-        { name: '🔨│logi-moderacji' },
-        { name: '📋│logi-ról' },
-        { name: '🎫│logi-ticketów' },
-        { name: '🚗│logi-pojazdów' },
-        { name: '🪪│logi-weryfikacji' },
-        { name: '😂│komedy', type: 'text', permissionOverwrites: staffOnly() },
-      ].map(c => ({ type: 'text', permissionOverwrites: staffOnly(), ...c })),
-    },
-
-    // ============ ROLEPLAY ============
-    {
-      name: '🎭 ──── Roleplay ────',
-      type: 'category',
-      children: [
-        { name: '🚔│ogłoszenia-roleplay',  type: 'text', permissionOverwrites: staffWrite() },
-        { name: '🚗│rejestracja-pojazdów', type: 'text' },
-        { name: '🪪│prawo-jazdy',          type: 'text' },
-        { name: '📋│wyniki-egzaminów',     type: 'text', permissionOverwrites: readOnly() },
+        { name: '🪪│stwórz-postać',    type: 0, perm: memberOnly(), topic: 'Stwórz postać RP — dowód, PESEL, numer tel.' },
+        { name: '🚗│rejestracja-auta', type: 0, perm: memberOnly(), topic: 'Zarejestruj pojazd — wymagane kat. B' },
+        { name: '📋│prawo-jazdy',      type: 0, perm: memberOnly(), topic: 'Zdaj egzamin i zdobądź prawo jazdy' },
+        { name: '📜│moje-mandaty',     type: 0, perm: memberOnly(), topic: 'Sprawdź swoje mandaty /mandaty lista' },
       ],
     },
-
-    // ============ SESJE RP ============
     {
-      name: '🎪 ──── Sesje RP ────',
-      type: 'category',
+      name: '💼 ──── Praca & Służby ────', type: 4,
       children: [
-        { name: '📢│sesje-ogłoszenia',  type: 'text' },
-        { name: '✅│zapisy-na-sesję',   type: 'text' },
+        { name: '📋│dostępne-stanowiska', type: 0, perm: readOnly(),      topic: 'Lista dostępnych służb i wymagania' },
+        { name: '📝│podania-o-służbę',    type: 0, perm: memberOnly(),    topic: 'Złóż podanie do wybranej służby' },
+        { name: '📊│wyniki-podań',        type: 0, perm: readOnly(STAFF), topic: 'Wyniki podań' },
       ],
     },
-
-    // ============ PRACE ============
     {
-      name: '💼 ──── Prace ────',
-      type: 'category',
+      name: '🆘 ──── Pomoc ────', type: 4,
       children: [
-        { name: '📋│informacje-prace-publiczne',  type: 'text', permissionOverwrites: readOnly() },
-        { name: '📝│podania-prace-publiczne',      type: 'text' },
-        { name: '📋│informacje-prace-prywatne',   type: 'text', permissionOverwrites: readOnly() },
-        { name: '📝│podania-prace-prywatne',       type: 'text' },
+        { name: '❓│faq',            type: 0, perm: readOnly(),   topic: 'Najczęściej zadawane pytania' },
+        { name: '🎫│otwórz-ticket', type: 0,                      topic: 'Otwórz prywatny ticket ze staffem' },
+        { name: '😡│skargi',        type: 0, perm: memberOnly(),  topic: 'Skargi na graczy lub staff' },
       ],
     },
-
-    // ============ POMOC ============
     {
-      name: '🆘 ──── Pomoc ────',
-      type: 'category',
+      name: '🔊 ──── Głosowe ────', type: 4,
       children: [
-        { name: '❓│faq',     type: 'text', permissionOverwrites: readOnly() },
-        { name: '🎫│ticket', type: 'text' },
+        { name: 'Lobby',              type: 2 },
+        { name: 'Ogólny 1',           type: 2 },
+        { name: 'Ogólny 2',           type: 2 },
+        { name: 'Ogólny 3',           type: 2 },
+        { name: '🔒 Prywatny [2os]',  type: 2, limit: 2 },
+        { name: '🔒 Prywatny [4os]',  type: 2, limit: 4 },
+        { name: '🎵 Radio RMF MAXX',  type: 2 },
+        { name: '📻 AFK',             type: 2 },
       ],
     },
-
-    // ============ STAFF ============
     {
-      name: '─── STAFF ───',
-      type: 'category',
-      permissionOverwrites: staffOnly(),
+      name: '🚔 ──── Policja ────', type: 4, perm: serviceOnly(['Policja']),
       children: [
-        { name: '📖│regulamin-staffu' },
-        { name: '📢│ogłoszenia-staffu' },
-        { name: '🤖│autorole' },
-        { name: '💬│chat-hr' },
-        { name: '💬│admin-chat' },
-        { name: '💬│mod-chat' },
-        { name: '🚗│pojazdy-służbowe' },
-        { name: '📋│egzaminy' },
-        { name: '🤖│automod' },
-        { name: '👑│informacje-dla-hostów' },
-        { name: '👑│host-chat' },
-        { name: '⚠️│warny-i-bany' },
-        { name: '📝│logi-staffu' },
-      ].map(c => ({ type: 'text', permissionOverwrites: staffOnly(), ...c })),
+        { name: '💬│policja-czat',        type: 0, perm: serviceOnly(['Policja']), topic: 'Czat wydziału Policji' },
+        { name: '📋│raporty-policji',     type: 0, perm: serviceOnly(['Policja']), topic: 'Raporty i notatki służbowe' },
+        { name: '📜│lista-poszukiwanych', type: 0, perm: serviceOnly(['Policja']), topic: 'Lista poszukiwanych' },
+        { name: '🚔 Patrol Alpha',        type: 2, perm: serviceOnly(['Policja']) },
+        { name: '🚔 Patrol Bravo',        type: 2, perm: serviceOnly(['Policja']) },
+        { name: '🏢 Centrum Dowodzenia',  type: 2, perm: serviceOnly(['Policja']) },
+      ],
+    },
+    {
+      name: '🚑 ──── EMS ────', type: 4, perm: serviceOnly(['EMS']),
+      children: [
+        { name: '💬│ems-czat',    type: 0, perm: serviceOnly(['EMS']), topic: 'Czat ratownictwa medycznego' },
+        { name: '📋│raporty-ems', type: 0, perm: serviceOnly(['EMS']), topic: 'Raporty medyczne' },
+        { name: '🚑 Dyżur EMS 1', type: 2, perm: serviceOnly(['EMS']) },
+        { name: '🚑 Dyżur EMS 2', type: 2, perm: serviceOnly(['EMS']) },
+      ],
+    },
+    {
+      name: '🚒 ──── Straż Pożarna ────', type: 4, perm: serviceOnly(['Straż Pożarna']),
+      children: [
+        { name: '💬│straż-czat',     type: 0, perm: serviceOnly(['Straż Pożarna']), topic: 'Czat Straży Pożarnej' },
+        { name: '📋│raporty-straży', type: 0, perm: serviceOnly(['Straż Pożarna']), topic: 'Raporty interwencji' },
+        { name: '🚒 Dyżur Straży',   type: 2, perm: serviceOnly(['Straż Pożarna']) },
+      ],
+    },
+    {
+      name: '🚧 ──── DOT ────', type: 4, perm: serviceOnly(['DOT']),
+      children: [
+        { name: '💬│dot-czat',   type: 0, perm: serviceOnly(['DOT']), topic: 'Czat Departamentu Transportu' },
+        { name: '🚧 Dyżur DOT', type: 2, perm: serviceOnly(['DOT']) },
+      ],
+    },
+    {
+      name: '🛡️ ──── Straż Miejska ────', type: 4, perm: serviceOnly(['Straż Miejska']),
+      children: [
+        { name: '💬│sm-czat',    type: 0, perm: serviceOnly(['Straż Miejska']), topic: 'Czat Straży Miejskiej' },
+        { name: '🛡️ Dyżur SM', type: 2, perm: serviceOnly(['Straż Miejska']) },
+      ],
+    },
+    {
+      name: '📝 ──── Logi ────', type: 4, perm: staffOnly(),
+      children: [
+        { name: '🤖│logi-bota',         type: 0, perm: staffOnly(), topic: 'Automatyczne logi bota' },
+        { name: '👥│logi-członków',     type: 0, perm: staffOnly(), topic: 'Dołączenia / opuszczenia' },
+        { name: '✏️│logi-nicków',       type: 0, perm: staffOnly(), topic: 'Zmiany nicków i avatarów' },
+        { name: '🗑️│logi-wiadomości',  type: 0, perm: staffOnly(), topic: 'Usunięte i edytowane wiadomości' },
+        { name: '🔨│logi-moderacji',    type: 0, perm: staffOnly(), topic: 'Warny, bany, kicke, mute' },
+        { name: '🎫│logi-ticketów',     type: 0, perm: staffOnly(), topic: 'Historia ticketów' },
+        { name: '🚗│logi-pojazdów',     type: 0, perm: staffOnly(), topic: 'Rejestracje i zmiany pojazdów' },
+        { name: '🔊│logi-głosowe',      type: 0, perm: staffOnly(), topic: 'Wejścia/wyjścia z kanałów głosowych' },
+      ],
+    },
+    {
+      name: '🛡️ ──── STAFF ────', type: 4, perm: staffOnly(),
+      children: [
+        { name: '📢│ogłoszenia-staffu', type: 0, perm: staffOnly(),                                          topic: 'Ogłoszenia wewnętrzne staffu' },
+        { name: '💬│staff-ogólny',      type: 0, perm: staffOnly(),                                          topic: 'Ogólny czat staffu' },
+        { name: '👑│host-chat',         type: 0, perm: only(['Host','Administrator','Co-Owner','Owner']),     topic: 'Czat Hostów i wyżej' },
+        { name: '🔨│mod-chat',          type: 0, perm: staffOnly(),                                          topic: 'Czat moderatorów' },
+        { name: '👥│hr-chat',           type: 0, perm: only(['HR','Administrator','Co-Owner','Owner']),       topic: 'Czat HR — nabory, podania' },
+        { name: '🤖│bot-komendy',       type: 0, perm: staffOnly(),                                          topic: 'Testowanie i konfiguracja bota' },
+        { name: '📋│notatki-staffu',    type: 0, perm: staffOnly(),                                          topic: 'Notatki, przypomnienia' },
+        { name: '⚠️│warny-i-bany',      type: 0, perm: staffOnly(),                                          topic: 'Rejestr kar moderacyjnych' },
+        { name: '📖│regulamin-staffu',  type: 0, perm: staffOnly(),                                          topic: 'Regulamin pracy staffu' },
+        { name: '🔊 Staff Voice',       type: 2, perm: staffOnly() },
+        { name: '🏛️ Spotkanie Staffu', type: 2, perm: staffOnly() },
+      ],
     },
   ];
 }
 
-// ==================== GŁÓWNA FUNKCJA SETUP ====================
+// ─── Główna funkcja ───────────────────────────────────────────────────────────
 
-/**
- * Tworzy wszystkie role, kategorie i kanały na serwerze
- * @param {import('discord.js').Guild} guild
- * @param {Function} progress - callback aktualizacji paska postępu
- * @returns {{ roles: Object, channels: Object }}
- */
-async function setupServer(guild, progress) {
+async function setupServer(guild) {
+  logger.info('🚀 setupServer: start');
+
+  const channels = await guild.channels.fetch();
+  const roles    = await guild.roles.fetch();
+  const everyone = guild.roles.everyone;
+
+  // Usuń kanały
+  logger.info(`🗑️  Usuwanie ${channels.size} kanałów...`);
+  for (const [, ch] of channels) {
+    await ch.delete('Setup — czyste konto').catch(() => {});
+    await delay(350);
+  }
+
+  // Usuń role
+  const deletable = [...roles.values()].filter(r => r.name !== '@everyone' && !r.managed);
+  logger.info(`🗑️  Usuwanie ${deletable.length} ról...`);
+  for (const r of deletable) {
+    await r.delete('Setup — czyste konto').catch(() => {});
+    await delay(350);
+  }
+
+  // Twórz role
+  logger.info('🎭 Tworzenie ról...');
   const createdRoles = {};
-  const createdChannels = {};
-
-  // --- Krok 1: Tworzenie ról ---
-  progress('🎭 Tworzę role...');
-
-  for (const roleCfg of ROLES_CONFIG) {
+  for (const def of ROLE_DEFS) {
     try {
-      // Sprawdź czy rola już istnieje
-      let role = guild.roles.cache.find(r => r.name === roleCfg.name);
-      if (!role) {
-        role = await guild.roles.create({
-          name: roleCfg.name,
-          color: roleCfg.color,
-          hoist: roleCfg.hoist,
-          mentionable: false,
-          reason: 'Greenville RP — Auto Setup',
-        });
-      }
-      createdRoles[roleCfg.name] = role;
-      logger.info(`Rola: ${roleCfg.name}`);
-    } catch (err) {
-      logger.error(`Błąd tworzenia roli ${roleCfg.name}:`, err.message);
+      const role = await guild.roles.create({
+        name: def.name, color: def.color,
+        hoist: def.hoist, mentionable: def.mentionable,
+        reason: 'Setup Greenville RP',
+      });
+      createdRoles[def.name] = role;
+      logger.info(`  ✅ @${role.name}`);
+      await delay(400);
+    } catch (e) {
+      logger.error(`  ❌ Rola ${def.name}: ${e.message}`);
     }
   }
 
-  const everyoneRole = guild.roles.everyone;
+  // Twórz kanały
+  const structure = buildStructure(createdRoles, everyone.id);
+  logger.info('📁 Tworzenie struktury kanałów...');
 
-  // --- Krok 2: Tworzenie kanałów ---
-  const channelStructure = buildChannelStructure(createdRoles, everyoneRole);
-
-  let categoryCount = 0;
-  for (const cat of channelStructure) {
-    categoryCount++;
-    progress(`📁 Tworzę kategorię ${categoryCount}/${channelStructure.length}: ${cat.name}`);
-
+  for (const cat of structure) {
     try {
-      // Sprawdź czy kategoria już istnieje
-      let category = guild.channels.cache.find(
-        c => c.name === cat.name && c.type === ChannelType.GuildCategory
-      );
+      const category = await guild.channels.create({
+        name: cat.name,
+        type: cat.type,
+        permissionOverwrites: cat.perm ?? [],
+        reason: 'Setup Greenville RP',
+      });
+      logger.info(`  📁 ${category.name}`);
+      await delay(400);
 
-      if (!category) {
-        const catOptions = {
-          name: cat.name,
-          type: ChannelType.GuildCategory,
-          reason: 'Greenville RP — Auto Setup',
-        };
-        if (cat.permissionOverwrites) {
-          catOptions.permissionOverwrites = cat.permissionOverwrites;
-        }
-        category = await guild.channels.create(catOptions);
-      }
-
-      createdChannels[cat.name] = category;
-
-      // Twórz kanały dzieci
-      for (const child of (cat.children || [])) {
+      for (const child of (cat.children ?? [])) {
         try {
-          const channelType = child.type === 'voice'
-            ? ChannelType.GuildVoice
-            : ChannelType.GuildText;
-
-          let existing = guild.channels.cache.find(
-            c => c.name === child.name && c.parentId === category.id
-          );
-
-          if (!existing) {
-            const childOptions = {
-              name: child.name,
-              type: channelType,
-              parent: category.id,
-              topic: child.topic || undefined,
-              userLimit: child.userLimit || undefined,
-              reason: 'Greenville RP — Auto Setup',
-            };
-
-            if (child.permissionOverwrites) {
-              childOptions.permissionOverwrites = child.permissionOverwrites;
-            } else if (cat.permissionOverwrites) {
-              childOptions.permissionOverwrites = cat.permissionOverwrites;
-            }
-
-            existing = await guild.channels.create(childOptions);
-          }
-
-          createdChannels[child.name] = existing;
-          logger.info(`Kanał: ${child.name}`);
-        } catch (err) {
-          logger.error(`Błąd tworzenia kanału ${child.name}:`, err.message);
+          await guild.channels.create({
+            name:  child.name,
+            type:  child.type,
+            parent: category,
+            topic: child.topic,
+            userLimit: child.limit,
+            permissionOverwrites: child.perm ?? cat.perm ?? [],
+            reason: 'Setup Greenville RP',
+          });
+          logger.info(`    ✅ ${child.name}`);
+          await delay(350);
+        } catch (e) {
+          logger.error(`    ❌ ${child.name}: ${e.message}`);
         }
       }
-    } catch (err) {
-      logger.error(`Błąd tworzenia kategorii ${cat.name}:`, err.message);
+    } catch (e) {
+      logger.error(`  ❌ Kategoria ${cat.name}: ${e.message}`);
     }
   }
 
-  progress('✅ Struktura serwera gotowa!');
-  logger.info('Setup serwera zakończony pomyślnie');
-
-  return { roles: createdRoles, channels: createdChannels };
+  logger.info('✅ setupServer: gotowe');
+  return createdRoles;
 }
 
-module.exports = { setupServer, ROLES_CONFIG };
+module.exports = { setupServer };

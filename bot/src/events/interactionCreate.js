@@ -121,11 +121,16 @@ module.exports = {
 
 // Dokładne dopasowanie customId → plik w /buttons
 const BUTTON_HANDLERS = {
+  // ── Weryfikacja (nowy system) ──────────────────────────────
+  'verify_start':    'verification/startVerification',  // przycisk w embedzie #zacznij-tutaj
+  // ── Stare handlery (zachowane dla kompatybilności) ─────────
   'verify_roblox':   'verification/verifyRoblox',
   'verify_quiz':     'verification/verifyQuiz',
+  // ── Tickety ────────────────────────────────────────────────
   'ticket_create':   'tickets/createTicket',
   'ticket_close':    'tickets/closeTicket',
   'ticket_claim':    'tickets/claimTicket',
+  // ── Inne ───────────────────────────────────────────────────
   'vehicle_register':'vehicles/registerVehicle',
   'character_create':'characters/createCharacter',
   'license_apply':   'licenses/applyLicense',
@@ -133,13 +138,15 @@ const BUTTON_HANDLERS = {
 
 // Dopasowanie po prefixie (np. ticket_close_1234 → prefix 'ticket')
 const BUTTON_PREFIX_HANDLERS = {
+  'quiz':      'verification/quizAnswer',   // quiz_A_0, quiz_B_2, itd.
   'session':   'sessions/sessionButton',
   'license':   'licenses/licenseButton',
   'appeal':    'moderation/appealButton',
 };
 
 const MODAL_HANDLERS = {
-  'modal_verify_roblox':   'verification/robloxModal',
+  'modal_verification':    'verification/verificationModal',  // nowy system
+  'modal_verify_roblox':   'verification/robloxModal',        // stary (fallback)
   'modal_character':       'characters/characterModal',
   'modal_vehicle':         'vehicles/vehicleModal',
   'modal_ticket_category': 'tickets/ticketCategoryModal',
