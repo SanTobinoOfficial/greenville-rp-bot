@@ -23,6 +23,7 @@ import {
   StickyNote,
   Lock,
   Newspaper,
+  Server,
 } from 'lucide-react';
 
 interface NavItem {
@@ -48,6 +49,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/dashboard/newsy',          label: 'Newsy',        icon: Newspaper,     minLevel: ACCESS_LEVELS.MOD    },
   { href: '/dashboard/quiz',           label: 'Quiz',         icon: HelpCircle,    minLevel: ACCESS_LEVELS.ADMIN  },
   { href: '/dashboard/logi',           label: 'Logi',         icon: FolderOpen,    minLevel: ACCESS_LEVELS.ADMIN  },
+  { href: '/dashboard/serwer',          label: 'Serwer Discord', icon: Server,      minLevel: ACCESS_LEVELS.OWNER  },
   { href: '/dashboard/ustawienia',     label: 'Ustawienia',   icon: Settings,      minLevel: ACCESS_LEVELS.OWNER  },
 ];
 
