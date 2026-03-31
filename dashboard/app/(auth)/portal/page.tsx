@@ -6,8 +6,6 @@ import { authOptions, ACCESS_LEVELS } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
-
 async function getUserData(discordId: string) {
   return prisma.user.findUnique({
     where: { discordId },
@@ -82,9 +80,7 @@ export default async function PortalPage() {
               )}
               <span className="text-sm text-white/70">{session.user.name}</span>
             </div>
-            <form action={async () => { 'use server'; redirect('/'); }}>
-              <Link href="/api/auth/signout" className="text-xs text-white/30 hover:text-white transition-colors">Wyloguj</Link>
-            </form>
+            <Link href="/api/auth/signout" className="text-xs text-white/30 hover:text-white transition-colors">Wyloguj</Link>
           </div>
         </div>
       </nav>
