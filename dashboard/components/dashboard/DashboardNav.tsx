@@ -19,6 +19,9 @@ import {
   FolderOpen,
   Settings,
   LogOut,
+  Shield,
+  StickyNote,
+  Lock,
 } from 'lucide-react';
 
 interface NavItem {
@@ -29,18 +32,21 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/dashboard',              label: 'Statystyki',  icon: BarChart2,     minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/podania',      label: 'Podania',     icon: ClipboardList, minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/gracze',       label: 'Gracze',      icon: Users,         minLevel: ACCESS_LEVELS.MOD    },
-  { href: '/dashboard/moderacja',    label: 'Moderacja',   icon: Hammer,        minLevel: ACCESS_LEVELS.MOD    },
-  { href: '/dashboard/pojazdy',      label: 'Pojazdy',     icon: Car,           minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/prawa-jazdy',  label: 'Prawa jazdy', icon: CreditCard,    minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/mandaty',      label: 'Mandaty',     icon: FileText,      minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/tickety',      label: 'Tickety',     icon: Ticket,        minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/sesje',        label: 'Sesje',       icon: Theater,       minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/quiz',         label: 'Quiz',        icon: HelpCircle,    minLevel: ACCESS_LEVELS.ADMIN  },
-  { href: '/dashboard/logi',         label: 'Logi',        icon: FolderOpen,    minLevel: ACCESS_LEVELS.ADMIN  },
-  { href: '/dashboard/ustawienia',   label: 'Ustawienia',  icon: Settings,      minLevel: ACCESS_LEVELS.OWNER  },
+  { href: '/dashboard',                label: 'Statystyki',   icon: BarChart2,     minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/podania',        label: 'Podania',      icon: ClipboardList, minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/gracze',         label: 'Gracze',       icon: Users,         minLevel: ACCESS_LEVELS.MOD    },
+  { href: '/dashboard/moderacja',      label: 'Moderacja',    icon: Hammer,        minLevel: ACCESS_LEVELS.MOD    },
+  { href: '/dashboard/notatki',        label: 'Notatki',      icon: StickyNote,    minLevel: ACCESS_LEVELS.MOD    },
+  { href: '/dashboard/zatrzymani',     label: 'Zatrzymani',   icon: Lock,          minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/sluzby',         label: 'Służby',       icon: Shield,        minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/pojazdy',        label: 'Pojazdy',      icon: Car,           minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/prawa-jazdy',    label: 'Prawa jazdy',  icon: CreditCard,    minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/mandaty',        label: 'Mandaty',      icon: FileText,      minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/tickety',        label: 'Tickety',      icon: Ticket,        minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/sesje',          label: 'Sesje',        icon: Theater,       minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/quiz',           label: 'Quiz',         icon: HelpCircle,    minLevel: ACCESS_LEVELS.ADMIN  },
+  { href: '/dashboard/logi',           label: 'Logi',         icon: FolderOpen,    minLevel: ACCESS_LEVELS.ADMIN  },
+  { href: '/dashboard/ustawienia',     label: 'Ustawienia',   icon: Settings,      minLevel: ACCESS_LEVELS.OWNER  },
 ];
 
 export function DashboardNav({ session }: { session: Session }) {

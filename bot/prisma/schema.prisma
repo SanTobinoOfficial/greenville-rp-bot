@@ -39,6 +39,11 @@ model User {
   finesIssued    Fine[]          @relation("IssuedFine")
   sessionSignups SessionSignup[]
   quizTokens     QuizToken[]
+  notes          Note[]          @relation("NoteTarget")
+  notesAuthored  Note[]          @relation("NoteAuthor")
+  dutyLogs       DutyLog[]
+  arrests        Arrest[]        @relation("ArrestTarget")
+  arrestsMade    Arrest[]        @relation("ArrestOfficer")
 }
 
 // ==================== POSTAĆ (DOWÓD OSOBISTY) ====================
@@ -321,6 +326,48 @@ model Settings {
   warnAutoBanCount      Int    @default(5)
   setupCompleted        Boolean @default(false)
   guildId               String @default("")
+}
+
+// ==================== NOTATKI MODERACYJNE ====================
+
+model Note {
+  id        String   @id @default(cuid())
+  targetId  String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  target User @relation("NoteTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  author User @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+// ==================== LOGI DUTY SŁUŻB ====================
+
+model DutyLog {
+  id        String   @id @default(cuid())
+  userId    String
+  service   String
+  action    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ==================== ZATRZYMANIA ====================
+
+model Arrest {
+  id          String    @id @default(cuid())
+  targetId    String
+  officerId   String
+  reason      String
+  active      Boolean   @default(true)
+  releasedAt  DateTime?
+  releasedBy  String?
+  createdAt   DateTime  @default(now())
+
+  target  User @relation("ArrestTarget",  fields: [targetId],  references: [id], onDelete: Cascade)
+  officer User @relation("ArrestOfficer", fields: [officerId], references: [id], onDelete: Cascade)
 }
 
 // ==================== LOGI BOTA ====================
