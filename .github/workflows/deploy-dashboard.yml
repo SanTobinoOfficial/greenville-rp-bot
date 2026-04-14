@@ -1,0 +1,58 @@
+# GitHub Actions — Deploy dashboardu na Vercel
+# Uruchamia się po każdym push na branch main
+# Vercel automatycznie wykrywa GitHub i deployuje — ten workflow dodaje tylko powiadomienia
+
+name: Deploy Dashboard → Vercel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dashboard/**'
+      - '!dashboard/node_modules/**'
+      - '!dashboard/.env*'
+
+jobs:
+  deploy-dashboard:
+    name: Trigger Vercel Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger Vercel deployment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          echo "🚀 Triggering Vercel deploy..."
+          RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "greenville-rp-dashboard",
+              "gitSource": {
+                "type": "github",
+                "repoId": "${{ github.repository_id }}",
+                "ref": "main"
+              },
+              "target": "production"
+            }' \
+            "https://api.vercel.com/v13/deployments")
+
+          DEPLOY_URL=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('url','unknown'))" 2>/dev/null || echo "sprawdź vercel.com")
+          echo "📡 Deploy URL: https://$DEPLOY_URL"
+          echo "DEPLOY_URL=https://$DEPLOY_URL" >> $GITHUB_ENV
+
+      - name: Deploy summary
+        run: |
+          echo "## 🌐 Dashboard Deployed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Czas:** $(date '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Autor:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Vercel URL:** ${{ env.DEPLOY_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Panel Vercel:** https://vercel.com/dashboard" >> $GITHUB_STEP_SUMMARY

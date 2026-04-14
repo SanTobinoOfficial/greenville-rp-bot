@@ -19,6 +19,16 @@ import {
   FolderOpen,
   Settings,
   LogOut,
+  Shield,
+  StickyNote,
+  Lock,
+  Newspaper,
+  Server,
+  BookOpen,
+  MessageSquare,
+  Briefcase,
+  Zap,
+  Bot,
 } from 'lucide-react';
 
 interface NavItem {
@@ -29,18 +39,28 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/dashboard',              label: 'Statystyki',  icon: BarChart2,     minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/podania',      label: 'Podania',     icon: ClipboardList, minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/gracze',       label: 'Gracze',      icon: Users,         minLevel: ACCESS_LEVELS.MOD    },
-  { href: '/dashboard/moderacja',    label: 'Moderacja',   icon: Hammer,        minLevel: ACCESS_LEVELS.MOD    },
-  { href: '/dashboard/pojazdy',      label: 'Pojazdy',     icon: Car,           minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/prawa-jazdy',  label: 'Prawa jazdy', icon: CreditCard,    minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/mandaty',      label: 'Mandaty',     icon: FileText,      minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/tickety',      label: 'Tickety',     icon: Ticket,        minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/sesje',        label: 'Sesje',       icon: Theater,       minLevel: ACCESS_LEVELS.HELPER },
-  { href: '/dashboard/quiz',         label: 'Quiz',        icon: HelpCircle,    minLevel: ACCESS_LEVELS.ADMIN  },
-  { href: '/dashboard/logi',         label: 'Logi',        icon: FolderOpen,    minLevel: ACCESS_LEVELS.ADMIN  },
-  { href: '/dashboard/ustawienia',   label: 'Ustawienia',  icon: Settings,      minLevel: ACCESS_LEVELS.OWNER  },
+  { href: '/dashboard',                label: 'Statystyki',   icon: BarChart2,     minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/podania',        label: 'Podania',      icon: ClipboardList, minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/gracze',         label: 'Gracze',       icon: Users,         minLevel: ACCESS_LEVELS.MOD    },
+  { href: '/dashboard/moderacja',      label: 'Moderacja',    icon: Hammer,        minLevel: ACCESS_LEVELS.MOD    },
+  { href: '/dashboard/notatki',        label: 'Notatki',      icon: StickyNote,    minLevel: ACCESS_LEVELS.MOD    },
+  { href: '/dashboard/zatrzymani',     label: 'Zatrzymani',   icon: Lock,          minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/sluzby',         label: 'Służby',       icon: Shield,        minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/pojazdy',        label: 'Pojazdy',      icon: Car,           minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/prawa-jazdy',    label: 'Prawa jazdy',  icon: CreditCard,    minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/mandaty',        label: 'Mandaty',      icon: FileText,      minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/tickety',        label: 'Tickety',      icon: Ticket,        minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/sesje',          label: 'Sesje',        icon: Theater,       minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/newsy',          label: 'Newsy',        icon: Newspaper,     minLevel: ACCESS_LEVELS.MOD    },
+  { href: '/dashboard/quiz',           label: 'Quiz',         icon: HelpCircle,    minLevel: ACCESS_LEVELS.ADMIN  },
+  { href: '/dashboard/logi',           label: 'Logi',         icon: FolderOpen,    minLevel: ACCESS_LEVELS.ADMIN  },
+  { href: '/dashboard/regulamin',       label: 'Regulamin',    icon: BookOpen,      minLevel: ACCESS_LEVELS.ADMIN  },
+  { href: '/dashboard/podania-pracy',   label: 'Podania o pracę', icon: Briefcase,  minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/czat-proximity', label: 'Czat Proximity', icon: MessageSquare, minLevel: ACCESS_LEVELS.OWNER },
+  { href: '/dashboard/komendy',         label: 'Komendy Bota', icon: Zap,           minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/boty',            label: 'Boty Zewnętrzne', icon: Bot,         minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/serwer',          label: 'Serwer Discord', icon: Server,      minLevel: ACCESS_LEVELS.OWNER  },
+  { href: '/dashboard/ustawienia',     label: 'Ustawienia',   icon: Settings,      minLevel: ACCESS_LEVELS.OWNER  },
 ];
 
 export function DashboardNav({ session }: { session: Session }) {
@@ -113,8 +133,26 @@ export function DashboardNav({ session }: { session: Session }) {
         })}
       </nav>
 
+      {/* CAD button */}
+      <div className="px-3 pb-2 border-t border-border pt-3">
+        <button
+          onClick={() => {
+            const w = 1100, h = 700;
+            const left = Math.round(window.screenX + (window.outerWidth - w) / 2);
+            const top = Math.round(window.screenY + (window.outerHeight - h) / 2);
+            window.open('/cad', 'GreenvilleCAD', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=no,toolbar=no,menubar=no,location=no`);
+          }}
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-md text-sm font-medium
+            text-cyan-400 border border-cyan-400/20 bg-cyan-400/5
+            hover:bg-cyan-400/15 hover:border-cyan-400/40 transition-colors"
+        >
+          <span className="text-base leading-none">🖥️</span>
+          System CAD
+        </button>
+      </div>
+
       {/* Sign out */}
-      <div className="px-3 py-4 border-t border-border">
+      <div className="px-3 py-3 border-t border-border">
         <button
           onClick={() => signOut({ callbackUrl: '/login' })}
           className="flex items-center gap-3 w-full px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-destructive/15 hover:text-destructive transition-colors"

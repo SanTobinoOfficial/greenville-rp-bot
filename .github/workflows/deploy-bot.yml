@@ -1,0 +1,117 @@
+# GitHub Actions — Deploy bota na bot-hosting.net
+# Uruchamia się po każdym push na branch main
+# Wgrywa zmienione pliki i restartuje bota przez Pterodactyl API
+
+name: Deploy Bot → bot-hosting.net
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'bot/**'
+      - '!bot/node_modules/**'
+      - '!bot/.env*'
+
+jobs:
+  deploy-bot:
+    name: Upload & Restart Bot
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: bot/package-lock.json
+
+      - name: Detect changed bot files
+        id: changes
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'bot/src/**' | grep -v node_modules | head -50 || true)
+          echo "Changed files:"
+          echo "$CHANGED"
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Upload changed files to bot-hosting.net
+        env:
+          BOT_HOSTING_KEY: ${{ secrets.BOT_HOSTING_KEY }}
+          BOT_HOSTING_SERVER_ID: ${{ secrets.BOT_HOSTING_SERVER_ID }}
+        run: |
+          PANEL_HOST="panel.bot-hosting.net"
+          SERVER_ID="${BOT_HOSTING_SERVER_ID}"
+          API_KEY="${BOT_HOSTING_KEY}"
+
+          upload_file() {
+            local LOCAL_PATH="$1"
+            local REMOTE_PATH="$2"
+
+            echo "📤 Uploading: $LOCAL_PATH → $REMOTE_PATH"
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              -X POST \
+              -H "Authorization: Bearer $API_KEY" \
+              -H "Content-Type: text/plain" \
+              --data-binary "@$LOCAL_PATH" \
+              "https://$PANEL_HOST/api/client/servers/$SERVER_ID/files/write?file=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$REMOTE_PATH'))")")
+
+            if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
+              echo "  ✅ OK ($HTTP_CODE)"
+            else
+              echo "  ❌ FAILED ($HTTP_CODE)"
+            fi
+          }
+
+          # Zawsze wgraj kluczowe pliki
+          upload_file "bot/src/api/server.js" "/src/api/server.js"
+          upload_file "bot/src/utils/aiDetector.js" "/src/utils/aiDetector.js"
+          upload_file "bot/src/buttons/verification/startVerification.js" "/src/buttons/verification/startVerification.js"
+          upload_file "bot/src/modals/verification/verificationModal.js" "/src/modals/verification/verificationModal.js"
+
+          # Wgraj zmienione pliki dynamicznie
+          while IFS= read -r FILE; do
+            [ -z "$FILE" ] && continue
+            [ ! -f "$FILE" ] && continue
+            REMOTE="${FILE#bot}"
+            upload_file "$FILE" "$REMOTE"
+          done <<< "${{ steps.changes.outputs.files }}"
+
+          echo ""
+          echo "✅ Upload zakończony"
+
+      - name: Restart bot
+        env:
+          BOT_HOSTING_KEY: ${{ secrets.BOT_HOSTING_KEY }}
+          BOT_HOSTING_SERVER_ID: ${{ secrets.BOT_HOSTING_SERVER_ID }}
+        run: |
+          echo "🔄 Restartowanie bota..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST \
+            -H "Authorization: Bearer ${{ secrets.BOT_HOSTING_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"signal":"restart"}' \
+            "https://panel.bot-hosting.net/api/client/servers/${{ secrets.BOT_HOSTING_SERVER_ID }}/power")
+
+          if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Bot zrestartowany pomyślnie!"
+          else
+            echo "❌ Restart nieudany (HTTP $HTTP_CODE)"
+            echo "   Zrestartuj ręcznie w panelu: https://panel.bot-hosting.net"
+            exit 1
+          fi
+
+      - name: Deploy summary
+        run: |
+          echo "## 🚀 Bot Deployed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Czas:** $(date '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Autor:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Panel:** https://panel.bot-hosting.net" >> $GITHUB_STEP_SUMMARY
