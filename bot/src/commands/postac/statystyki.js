@@ -108,7 +108,7 @@ module.exports = {
           inline: false,
         }
       )
-      .setFooter({ text: 'Greenville RP — Statystyki gracza' })
+      .setFooter({ text: 'AURORA Greenville RP — Statystyki gracza' })
       .setTimestamp();
 
     await interaction.editReply({ embeds: [embed] });

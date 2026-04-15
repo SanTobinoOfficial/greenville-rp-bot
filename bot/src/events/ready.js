@@ -16,7 +16,7 @@ module.exports = {
     // Ustaw status bota
     client.user.setPresence({
       activities: [{
-        name: 'Greenville RP 🏙️',
+        name: 'AURORA Greenville RP 🏙️',
         type: ActivityType.Watching,
       }],
       status: 'online',
@@ -38,6 +38,6 @@ module.exports = {
       logger.warn('Nie można uruchomić radia:', err.message);
     }
 
-    logger.info('Bot Greenville RP jest gotowy! ✅');
+    logger.info('Bot AURORA Greenville RP jest gotowy! ✅');
   },
 };

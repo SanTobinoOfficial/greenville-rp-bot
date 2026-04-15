@@ -91,7 +91,7 @@ module.exports = {
         { name: '🕐 Czas', value: `<t:${Math.floor(Date.now() / 1000)}:T>`, inline: true },
         { name: '🆔 ID', value: `\`${arrest.id.slice(-8)}\``, inline: true },
       )
-      .setFooter({ text: 'Greenville RP — Policja' })
+      .setFooter({ text: 'AURORA Greenville RP — Policja' })
       .setTimestamp();
 
     await interaction.editReply({ embeds: [embed] });
@@ -107,7 +107,7 @@ module.exports = {
               { name: '📝 Powód', value: powod },
               { name: '🚔 Funkcjonariusz', value: `<@${interaction.user.id}>` },
             )
-            .setFooter({ text: 'Greenville RP — Policja' })
+            .setFooter({ text: 'AURORA Greenville RP — Policja' })
             .setTimestamp(),
         ],
       });

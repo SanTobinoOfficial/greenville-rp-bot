@@ -1,0 +1,1999 @@
+{
+  "meta": {
+    "version": "3.0",
+    "generated": "2026-04-09",
+    "description": "Kompletna konfiguracja serwera AURORA Greenville RP — role, kanały, embedy, quiz, regulamin"
+  },
+
+  "server": {
+    "name": "AURORA AURORA Greenville RP",
+    "description": "Oficjalny serwer Discord polskiej społeczności AURORA Greenville RP na Roblox. Dołącz do służb, bierz udział w sesjach i baw się razem z nami!",
+    "verification_level": 1,
+    "default_message_notifications": 1,
+    "preferred_locale": "pl",
+    "features": {
+      "stats_updater_interval_min": 10,
+      "ticket_system": true,
+      "verification_web": true,
+      "verification_url": "https://greenville-rp-bot.vercel.app/weryfikacja",
+      "quiz_pass_threshold": 8,
+      "quiz_total_questions": 10
+    }
+  },
+
+  "permission_presets": {
+    "everyone_view_history": "Wszyscy widzą i czytają historię, nikt nie może pisać",
+    "everyone_read_only": "Wszyscy widzą i czytają historię, nikt nie może pisać",
+    "members_only": "Tylko Mieszkaniec + Wspierający + Nitro Booster + Staff",
+    "vip_only": "Tylko Wspierający + Nitro Booster + Staff",
+    "staff_only": "Tylko Helper i wyżej",
+    "hr_and_above": "Tylko HR, Host, Moderator, Administrator, Co-Owner, Owner",
+    "host_and_above": "Tylko Host, Administrator, Co-Owner, Owner",
+    "service_policja": "Policja + Staff",
+    "service_ems": "EMS + Staff",
+    "service_straz_pozarna": "Straż Pożarna + Staff",
+    "service_dot": "DOT + Staff",
+    "service_sm": "Straż Miejska + Staff",
+    "voice_view_only": "Wszyscy widzą kanał głosowy, nikt nie może do niego dołączyć"
+  },
+
+  "roles": [
+    { "name": "Niezweryfikowany",  "color": "#6B7280", "hoist": false, "mentionable": false, "note": "Nadawana automatycznie przy dołączeniu — brak dostępu do serwera" },
+    { "name": "Mieszkaniec",       "color": "#4ADE80", "hoist": false, "mentionable": false, "note": "Nadawana po pomyślnej weryfikacji" },
+    { "name": "Kat. AM",           "color": "#94A3B8", "hoist": false, "mentionable": false, "note": "Prawo jazdy kategorii AM — motorower do 45 km/h" },
+    { "name": "Kat. A1",           "color": "#94A3B8", "hoist": false, "mentionable": false, "note": "Prawo jazdy kategorii A1 — motocykl do 125 cm³" },
+    { "name": "Kat. A2",           "color": "#94A3B8", "hoist": false, "mentionable": false, "note": "Prawo jazdy kategorii A2 — motocykl do 35 kW" },
+    { "name": "Kat. A",            "color": "#94A3B8", "hoist": false, "mentionable": false, "note": "Prawo jazdy kategorii A — każdy motocykl" },
+    { "name": "Kat. B",            "color": "#94A3B8", "hoist": false, "mentionable": false, "note": "Prawo jazdy kategorii B — samochód osobowy (wymagane do rejestracji auta)" },
+    { "name": "Kat. C",            "color": "#94A3B8", "hoist": false, "mentionable": false, "note": "Prawo jazdy kategorii C — pojazd ciężarowy" },
+    { "name": "Kat. D",            "color": "#94A3B8", "hoist": false, "mentionable": false, "note": "Prawo jazdy kategorii D — autobus" },
+    { "name": "Kat. T",            "color": "#94A3B8", "hoist": false, "mentionable": false, "note": "Prawo jazdy kategorii T — ciągnik rolniczy" },
+    { "name": "🔔 Powiadomienia",  "color": "#FFFFFF", "hoist": false, "mentionable": false, "note": "Rola do oznaczania przy ogłoszeniach sesji — nadawana/odbierana przez gracza samodzielnie" },
+    { "name": "Wspierający",       "color": "#A855F7", "hoist": false, "mentionable": false, "note": "VIP — do 9 pojazdów, dostęp do vip-lounge" },
+    { "name": "Nitro Booster",     "color": "#FF73FA", "hoist": false, "mentionable": false, "note": "Booster serwera — do 10 pojazdów + wszystkie przywileje Wspierającego" },
+    { "name": "Taksówkarz",        "color": "#EAB308", "hoist": false, "mentionable": true,  "note": "Służba publiczna — taksówkarz RP" },
+    { "name": "Straż Miejska",     "color": "#6366F1", "hoist": false, "mentionable": true,  "note": "Służba — Straż Miejska" },
+    { "name": "DOT",               "color": "#F59E0B", "hoist": false, "mentionable": true,  "note": "Służba — Departament Transportu" },
+    { "name": "Straż Pożarna",     "color": "#DC2626", "hoist": false, "mentionable": true,  "note": "Służba — Straż Pożarna" },
+    { "name": "EMS",               "color": "#10B981", "hoist": false, "mentionable": true,  "note": "Służba — Emergency Medical Services" },
+    { "name": "Policja",           "color": "#1D4ED8", "hoist": false, "mentionable": true,  "note": "Służba — Policja" },
+    { "name": "Helper",            "color": "#F1C40F", "hoist": true,  "mentionable": true,  "note": "Staff — pomocnik, pierwszy szczebel staffu" },
+    { "name": "HR",                "color": "#3B82F6", "hoist": true,  "mentionable": true,  "note": "Staff — Human Resources, rekrutacja i nabory" },
+    { "name": "Host",              "color": "#9B59B6", "hoist": true,  "mentionable": true,  "note": "Staff — prowadzący sesje RP" },
+    { "name": "Moderator",         "color": "#E67E22", "hoist": true,  "mentionable": true,  "note": "Staff — moderator serwera i sesji" },
+    { "name": "Administrator",     "color": "#E74C3C", "hoist": true,  "mentionable": true,  "note": "Staff — administrator serwera" },
+    { "name": "Co-Owner",          "color": "#FF6B00", "hoist": true,  "mentionable": true,  "note": "Staff — współwłaściciel serwera" },
+    { "name": "Owner",             "color": "#FFD700", "hoist": true,  "mentionable": true,  "note": "Właściciel serwera — najwyższa rola" }
+  ],
+
+  "categories": [
+    {
+      "name": "📊 ──── Statystyki ────",
+      "permissions": "everyone_view_history",
+      "channels": [
+        { "name": "👥│Mieszkańcy: 0", "type": "voice", "permissions": "voice_view_only", "note": "Auto-aktualizowany przez bota co 10 minut" },
+        { "name": "🟢│Sesja: Brak",   "type": "voice", "permissions": "voice_view_only", "note": "Status aktywnej sesji RP — auto-aktualizowany" },
+        { "name": "🤖│Boty: 0",       "type": "voice", "permissions": "voice_view_only", "note": "Liczba botów online — auto-aktualizowany" }
+      ]
+    },
+    {
+      "name": "✅ ──── Weryfikacja ────",
+      "channels": [
+        {
+          "name": "📋│zacznij-tutaj",
+          "type": "text",
+          "topic": "Zweryfikuj się — powiąż konto Roblox i zdaj quiz | Formularz: https://greenville-rp-bot.vercel.app/weryfikacja",
+          "permissions": "everyone_view_history",
+          "embed": "weryfikacja"
+        },
+        {
+          "name": "🪪│logi-weryfikacji",
+          "type": "text",
+          "topic": "Automatyczne logi procesu weryfikacji — tylko staff",
+          "permissions": "staff_only"
+        }
+      ]
+    },
+    {
+      "name": "❗ ──── Informacje ────",
+      "channels": [
+        {
+          "name": "📢│ogłoszenia",
+          "type": "text",
+          "topic": "Oficjalne ogłoszenia serwera AURORA Greenville RP",
+          "permissions": "everyone_read_only",
+          "can_write": ["staff_only"]
+        },
+        {
+          "name": "❗│regulamin",
+          "type": "text",
+          "topic": "Regulamin serwera — przeczytaj przed weryfikacją",
+          "permissions": "everyone_read_only",
+          "embed": "regulamin"
+        },
+        {
+          "name": "📖│słownik-rp",
+          "type": "text",
+          "topic": "Pojęcia RP: FRP, NLR, metagaming i inne — obowiązkowa lektura!",
+          "permissions": "everyone_read_only",
+          "embed": "slownik_rp"
+        },
+        {
+          "name": "🗺️│o-greenville",
+          "type": "text",
+          "topic": "Informacje o mapie i lokacjach w Greenville",
+          "permissions": "everyone_read_only"
+        },
+        {
+          "name": "🔔│rola-powiadomień",
+          "type": "text",
+          "topic": "Kliknij przycisk aby otrzymywać powiadomienia o sesjach RP",
+          "permissions": "everyone_read_only",
+          "embed": "powiadomienia"
+        },
+        {
+          "name": "🏆│rankingi",
+          "type": "text",
+          "topic": "Rankingi graczy i służb — aktualizowane po każdej sesji",
+          "permissions": "everyone_read_only",
+          "can_write": ["staff_only"]
+        }
+      ]
+    },
+    {
+      "name": "💬 ──── Ogólne ────",
+      "permissions": "members_only",
+      "channels": [
+        { "name": "💬│ogólny",           "type": "text", "topic": "Główny kanał rozmów społeczności",              "permissions": "members_only" },
+        { "name": "🎮│roblox-off-topic", "type": "text", "topic": "Rozmowy o Roblox i innych grach",               "permissions": "members_only" },
+        { "name": "📸│screenshoty",      "type": "text", "topic": "Zdjęcia z sesji RP — wyłącznie screenshoty!",   "permissions": "members_only" },
+        { "name": "😂│memy",             "type": "text", "topic": "Memy związane z AURORA Greenville RP",                 "permissions": "members_only" },
+        { "name": "🏆│osiągnięcia",      "type": "text", "topic": "Pochwal się swoimi osiągnięciami w RP!",        "permissions": "members_only" },
+        { "name": "💡│sugestie",         "type": "text", "topic": "Sugestie — 1 sugestia na wiadomość, bez dyskusji", "permissions": "members_only" },
+        { "name": "💜│vip-lounge",       "type": "text", "topic": "Kanał dla Wspierających i Nitro Boosterów 💜",  "permissions": "vip_only" }
+      ]
+    },
+    {
+      "name": "🎪 ──── Sesje RP ────",
+      "channels": [
+        { "name": "📅│plan-sesji",        "type": "text", "topic": "Harmonogram nadchodzących sesji RP",             "permissions": "everyone_read_only" },
+        { "name": "📢│ogłoszenia-sesji",  "type": "text", "topic": "Ogłoszenia o sesjach — tylko staff",             "permissions": "everyone_read_only", "can_write": ["staff_only"] },
+        { "name": "✅│zapisy-na-sesję",   "type": "text", "topic": "Zapisz się na sesję komendą /sesja zapisy",      "permissions": "members_only" },
+        { "name": "📊│wyniki-sesji",      "type": "text", "topic": "Podsumowania zakończonych sesji",                "permissions": "everyone_read_only", "can_write": ["staff_only"] },
+        { "name": "💬│rozmowy-o-sesjach","type": "text", "topic": "Dyskusje i pytania dotyczące sesji RP",          "permissions": "members_only" }
+      ]
+    },
+    {
+      "name": "👤 ──── Postacie & Pojazdy ────",
+      "permissions": "members_only",
+      "channels": [
+        {
+          "name": "🪪│stwórz-postać",
+          "type": "text",
+          "topic": "Stwórz postać RP — dowód osobisty, PESEL, numer telefonu | /postac stworz",
+          "permissions": "members_only",
+          "embed": "postac"
+        },
+        {
+          "name": "🚗│rejestracja-auta",
+          "type": "text",
+          "topic": "Zarejestruj pojazd — wymagane kat. B | /pojazd rejestruj",
+          "permissions": "members_only",
+          "embed": "pojazd"
+        },
+        {
+          "name": "📋│prawo-jazdy",
+          "type": "text",
+          "topic": "Egzaminy na prawo jazdy (kat. AM, A1, A2, A, B, C, D, T) | /prawojazdy egzamin",
+          "permissions": "members_only",
+          "embed": "prawo_jazdy"
+        },
+        {
+          "name": "📜│moje-mandaty",
+          "type": "text",
+          "topic": "Sprawdź swoje mandaty i historię kar | /mandaty lista",
+          "permissions": "members_only"
+        }
+      ]
+    },
+    {
+      "name": "💼 ──── Praca & Służby ────",
+      "channels": [
+        { "name": "📋│dostępne-stanowiska", "type": "text", "topic": "Lista dostępnych służb i wymagania rekrutacyjne", "permissions": "everyone_read_only" },
+        { "name": "📝│podania-o-służbę",    "type": "text", "topic": "Złóż podanie do wybranej służby (Policja, EMS, Straż, DOT, SM, Taksówkarz)", "permissions": "members_only" },
+        { "name": "📊│wyniki-podań",        "type": "text", "topic": "Wyniki podań rekrutacyjnych — ogłaszane przez HR", "permissions": "everyone_read_only", "can_write": ["staff_only"] }
+      ]
+    },
+    {
+      "name": "🆘 ──── Pomoc ────",
+      "channels": [
+        {
+          "name": "❓│faq",
+          "type": "text",
+          "topic": "Najczęściej zadawane pytania — przeczytaj zanim otworzysz ticket",
+          "permissions": "everyone_read_only",
+          "embed": "faq"
+        },
+        {
+          "name": "🎫│otwórz-ticket",
+          "type": "text",
+          "topic": "Otwórz prywatny ticket ze staffem — pomoc, skargi, problemy z kontem",
+          "embed": "ticket"
+        },
+        {
+          "name": "😡│skargi",
+          "type": "text",
+          "topic": "Skargi na graczy lub staff — opisz sytuację z dowodem (screen/klip)",
+          "permissions": "members_only"
+        }
+      ]
+    },
+    {
+      "name": "🔊 ──── Głosowe ────",
+      "permissions": "members_only",
+      "channels": [
+        { "name": "Lobby",             "type": "voice", "permissions": "members_only" },
+        { "name": "Ogólny 1",          "type": "voice", "permissions": "members_only" },
+        { "name": "Ogólny 2",          "type": "voice", "permissions": "members_only" },
+        { "name": "Ogólny 3",          "type": "voice", "permissions": "members_only" },
+        { "name": "🔒 Prywatny [2os]", "type": "voice", "user_limit": 2,  "permissions": "members_only" },
+        { "name": "🔒 Prywatny [4os]", "type": "voice", "user_limit": 4,  "permissions": "members_only" },
+        { "name": "🎵 Radio RMF MAXX", "type": "voice", "permissions": "members_only" },
+        { "name": "📻 AFK",            "type": "voice", "permissions": "members_only" }
+      ]
+    },
+    {
+      "name": "🚔 ──── Policja ────",
+      "permissions": "service_policja",
+      "channels": [
+        { "name": "💬│policja-czat",        "type": "text",  "topic": "Czat wydziału Policji — wewnętrzna komunikacja",          "permissions": "service_policja" },
+        { "name": "📋│raporty-policji",     "type": "text",  "topic": "Raporty i notatki służbowe Policji",                      "permissions": "service_policja" },
+        { "name": "📜│lista-poszukiwanych", "type": "text",  "topic": "Lista poszukiwanych — aktualizowana na bieżąco",          "permissions": "service_policja" },
+        { "name": "🚔 Patrol Alpha",        "type": "voice", "permissions": "service_policja" },
+        { "name": "🚔 Patrol Bravo",        "type": "voice", "permissions": "service_policja" },
+        { "name": "🏢 Centrum Dowodzenia",  "type": "voice", "permissions": "service_policja" }
+      ]
+    },
+    {
+      "name": "🚑 ──── EMS ────",
+      "permissions": "service_ems",
+      "channels": [
+        { "name": "💬│ems-czat",    "type": "text",  "topic": "Czat ratownictwa medycznego — wewnętrzna komunikacja",         "permissions": "service_ems" },
+        { "name": "📋│raporty-ems", "type": "text",  "topic": "Raporty medyczne i notatki służbowe EMS",                      "permissions": "service_ems" },
+        { "name": "🚑 Dyżur EMS 1", "type": "voice", "permissions": "service_ems" },
+        { "name": "🚑 Dyżur EMS 2", "type": "voice", "permissions": "service_ems" }
+      ]
+    },
+    {
+      "name": "🚒 ──── Straż Pożarna ────",
+      "permissions": "service_straz_pozarna",
+      "channels": [
+        { "name": "💬│straż-czat",     "type": "text",  "topic": "Czat Straży Pożarnej — wewnętrzna komunikacja",             "permissions": "service_straz_pozarna" },
+        { "name": "📋│raporty-straży", "type": "text",  "topic": "Raporty interwencji i notatki służbowe Straży Pożarnej",    "permissions": "service_straz_pozarna" },
+        { "name": "🚒 Dyżur Straży",   "type": "voice", "permissions": "service_straz_pozarna" }
+      ]
+    },
+    {
+      "name": "🚧 ──── DOT ────",
+      "permissions": "service_dot",
+      "channels": [
+        { "name": "💬│dot-czat",   "type": "text",  "topic": "Czat Departamentu Transportu — wewnętrzna komunikacja",        "permissions": "service_dot" },
+        { "name": "🚧 Dyżur DOT", "type": "voice", "permissions": "service_dot" }
+      ]
+    },
+    {
+      "name": "🛡️ ──── Straż Miejska ────",
+      "permissions": "service_sm",
+      "channels": [
+        { "name": "💬│sm-czat",    "type": "text",  "topic": "Czat Straży Miejskiej — wewnętrzna komunikacja",               "permissions": "service_sm" },
+        { "name": "🛡️ Dyżur SM", "type": "voice", "permissions": "service_sm" }
+      ]
+    },
+    {
+      "name": "📝 ──── Logi ────",
+      "permissions": "staff_only",
+      "channels": [
+        { "name": "🤖│logi-bota",        "type": "text", "topic": "Automatyczne logi bota — akcje systemu",                   "permissions": "staff_only" },
+        { "name": "👥│logi-członków",    "type": "text", "topic": "Dołączenia i opuszczenia serwera",                         "permissions": "staff_only" },
+        { "name": "✏️│logi-nicków",      "type": "text", "topic": "Zmiany nicków i avatarów",                                 "permissions": "staff_only" },
+        { "name": "🗑️│logi-wiadomości", "type": "text", "topic": "Usunięte i edytowane wiadomości",                          "permissions": "staff_only" },
+        { "name": "🔨│logi-moderacji",   "type": "text", "topic": "Warny, bany, kicke, mute — rejestr kar",                  "permissions": "staff_only" },
+        { "name": "🎫│logi-ticketów",    "type": "text", "topic": "Historia zamkniętych ticketów",                            "permissions": "staff_only" },
+        { "name": "🚗│logi-pojazdów",    "type": "text", "topic": "Rejestracje i zmiany pojazdów",                            "permissions": "staff_only" },
+        { "name": "🔊│logi-głosowe",     "type": "text", "topic": "Wejścia i wyjścia z kanałów głosowych",                   "permissions": "staff_only" }
+      ]
+    },
+    {
+      "name": "🛡️ ──── STAFF ────",
+      "permissions": "staff_only",
+      "channels": [
+        { "name": "📢│ogłoszenia-staffu", "type": "text",  "topic": "Ogłoszenia wewnętrzne staffu — ważne informacje",        "permissions": "staff_only" },
+        { "name": "💬│staff-ogólny",      "type": "text",  "topic": "Ogólny czat staffu",                                     "permissions": "staff_only" },
+        { "name": "👑│host-chat",         "type": "text",  "topic": "Czat Hostów i wyżej — organizacja sesji",                "permissions": "host_and_above" },
+        { "name": "🔨│mod-chat",          "type": "text",  "topic": "Czat moderatorów — bieżące sprawy moderacji",            "permissions": "staff_only" },
+        { "name": "👥│hr-chat",           "type": "text",  "topic": "Czat HR — nabory, podania, rekrutacja",                  "permissions": "hr_and_above" },
+        { "name": "🤖│bot-komendy",       "type": "text",  "topic": "Testowanie i konfiguracja bota — komendy staffu",        "permissions": "staff_only" },
+        { "name": "📋│notatki-staffu",    "type": "text",  "topic": "Notatki, przypomnienia i wewnętrzna dokumentacja",       "permissions": "staff_only" },
+        { "name": "⚠️│warny-i-bany",     "type": "text",  "topic": "Rejestr kar moderacyjnych",                              "permissions": "staff_only" },
+        { "name": "📖│regulamin-staffu",  "type": "text",  "topic": "Regulamin pracy staffu — obowiązkowa lektura",           "permissions": "staff_only" },
+        { "name": "🔊 Staff Voice",       "type": "voice", "permissions": "staff_only" },
+        { "name": "🏛️ Spotkanie Staffu", "type": "voice", "permissions": "staff_only" }
+      ]
+    }
+  ],
+
+  "embeds": {
+    "weryfikacja": {
+      "channel": "📋│zacznij-tutaj",
+      "color": "#30D158",
+      "title": "✅ Witaj w AURORA Greenville RP!",
+      "description": "**AURORA Greenville RP** to polski serwer Roleplay na Roblox.\nAby uzyskać dostęp do serwera, wypełnij formularz weryfikacyjny.\n\n**Jak przebiega weryfikacja?**\n> 📋 Wejdź na formularz pod linkiem poniżej\n> 🔗 Podaj swój **Discord ID** oraz **nick Roblox**\n> ❓ Odpowiedz na **10 pytań** z regulaminu serwera\n> ✅ Uzyskaj minimum **8/10 punktów**\n> 🏠 Rola **Mieszkaniec** zostanie nadana automatycznie!\n\n**Jak znaleźć swoje Discord ID?**\n> Ustawienia → Zaawansowane → włącz **Tryb dewelopera**\n> Kliknij prawym na swój nick → **Kopiuj ID użytkownika**\n\n**Zanim zaczniesz:**\n• Przeczytaj regulamin na kanale #regulamin\n• Zapoznaj się z pojęciami RP (FRP, NLR, metagaming)\n\n*Kliknij przycisk poniżej, aby otworzyć formularz!*",
+      "footer": "AURORA Greenville RP — System weryfikacji",
+      "button": {
+        "type": "link",
+        "label": "📋 Wypełnij formularz weryfikacyjny",
+        "url": "https://greenville-rp-bot.vercel.app/weryfikacja"
+      }
+    },
+    "ticket": {
+      "channel": "🎫│otwórz-ticket",
+      "color": "#00C8FF",
+      "title": "🎫 System ticketów",
+      "description": "Potrzebujesz pomocy staffu? Masz pytanie, skargę lub problem?\n\n**Kiedy otworzyć ticket:**\n> • Problem z weryfikacją lub kontem\n> • Skarga na gracza lub staff\n> • Błąd bota lub systemu\n> • Pytanie do administracji\n> • Podanie o rolę specjalną\n\n**Jak to działa:**\n> 1️⃣ Kliknij przycisk poniżej\n> 2️⃣ Wybierz kategorię ticketu\n> 3️⃣ Opisz swój problem\n> 4️⃣ Poczekaj na odpowiedź staffu\n\n*Nie nadużywaj ticketów — służą do poważnych spraw.*",
+      "footer": "AURORA Greenville RP — Support",
+      "button": {
+        "type": "custom",
+        "custom_id": "ticket_create",
+        "label": "🎫 Otwórz ticket",
+        "style": "Primary"
+      }
+    },
+    "postac": {
+      "channel": "🪪│stwórz-postać",
+      "color": "#30D158",
+      "title": "🪪 Tworzenie postaci RP",
+      "description": "Zanim zaczniesz grać, stwórz swoją postać!\n\n**Co otrzymasz:**\n> 👤 Imię i nazwisko IC\n> 🆔 Numer PESEL\n> 📱 Unikalny numer telefonu RP\n> 🪪 Dowód osobisty\n\n**Wymagania:**\n> • Musisz mieć rolę **Mieszkaniec**\n> • Imię i nazwisko muszą brzmieć realistycznie\n\n**Komenda:** `/postac stworz`",
+      "footer": "AURORA Greenville RP — Postacie",
+      "button": {
+        "type": "custom",
+        "custom_id": "character_create",
+        "label": "👤 Stwórz postać",
+        "style": "Success"
+      }
+    },
+    "pojazd": {
+      "channel": "🚗│rejestracja-auta",
+      "color": "#94A3B8",
+      "title": "🚗 Rejestracja pojazdu",
+      "description": "Zarejestruj swój pojazd RP!\n\n**Wymagania:**\n> • Rola **Mieszkaniec**\n> • Prawo jazdy odpowiedniej kategorii\n> • Stworzony dowód osobisty\n\n**Limity pojazdów:**\n> 👤 Mieszkaniec — do **5** pojazdów\n> 💜 Wspierający — do **9** pojazdów\n> 💎 Nitro Booster — do **10** pojazdów\n\n**Komenda:** `/pojazd rejestruj`",
+      "footer": "AURORA Greenville RP — Pojazdy",
+      "button": {
+        "type": "custom",
+        "custom_id": "vehicle_register",
+        "label": "🚗 Zarejestruj pojazd",
+        "style": "Secondary"
+      }
+    },
+    "prawo_jazdy": {
+      "channel": "📋│prawo-jazdy",
+      "color": "#F59E0B",
+      "title": "🚗 Prawo jazdy — egzaminy",
+      "description": "Aby prowadzić pojazdy w RP, potrzebujesz prawa jazdy!\n\n**Dostępne kategorie:**\n> 🛵 **Kat. AM** — motorower (do 45 km/h)\n> 🏍️ **Kat. A1** — motocykl do 125 cm³\n> 🏍️ **Kat. A2** — motocykl do 35 kW\n> 🏍️ **Kat. A** — każdy motocykl\n> 🚗 **Kat. B** — samochód osobowy (wymagane do rejestracji auta)\n> 🚛 **Kat. C** — pojazd ciężarowy\n> 🚌 **Kat. D** — autobus\n> 🚜 **Kat. T** — ciągnik rolniczy\n\n**Komenda:** `/prawojazdy egzamin [kategoria]`\n\n*Egzamin składa się z 10 pytań — wymagane 8/10.*",
+      "footer": "AURORA Greenville RP — Prawo jazdy",
+      "button": {
+        "type": "custom",
+        "custom_id": "license_apply",
+        "label": "📋 Przystąp do egzaminu",
+        "style": "Primary"
+      }
+    },
+    "powiadomienia": {
+      "channel": "🔔│rola-powiadomień",
+      "color": "#FFFFFF",
+      "title": "🔔 Powiadomienia o sesjach",
+      "description": "Chcesz być informowany o nadchodzących sesjach RP?\n\nKliknij przycisk poniżej aby przypisać/zdjąć sobie rolę **🔔 Powiadomienia** — będziesz oznaczany przy ogłoszeniach sesji!\n\n*Możesz w każdej chwili usunąć rolę klikając ponownie.*",
+      "footer": "AURORA Greenville RP — Powiadomienia",
+      "button": {
+        "type": "custom",
+        "custom_id": "toggle_notifications",
+        "label": "🔔 Włącz / Wyłącz powiadomienia",
+        "style": "Secondary"
+      }
+    },
+    "faq": {
+      "channel": "❓│faq",
+      "color": "#5865F2",
+      "title": "❓ Najczęściej zadawane pytania",
+      "description": "**Jak dołączyć do serwera RP?**\n> Wejdź na kanał #zacznij-tutaj i kliknij **Wypełnij formularz weryfikacyjny**.\n\n**Ile mam czasu na formularz?**\n> Nie ma limitu czasu. Po nieudanej próbie odczekaj 24 godziny.\n\n**Jak zmienić nick Roblox?**\n> Otwórz ticket — staff pomoże zmienić powiązanie.\n\n**Kiedy są sesje?**\n> Sprawdź kanał #plan-sesji lub włącz powiadomienia na #rola-powiadomień.\n\n**Jak dołączyć do służb?**\n> Złóż podanie na kanale #podania-o-służbę.\n\n**Mam problem z botem — co robić?**\n> Otwórz ticket na #otwórz-ticket.",
+      "footer": "AURORA Greenville RP — FAQ"
+    },
+    "slownik_rp": {
+      "channel": "📖│słownik-rp",
+      "color": "#5865F2",
+      "title": "📖 Słownik pojęć RP",
+      "fields": [
+        {
+          "name": "📖 Pojęcia podstawowe",
+          "value": "**FRP** (Fail Roleplay) — Nieprawidłowe odegranie lub brak odegrania akcji RP.\n**IC** (In Character) — Wszystko dziające się w rozgrywce roleplay.\n**OOC** (Out Of Character) — Wszystko poza grą, w realnym świecie.\n**CL** (Combat Logging) — Wyjście z gry podczas akcji RP, aby uniknąć odpowiedzialności.\n**VDM** (Vehicle Deathmatch) — Umyślne przejeżdżanie osób pojazdem.\n**RDM** (Random Deathmatch) — Strzelanie do przypadkowych osób prowadzące do śmierci.\n**PG** (Power Gaming) — Zmuszanie innych do akcji RP bez ich zgody.\n**MG** (Meta Gaming) — Wykorzystywanie informacji z OOC w IC."
+        },
+        {
+          "name": "🚗 Pojęcia drogowe",
+          "value": "**CB** (Cop Baiting) — Prowokowanie policji bez wyraźnego powodu.\n**FD** (Fail Driving) — Jazda w sposób nierealistyczny.\n**Prędkość FRP** — **131 mph** (przekroczenie uznawane jako FRP).\n**Imersja** — Wczucie się w postać i otoczenie.\n**Nieposzanowanie życia** — Narażanie postaci na śmierć lub obrażenia."
+        },
+        {
+          "name": "💬 Komendy RP",
+          "value": "**`/me`** — Opis czynności postaci (np. /me pije wodę).\n**`/do`** — Opis danej chwili otoczenia (np. /do widać otarcia na karoserii)."
+        },
+        {
+          "name": "💼 Rodzaje pracy",
+          "value": "**Prace publiczne** — dostępne dla każdego, bez zarządcy.\n**Prace prywatne** — tylko po zatwierdzeniu formularza przez zarządcę."
+        }
+      ],
+      "footer": "AURORA Greenville RP — Słownik RP"
+    }
+  },
+
+  "quiz": {
+    "pass_threshold": 8,
+    "total_questions": 10,
+    "cooldown_hours": 24,
+    "questions": [
+      {
+        "order": 1,
+        "question": "Co oznacza skrót FRP?",
+        "answers": ["Fail Roleplay", "Fast Roleplay", "Free Roleplay", "Fun Roleplay"],
+        "correct": 0
+      },
+      {
+        "order": 2,
+        "question": "Jaka jest prędkość FRP w AURORA Greenville RP?",
+        "answers": ["100 mph", "120 mph", "131 mph", "150 mph"],
+        "correct": 2
+      },
+      {
+        "order": 3,
+        "question": "Co oznacza VDM?",
+        "answers": ["Very Dangerous Move", "Vehicle Deathmatch", "Virtual Driver Mode", "Violation During Mission"],
+        "correct": 1
+      },
+      {
+        "order": 4,
+        "question": "Ile pojazdów może zarejestrować zwykły Mieszkaniec?",
+        "answers": ["3", "5", "9", "10"],
+        "correct": 1
+      },
+      {
+        "order": 5,
+        "question": "Co to jest Combat Logging (CL)?",
+        "answers": [
+          "Walka z innymi graczami",
+          "Wyjście z gry podczas akcji RP aby uniknąć odpowiedzialności",
+          "Logowanie do gry podczas walki",
+          "Zakaz używania broni"
+        ],
+        "correct": 1
+      },
+      {
+        "order": 6,
+        "question": "Ile mandatów prowadzi do automatycznego zatrzymania prawa jazdy?",
+        "answers": ["5", "8", "10", "15"],
+        "correct": 2
+      },
+      {
+        "order": 7,
+        "question": "Co oznacza komenda /me w RP?",
+        "answers": [
+          "Opis danej chwili otoczenia",
+          "Opis czynności postaci",
+          "Wezwanie pomocy",
+          "Wyjście z trybu RP"
+        ],
+        "correct": 1
+      },
+      {
+        "order": 8,
+        "question": "Ile osób może brać udział w napadzie na bank?",
+        "answers": ["1-2", "2-3", "3-5", "Brak limitu"],
+        "correct": 1
+      },
+      {
+        "order": 9,
+        "question": "Co to jest Meta Gaming (MG)?",
+        "answers": [
+          "Granie na wielu serwerach jednocześnie",
+          "Używanie informacji z OOC w IC",
+          "Omijanie zasad serwera",
+          "Korzystanie z modów"
+        ],
+        "correct": 1
+      },
+      {
+        "order": 10,
+        "question": "Podczas Peacetime 1° co jest zakazane?",
+        "answers": [
+          "Jazda pojazdami",
+          "Rozmowy na czacie",
+          "Akcje Crime i ucieczka przed policją",
+          "Korzystanie z /me"
+        ],
+        "correct": 2
+      }
+    ]
+  },
+
+  "regulamin": {
+    "channel": "❗│regulamin",
+    "color": "#E74C3C",
+    "footer": "AURORA Greenville RP — Regulamin Serwera",
+    "sections": [
+      {
+        "embed": 1,
+        "title": "📜 REGULAMIN SERWERA DISCORD — AURORA Greenville RP",
+        "intro": "Witaj na serwerze **AURORA Greenville RP**! Przed rozpoczęciem rozgrywki zapoznaj się z poniższym regulaminem. Dołączając do serwera, automatycznie akceptujesz wszystkie poniższe zasady.",
+        "fields": [
+          {
+            "name": "§1. Postanowienia ogólne",
+            "rules": [
+              "Wchodząc na serwer Discord, akceptujesz niniejszy regulamin.",
+              "Nieznajomość regulaminu nie zwalnia z obowiązku jego przestrzegania.",
+              "Administracja ma prawo ukarać użytkownika za zachowania nieujęte w regulaminie.",
+              "Administracja zastrzega sobie prawo do zbanowania użytkownika bez podania przyczyny.",
+              "Na serwerze obowiązuje regulamin Discord ToS.",
+              "Korzystanie z serwera jest całkowicie darmowe.",
+              "Administracja nie ponosi odpowiedzialności za problemy techniczne."
+            ]
+          }
+        ]
+      },
+      {
+        "embed": 2,
+        "fields": [
+          {
+            "name": "§2. Zasady kanałów tekstowych",
+            "rules": [
+              "Zakaz spamowania wiadomości.",
+              "Zakaz pisania wielkimi literami (Caps Lock).",
+              "Zakaz prowokowania kłótni i dyskusji negatywnie wpływających na atmosferę.",
+              "Trolling i zachowania antyspołeczne są zabronione.",
+              "Wszyscy użytkownicy zobowiązani są do wzajemnego szacunku.",
+              "Nadmierne używanie wulgaryzmów → upomnienie, następnie ban.",
+              "Reklamowanie bez zgody administracji jest zabronione.",
+              "Zakaz poruszania tematów: polityka, Holocaust, LGBT itp.",
+              "Treści pornograficzne/+18 → natychmiastowy ban."
+            ]
+          },
+          {
+            "name": "§3. Zasady kanałów głosowych",
+            "rules": [
+              "Wszystkie zasady kanałów tekstowych obowiązują również na kanałach głosowych."
+            ]
+          }
+        ]
+      },
+      {
+        "embed": 3,
+        "fields": [
+          {
+            "name": "§4. Regulamin Sesji Roleplay",
+            "rules": [
+              "Obowiązek przestrzegania pojęć RP z kanału #słownik-rp.",
+              "Zakaz odgrywania 2 postaci jednocześnie.",
+              "Pojazdy spawnować tylko na: spawnie, własnym domu, DMV, miejscu pracy.",
+              "Team 'Criminal' i napady wymagają zgody Hosta sesji.",
+              "Napad na bank: min. 2, maks. 3 osoby.",
+              "Ucieczka przed policją bez teamu 'Heist Crew' dozwolona jeśli nie jesteś poszukiwany.",
+              "Obowiązek odgrywania czynności na czacie podczas napadu (/me rozwierca zamek).",
+              "Wymagane konto Roblox 13+.",
+              "Ubiór i pojazdy mają wyglądać realistycznie (kolor, felgi).",
+              "'Auto Flip' w ustawieniach gry musi być wyłączony.",
+              "Prędkość FRP wynosi **131 mph**.",
+              "Obowiązek rejestracji pojazdów/przyczep na kanale #rejestracja-auta.",
+              "Autobusy szkolne i pojazdy poczty nie wymagają rejestracji.",
+              "Exploiting → permanentny ban."
+            ]
+          }
+        ]
+      },
+      {
+        "embed": 4,
+        "fields": [
+          {
+            "name": "§4. Regulamin Sesji RP (cd.)",
+            "rules": [
+              "Pojazd Staff: jasnozielony Dodge Charger (BullHorn Prancer), czarne tablice.",
+              "Pojazd HR: pomarańczowy Dodge Charger (BullHorn Prancer), czarne tablice. Ucieczka przed tymi pojazdami jest zabroniona.",
+              "Staff i HR w pojeździe służbowym nie uczestniczą w akcjach RP.",
+              "10 mandatów / 5 grzywien / 5 aresztów → prawo jazdy zatrzymane na **1 miesiąc**. Po zatrzymaniu PJ możesz jeździć przez 10 minut.",
+              "Po miesiącu możliwość zdania egzaminu przywracającego uprawnienia.",
+              "OOC na czacie piszemy w nawiasach: (Zaraz wracam). Zakaz długich konwersacji OOC.",
+              "Wspierający — do 9 zarejestrowanych pojazdów + dostęp do kanałów Wspierających.",
+              "Boosterzy — do 10 zarejestrowanych pojazdów + wszystkie przywileje Wspierających.",
+              "Staff może wybrać 1 pojazd z zakazanych (za zgodą właściciela).",
+              "Pojazdy służb przeznaczone tylko dla nich (radiowozy → policja, lawety DOT → tylko DOT).",
+              "Akcje RP może Voidować tylko Staff.",
+              "Zakaz nierealistycznego modyfikowania zawieszenia.",
+              "Wypadek powyżej 35 mph → obowiązek odgrywania obrażeń i wezwania EMS.",
+              "'Laser Blaster' policji = paralizator RP.",
+              "Peacetime 1° — zakaz akcji Crime i ucieczki przed policją.",
+              "Peacetime 2° — j.w. + Void wypadków + limit FRP 70 mph.",
+              "Zakaz nadawania 'blacklist' innym graczom na własny dom."
+            ]
+          },
+          {
+            "name": "§5. Zasady dotyczące pojazdów",
+            "rules": [
+              "Mieszkaniec może zarejestrować maks. **5 pojazdów** (łącznie do 90 000$). Nie dotyczy pojazdów limitowanych, eventowych i kolekcjonerskich.",
+              "Pojazd Administracji: fioletowy Durant Camion PPV, tablice Admin-[numer]. Traktowany jak pojazd policyjny.",
+              "Pojazdy można respawnować wyłącznie: obok własnego domu, na spawnie, w miejscu pracy."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  "jobs": [
+    {
+      "id": "fox_valley_police",
+      "name": "Fox Valley Metro Police Department",
+      "emoji": "🚔",
+      "kategoria": "Policja",
+      "opis": "Służysz jako funkcjonariusz Fox Valley Metro Police Department — głównej policji miejskiej w Greenville. Twoim zadaniem jest patrolowanie ulic, reagowanie na zgłoszenia i dbanie o bezpieczeństwo mieszkańców.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B", "Brak aktywnych wyroków", "Zaliczony quiz z regulaminu"],
+      "wynagrodzenie_min": 600,
+      "wynagrodzenie_max": 1400,
+      "rola_discord": "Policja",
+      "typ": "SERVICE",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz zostać funkcjonariuszem FVMPD? (min. 80 znaków)", "min": 80 },
+        { "id": "doswiadczenie", "pytanie": "Opisz swoje dotychczasowe doświadczenie RP (min. 50 znaków)", "min": 50 },
+        { "id": "sytuacja", "pytanie": "Opisz jak zachowasz się widząc pościg drogowy jako nowy rekrut (min. 60 znaków)", "min": 60 }
+      ],
+      "mini_regulamin": "1. Zawsze działaj zgodnie z prawem RP i rozkazami przełożonych.\n2. Nie stosuj brutalnej siły bez uzasadnionej przyczyny.\n3. Obowiązuje cię mundur służbowy podczas dyżuru.\n4. Nie wolno ci korzystać z pojazdów służbowych poza dyżurem.\n5. Wszelkie interwencje musisz logować przez /duty."
+    },
+    {
+      "id": "outagamie_sheriff",
+      "name": "Outagamie County Sheriff's Office",
+      "emoji": "⭐",
+      "kategoria": "Policja",
+      "opis": "Służysz jako zastępca szeryfa Outagamie County. Odpowiadasz za tereny podmiejskie i wiejskie hrabstwa, współpracujesz z miejską policją podczas dużych akcji.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B", "Brak aktywnych wyroków"],
+      "wynagrodzenie_min": 580,
+      "wynagrodzenie_max": 1300,
+      "rola_discord": "Policja",
+      "typ": "SERVICE",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz służyć w Outagamie County Sheriff's Office? (min. 80 znaków)", "min": 80 },
+        { "id": "doswiadczenie", "pytanie": "Opisz swoje doświadczenie w RP, szczególnie związane ze służbami (min. 50 znaków)", "min": 50 },
+        { "id": "obszar", "pytanie": "Jak zamierzasz patrolować tereny wiejskie i podmiejskie? (min. 60 znaków)", "min": 60 }
+      ],
+      "mini_regulamin": "1. Szanuj jurysdykcję innych służb i współpracuj z nimi.\n2. Patrole podmiejskie wymagają pojazdu terenowego lub oznakowanego.\n3. Zawsze informuj dyspozytornię o swoim położeniu.\n4. Używaj radiowozu oznakowanego podczas dyżuru.\n5. Nie wolno ci prowadzić prywatnych dochodzeń bez zgody przełożonego."
+    },
+    {
+      "id": "wisconsin_state_patrol",
+      "name": "Wisconsin State Patrol",
+      "emoji": "🛣️",
+      "kategoria": "Policja",
+      "opis": "Jesteś funkcjonariuszem Wisconsin State Patrol — patrolujesz autostrady i drogi stanowe, egzekwujesz przepisy ruchu drogowego i dbasz o bezpieczeństwo na trasach.",
+      "wymagania": ["Ukończone 21 lat RP", "Prawo jazdy kat. B", "Prawo jazdy kat. C (zalecane)", "Brak aktywnych wyroków"],
+      "wynagrodzenie_min": 650,
+      "wynagrodzenie_max": 1500,
+      "rola_discord": "Policja",
+      "typ": "SERVICE",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz zostać funkcjonariuszem WSP? (min. 80 znaków)", "min": 80 },
+        { "id": "ruch_drogowy", "pytanie": "Jak reagujesz na przekroczenie prędkości o 50 km/h na autostradzie? (min. 60 znaków)", "min": 60 },
+        { "id": "doswiadczenie", "pytanie": "Opisz swoje doświadczenie z prawem drogowym w RP (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Patrolujesz wyłącznie drogi stanowe i autostrady.\n2. Egzekwuj przepisy drogowe — zero tolerancji dla DUI.\n3. Pojazd służbowy to oznakowany radiowóz WSP.\n4. Pościgi na autostradach wymagają zgody dyspozytora.\n5. Loguj każde zatrzymanie w systemie CAD."
+    },
+    {
+      "id": "outagamie_communications",
+      "name": "Outagamie County Communications",
+      "emoji": "📡",
+      "kategoria": "Dyspozytornia",
+      "opis": "Pracujesz jako dyspozytor Outagamie County — odbierasz zgłoszenia 911, koordynujesz jednostki policji, EMS i straży pożarnej oraz zarządzasz systemem CAD.",
+      "wymagania": ["Ukończone 18 lat RP", "Znajomość systemu CAD", "Spokój pod presją"],
+      "wynagrodzenie_min": 500,
+      "wynagrodzenie_max": 1100,
+      "rola_discord": "Dyspozytornia",
+      "typ": "SERVICE",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz zostać dyspozytorem? (min. 70 znaków)", "min": 70 },
+        { "id": "wielozadaniowosc", "pytanie": "Opisz sytuację, w której musisz jednocześnie koordynować policję i EMS (min. 80 znaków)", "min": 80 },
+        { "id": "cad", "pytanie": "Czy masz doświadczenie z systemem CAD lub podobnymi narzędziami? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Jesteś odpowiedzialny za koordynację wszystkich służb.\n2. Nie opuszczaj stanowiska dyspozytorni bez powiadomienia przełożonego.\n3. Każde zgłoszenie 911 musi być odnotowane w systemie CAD.\n4. Zachowaj spokój — panika dyspozytora zagraża życiu innych.\n5. Nie ujawniaj lokalizacji jednostek nieupoważnionym osobom."
+    },
+    {
+      "id": "brookmere_fire",
+      "name": "Brookmere Fire Department",
+      "emoji": "🚒",
+      "kategoria": "Straż",
+      "opis": "Służysz jako strażak w Brookmere Fire Department. Gasisz pożary, przeprowadzasz akcje ratownicze i udzielasz pierwszej pomocy.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B lub C", "Brak aktywnych wyroków"],
+      "wynagrodzenie_min": 550,
+      "wynagrodzenie_max": 1200,
+      "rola_discord": "Straż Pożarna",
+      "typ": "SERVICE",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz zostać strażakiem w BFD? (min. 70 znaków)", "min": 70 },
+        { "id": "pozar", "pytanie": "Opisz procedurę postępowania przy przybyciu na miejsce pożaru (min. 60 znaków)", "min": 60 },
+        { "id": "teamwork", "pytanie": "Jak ważna jest dla Ciebie praca zespołowa w służbach ratowniczych? (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Zawsze zakładaj sprzęt ochronny przed wejściem do strefy zagrożenia.\n2. Działaj wyłącznie zgodnie z rozkazami dowódcy akcji.\n3. Pojazdy straży są wyłącznie do użytku służbowego.\n4. Uczestniczysz w obowiązkowych szkoleniach co miesiąc.\n5. Zgłaszaj każdy wypadek przy pracy przełożonemu."
+    },
+    {
+      "id": "greenville_fire_rescue",
+      "name": "Greenville Fire Rescue",
+      "emoji": "🔥",
+      "kategoria": "Straż",
+      "opis": "Jesteś ratownikiem Greenville Fire Rescue — łączysz obowiązki strażaka i ratownika medycznego, działasz w centrum Greenville.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B", "Brak aktywnych wyroków"],
+      "wynagrodzenie_min": 570,
+      "wynagrodzenie_max": 1250,
+      "rola_discord": "Straż Pożarna",
+      "typ": "SERVICE",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz służyć w Greenville Fire Rescue? (min. 70 znaków)", "min": 70 },
+        { "id": "ratownictwo", "pytanie": "Opisz swoje doświadczenie z ratownictwem medycznym lub pożarowym (min. 50 znaków)", "min": 50 },
+        { "id": "stres", "pytanie": "Jak radzisz sobie ze stresem podczas akcji ratowniczych? (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Łączysz obowiązki strażaka i ratownika — musisz być przygotowany na oba.\n2. Wozy ratownicze są priorytetem — ustępuj im drogi.\n3. Nie odchodź z miejsca wypadku bez stabilizacji poszkodowanego.\n4. Każda akcja wymaga raportu po zakończeniu.\n5. Radio EMS i STRAŻ muszą być zawsze włączone podczas dyżuru."
+    },
+    {
+      "id": "fox_mountain_medical",
+      "name": "Fox Mountain Medical Worker",
+      "emoji": "🚑",
+      "kategoria": "EMS",
+      "opis": "Pracujesz jako ratownik medyczny lub pielęgniarz w Fox Mountain Medical — szpitalu obsługującym całe Greenville. Udzielasz pomocy poszkodowanym w wypadkach i nagłych przypadkach.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B", "Brak aktywnych wyroków"],
+      "wynagrodzenie_min": 600,
+      "wynagrodzenie_max": 1350,
+      "rola_discord": "EMS",
+      "typ": "SERVICE",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w służbach medycznych? (min. 70 znaków)", "min": 70 },
+        { "id": "procedury", "pytanie": "Opisz procedurę postępowania przy wypadku drogowym z ofiarami (min. 80 znaków)", "min": 80 },
+        { "id": "stres", "pytanie": "Jak radzisz sobie z presją czasu podczas reanimacji? (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Zawsze priorytetyzuj zagrożenie życia nad innymi obrażeniami.\n2. Karetka pogotowia jest pojazdem uprzywilejowanym — używaj sygnałów.\n3. Nie możesz odmówić pomocy medycznej żadnej osobie.\n4. Każda interwencja musi być odnotowana w systemie CAD.\n5. Ściśle współpracuj z policją na miejscu wypadku."
+    },
+    {
+      "id": "wisconsin_dot",
+      "name": "Wisconsin Department of Transportation",
+      "emoji": "🚧",
+      "kategoria": "DOT",
+      "opis": "Pracujesz w Wisconsin DOT — zarządzasz ruchem drogowym, usuwasz przeszkody z jezdni, zarządzasz sygnalizacją świetlną i zgłaszasz uszkodzenia infrastruktury.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B i C"],
+      "wynagrodzenie_min": 520,
+      "wynagrodzenie_max": 1100,
+      "rola_discord": "DOT",
+      "typ": "SERVICE",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w Wisconsin DOT? (min. 60 znaków)", "min": 60 },
+        { "id": "ruch", "pytanie": "Jak zarządzasz ruchem przy wypadku blokującym jezdnię? (min. 70 znaków)", "min": 70 },
+        { "id": "pojazdy", "pytanie": "Czy posiadasz prawo jazdy kat. C lub doświadczenie z pojazdami ciężkimi? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Zawsze zabezpiecz miejsce pracy trójkątami i barierkami.\n2. Pojazdy DOT mają pierwszeństwo przy pracach na drodze.\n3. Zgłaszaj uszkodzenia infrastruktury do centrum kontroli.\n4. Nie wkraczaj na autostradę bez kamizelki odblaskowej.\n5. Współpracuj z policją przy zamknięciach dróg."
+    },
+    {
+      "id": "burger_knight",
+      "name": "Burger Knight Cashier",
+      "emoji": "🍔",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz jako kasjer w Burger Knight — popularnej sieci fast food w Greenville. Obsługujesz klientów, przyjmujesz zamówienia i dbasz o czystość stanowiska.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 150,
+      "wynagrodzenie_max": 380,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w Burger Knight? (min. 30 znaków)", "min": 30 },
+        { "id": "klient", "pytanie": "Jak obsługujesz trudnego klienta? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Obsługuj każdego klienta z uśmiechem i szacunkiem.\n2. Mundur pracowniczy jest obowiązkowy podczas zmiany.\n3. Nie spożywaj jedzenia z restauracji podczas pracy bez zgody kierownika.\n4. Przestrzegaj zasad higieny przy obsłudze żywności."
+    },
+    {
+      "id": "burgerhaus",
+      "name": "Burgerhaus Worker",
+      "emoji": "🍟",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w Burgerhaus — restauracji z burgerami premium. Przygotowujesz jedzenie, obsługujesz klientów i dbasz o jakość serwowanych dań.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 160,
+      "wynagrodzenie_max": 400,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co przyciąga Cię do pracy w Burgerhaus? (min. 30 znaków)", "min": 30 },
+        { "id": "higiena", "pytanie": "Opisz jak dbasz o higienę przy pracy z żywnością (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Przestrzegaj standardów jakości Burgerhaus.\n2. Każde danie musi być przygotowane świeżo.\n3. Raportuj problemy z dostawami kierownikowi.\n4. Obsługuj klientów w kolejności przyjęcia zamówienia."
+    },
+    {
+      "id": "huntys_pizza",
+      "name": "Hunty's Pizza Palace Worker",
+      "emoji": "🍕",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w Hunty's Pizza Palace — kultowej pizzerii w Greenville. Robisz pizze, obsługujesz zamówienia i dostarczasz jedzenie na miejscu lub do domu.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 155,
+      "wynagrodzenie_max": 390,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w Hunty's Pizza Palace? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Każda pizza musi być przygotowana zgodnie z recepturą.\n2. Czas oczekiwania klienta nie może przekroczyć 15 minut RP.\n3. Przy dostawach używaj roweru lub skutera firmowego."
+    },
+    {
+      "id": "home_barn_grill",
+      "name": "Home Barn American Grill Server",
+      "emoji": "🥩",
+      "kategoria": "Gastronomia",
+      "opis": "Jesteś kelnerem w Home Barn American Grill — restauracji serwującej amerykańskie klasyki. Obsługujesz stoły, przyjmujesz zamówienia i dbasz o dobre doświadczenie gości.",
+      "wymagania": ["Ukończone 17 lat RP"],
+      "wynagrodzenie_min": 170,
+      "wynagrodzenie_max": 420,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co skłoniło Cię do pracy jako kelner/kelnerka? (min. 30 znaków)", "min": 30 },
+        { "id": "stres", "pytanie": "Jak radzisz sobie z dużą liczbą gości jednocześnie? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Zawsze witaj gości przy wejściu.\n2. Zamówienia przyjmuj w ciągu 3 minut od usadzenia gości.\n3. Dbaj o elegancki wygląd — to restauracja klasy średniej.\n4. Napiwki należą do kelnera."
+    },
+    {
+      "id": "bills_diner",
+      "name": "Bill's Diner Worker",
+      "emoji": "☕",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w kultowym Bill's Diner — klasycznej amerykańskiej jadłodajni. Serwujesz śniadania, kanapki i kawę stałym bywalcom.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 145,
+      "wynagrodzenie_max": 360,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co lubisz w pracy w klimatycznych knajpach? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Serwuj śniadania od otwarcia.\n2. Bądź pomocny i rozmowny z gośćmi.\n3. Dbaj o czystość baru i stołów."
+    },
+    {
+      "id": "fiesta_rodeo",
+      "name": "Fiesta-Rodeo Worker",
+      "emoji": "🌮",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w Fiesta-Rodeo — meksykańskiej restauracji z rodeo klimatem. Przygotowujesz tacos, burritos i inne specjały kuchni meksykańskiej.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 150,
+      "wynagrodzenie_max": 375,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w Fiesta-Rodeo? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Przygotowuj dania zgodnie z oryginalnymi recepturami.\n2. Muzyka i klimat restauracji to część doświadczenia — dbaj o atmosferę.\n3. Nie podawaj alkoholu osobom poniżej 21 lat RP."
+    },
+    {
+      "id": "ol_texas",
+      "name": "Ol' Texas Worker",
+      "emoji": "🤠",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w Ol' Texas — restauracji z kuchnią teksańską. Serwujesz steki, żeberka i tradycyjne potrawy z południa USA.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 155,
+      "wynagrodzenie_max": 385,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w teksańskiej kuchni i kulturze? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Noś kowbojski strój służbowy podczas pracy.\n2. Każdy stek serwuj zgodnie z zamówieniem (rare/medium/well-done).\n3. Dbaj o ogniskową atmosferę restauracji."
+    },
+    {
+      "id": "red_chopstick",
+      "name": "The Red Chopstick Worker",
+      "emoji": "🥢",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w The Red Chopstick — azjatyckiej restauracji serwującej dania chińskie i japońskie. Przygotowujesz sushi, nudle i dania wok.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 160,
+      "wynagrodzenie_max": 400,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co przyciągnęło Cię do kuchni azjatyckiej? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Każde danie przygotowuj z dbałością o detale estetyczne.\n2. Przestrzegaj zasad diety azjatyckiej (halal/vegan opcje).\n3. Obsługuj gości z ceremonialnym szacunkiem."
+    },
+    {
+      "id": "taco_castillo",
+      "name": "Taco Castillo Worker",
+      "emoji": "🌯",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w Taco Castillo — szybkiej restauracji z tacos i burrito. Obsługujesz przy okienku drive-through i ladzie.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 145,
+      "wynagrodzenie_max": 360,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w Taco Castillo? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Czas realizacji zamówienia drive-through: max 5 minut RP.\n2. Zawsze pytaj o poziom ostrości.\n3. Dbaj o czystość stanowiska przy okienku."
+    },
+    {
+      "id": "timberwolf_drive_in",
+      "name": "Timberwolf Drive In Worker",
+      "emoji": "🚗",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w Timberwolf Drive In — retro drive-in restauracji. Obsługujesz klientów w samochodach, przynosząc zamówienia na tacach.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 150,
+      "wynagrodzenie_max": 370,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co lubisz w klimacie retro restauracji? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Noś retro mundur z rolkami do poruszania się.\n2. Obsługuj auta w kolejności przyjazdu.\n3. Dbaj o klimat lat 50. i 60."
+    },
+    {
+      "id": "ice_cream_station",
+      "name": "Ice Cream Station Worker",
+      "emoji": "🍦",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w Ice Cream Station — popularnym kiosku z lodami i deserami. Serwujesz lody, sundae i zimne desery.",
+      "wymagania": ["Ukończone 15 lat RP"],
+      "wynagrodzenie_min": 130,
+      "wynagrodzenie_max": 320,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w Ice Cream Station? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Dbaj o temperaturę przechowywania lodów.\n2. Bądź szczególnie miły dla dzieci — to wasza główna klientela.\n3. Informuj o składnikach alergennych."
+    },
+    {
+      "id": "superwich",
+      "name": "Superwich Worker",
+      "emoji": "🥪",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w Superwich — sieci kanapkowej w stylu Subway. Przygotowujesz kanapki na zamówienie, dobierasz składniki i obsługujesz klientów przy ladzie.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 145,
+      "wynagrodzenie_max": 355,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w pracy przy ladzie kanapkowej? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Zawsze pytaj o preferencje klienta przed każdym składnikiem.\n2. Używaj rękawiczek przy przygotowaniu każdej kanapki.\n3. Dbaj o świeżość składników — sprawdzaj daty ważności."
+    },
+    {
+      "id": "holey_smokes",
+      "name": "Holey Smokes Employee",
+      "emoji": "🍩",
+      "kategoria": "Gastronomia",
+      "opis": "Pracujesz w Holey Smokes — popularnej pączkarni i kawiarni z wędzonymi przekąskami. Serwujesz pączki, bułki i wędzone mięsa.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 148,
+      "wynagrodzenie_max": 365,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co przyciąga Cię do pracy w Holey Smokes? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Pączki smaż zawsze świeże — nie starsze niż 4 godziny.\n2. Wędzone mięsa przechowuj w odpowiedniej temperaturze.\n3. Bądź dumny z unikalności naszego menu."
+    },
+    {
+      "id": "brookmere_brew",
+      "name": "Brookmere Brew Barista",
+      "emoji": "☕",
+      "kategoria": "Kawiarnia",
+      "opis": "Jesteś baristą w Brookmere Brew — eleganckiej kawiarni rzemieślniczej w Brookmere. Parzysz specialty coffee, tworzysz latte art i obsługujesz wymagających klientów.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 160,
+      "wynagrodzenie_max": 390,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co fascynuje Cię w świecie specialty coffee? (min. 30 znaków)", "min": 30 },
+        { "id": "kawa", "pytanie": "Opisz różnicę między espresso a americano (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Każde espresso przygotowuj na świeżo zmielonej kawie.\n2. Dbaj o jakość latte art — to wizytówka kawiarni.\n3. Oferuj klientom degustację nowych blend'ów."
+    },
+    {
+      "id": "caffeine_street",
+      "name": "Caffeine Street Barista",
+      "emoji": "🧋",
+      "kategoria": "Kawiarnia",
+      "opis": "Pracujesz w Caffeine Street — nowoczesnej kawiarni przy głównej ulicy Greenville. Serwujesz kawy, napoje zimne i przekąski.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 155,
+      "wynagrodzenie_max": 380,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz być baristą w Caffeine Street? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Szybka obsługa to priorytet — kolejka nie może czekać długo.\n2. Pamiętaj zamówienia stałych bywalców.\n3. Kawę serwuj zawsze z uśmiechem."
+    },
+    {
+      "id": "kats_kafe",
+      "name": "Kat's Kafe Barista",
+      "emoji": "🐱",
+      "kategoria": "Kawiarnia",
+      "opis": "Pracujesz w Kat's Kafe — uroczej kawiarni z kocim motywem. Serwujesz kawy, herbaty i słodycze w klimatycznej atmosferze.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 152,
+      "wynagrodzenie_max": 375,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co lubisz w klimatycznych kawiarniach? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Dbaj o koci klimat kawiarni — dekoracje i obsługa muszą być spójne.\n2. Oferuj klientom wybór między kawą, herbatą i naparami.\n3. Bądź ciepły i przyjazny jak nasz maskot."
+    },
+    {
+      "id": "leos_cafe",
+      "name": "Leo's Cafe Worker",
+      "emoji": "🥐",
+      "kategoria": "Kawiarnia",
+      "opis": "Pracujesz w Leo's Cafe — śródziemnomorskiej kawiarni z wypiekami i kawą. Serwujesz rogaliki, tarty i włoskie kawy.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 155,
+      "wynagrodzenie_max": 380,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w śródziemnomorskim klimacie Leo's Cafe? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Wypieki serwuj zawsze świeże — rano lub po południu.\n2. Włoskie kawy przygotowuj zgodnie z oryginalną recepturą.\n3. Twórz ciepłą, rodzinną atmosferę."
+    },
+    {
+      "id": "bobahaus",
+      "name": "bobahaus Worker",
+      "emoji": "🧋",
+      "kategoria": "Kawiarnia",
+      "opis": "Pracujesz w bobahaus — popularnej kawiarni z bubble tea i napojami azjatyckimi. Przygotowujesz boba tea z różnymi smakami i dodatkami.",
+      "wymagania": ["Ukończone 15 lat RP"],
+      "wynagrodzenie_min": 145,
+      "wynagrodzenie_max": 360,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Czy jesteś fanem bubble tea? Opisz swój ulubiony smak (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Perełki tapioki gotuj zawsze świeże.\n2. Zawsze pytaj o poziom słodkości i lodu.\n3. Dbaj o estetykę podania — boba to też doświadczenie wizualne."
+    },
+    {
+      "id": "crispi_cookies",
+      "name": "Crispi Cookies Worker",
+      "emoji": "🍪",
+      "kategoria": "Kawiarnia",
+      "opis": "Pracujesz w Crispi Cookies — słynnej ciasteczkarni w Greenville. Pieciesz i sprzedajesz ciastka, brownie i inne wypieki.",
+      "wymagania": ["Ukończone 15 lat RP"],
+      "wynagrodzenie_min": 140,
+      "wynagrodzenie_max": 350,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co lubisz w pieczeniu ciastek? (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Ciastka serwuj zawsze ciepłe, prosto z pieca.\n2. Informuj klientów o składnikach alergennych.\n3. Próbuj nowych receptur i sugeruj je kierownikowi."
+    },
+    {
+      "id": "bread_shack",
+      "name": "Bread Shack Baker",
+      "emoji": "🍞",
+      "kategoria": "Kawiarnia",
+      "opis": "Pracujesz jako piekarz w Bread Shack — rzemieślniczej piekarni. Pieczesz chleby, bułki i wypieki na zakwasie.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 150,
+      "wynagrodzenie_max": 370,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co fascynuje Cię w rzemieślniczym pieczywie? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Zakwas to nasz skarb — dbaj o niego codziennie.\n2. Chleb wypieka się rano — praca zaczyna się przed świtem.\n3. Nie używaj konserwantów — tylko naturalne składniki."
+    },
+    {
+      "id": "bulk_priced",
+      "name": "Bulk Priced Food Shoppe Worker",
+      "emoji": "🛒",
+      "kategoria": "Handel",
+      "opis": "Pracujesz w Bulk Priced Food Shoppe — hurtowym sklepie spożywczym. Obsługujesz klientów hurtowych, układasz towary i zarządzasz magazynem.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 145,
+      "wynagrodzenie_max": 360,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w sklepie hurtowym? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Dbaj o porządek na półkach i w magazynie.\n2. Sprawdzaj daty ważności produktów przy przyjęciu dostawy.\n3. Obsługuj klientów hurtowych z priorytetem."
+    },
+    {
+      "id": "connors",
+      "name": "Connor's Worker",
+      "emoji": "🏪",
+      "kategoria": "Handel",
+      "opis": "Pracujesz w Connor's — lokalnym sklepie wielobranżowym. Obsługujesz kasę, pomagasz klientom i dbasz o ekspozycję towarów.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 140,
+      "wynagrodzenie_max": 350,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w pracy w lokalnym sklepie? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Bądź pomocny i dobrze znaj asortyment sklepu.\n2. Obsługuj kasę szybko i bez błędów.\n3. Dbaj o porządek na ekspozycji."
+    },
+    {
+      "id": "farnsworths",
+      "name": "Farnsworths Worker",
+      "emoji": "🏬",
+      "kategoria": "Handel",
+      "opis": "Pracujesz w Farnsworths — ekskluzywnym sklepie z odzieżą i akcesoriami. Pomagasz klientom w wyborze, dbasz o wystawę i obsługujesz transakcje.",
+      "wymagania": ["Ukończone 17 lat RP"],
+      "wynagrodzenie_min": 155,
+      "wynagrodzenie_max": 390,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co lubisz w świecie mody i sprzedaży ekskluzywnej? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Dbaj o elegancki wygląd osobisty — reprezentujesz markę.\n2. Zaoferuj klientowi pomoc w ciągu 30 sekund od wejścia.\n3. Nie komentuj wyborów klientów negatywnie."
+    },
+    {
+      "id": "gvps",
+      "name": "GVPS Worker",
+      "emoji": "📦",
+      "kategoria": "Handel",
+      "opis": "Pracujesz w GVPS — Greenville Public Supply, sklepie z artykułami ogólnymi i zaopatrzeniem. Obsługujesz dostawy i sprzedaż hurtową.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 142,
+      "wynagrodzenie_max": 355,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w GVPS? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Wszystkie dostawy muszą być odnotowane w systemie.\n2. Produkty niebezpieczne przechowuj oddzielnie.\n3. Obsługuj zamówienia hurtowe z priorytetem."
+    },
+    {
+      "id": "just_buy",
+      "name": "Just Buy Worker",
+      "emoji": "🛍️",
+      "kategoria": "Handel",
+      "opis": "Pracujesz w Just Buy — dyskontowym sklepie z artykułami codziennego użytku. Obsługujesz klientów i dbasz o stan kasy.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 138,
+      "wynagrodzenie_max": 345,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w handlu detalicznym? (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Szybka obsługa przy kasie to priorytet.\n2. Informuj klientów o promocjach tygodniowych.\n3. Dbaj o porządek przy wejściu do sklepu."
+    },
+    {
+      "id": "quick_dollar",
+      "name": "Quick Dollar Worker",
+      "emoji": "💵",
+      "kategoria": "Handel",
+      "opis": "Pracujesz w Quick Dollar — sklepie z artykułami po stałej cenie. Obsługujesz klientów, uzupełniasz półki i przyjmujesz dostawy.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 135,
+      "wynagrodzenie_max": 340,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w Quick Dollar? (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Każdy artykuł kosztuje stałą cenę — nie negocjuj.\n2. Regularnie uzupełniaj półki.\n3. Zachowuj spokój w kolejkach."
+    },
+    {
+      "id": "visitors",
+      "name": "Visitor's Worker",
+      "emoji": "🎁",
+      "kategoria": "Handel",
+      "opis": "Pracujesz w Visitor's — sklepie z pamiątkami i upominkami turystycznymi. Obsługujesz turystów i sprzedajesz lokalne gadżety.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 140,
+      "wynagrodzenie_max": 350,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co lubisz w obsłudze turystów i sprzedaży pamiątek? (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Bądź przyjaznym ambasadorem Greenville.\n2. Znaj lokalne atrakcje — możesz je polecać klientom.\n3. Obsługuj cudzoziemców z cierpliwością."
+    },
+    {
+      "id": "nerd_squad",
+      "name": "Nerd Squad Worker",
+      "emoji": "💻",
+      "kategoria": "Handel/IT",
+      "opis": "Pracujesz w Nerd Squad — sklepie z elektroniką i centrum serwisowym. Doradzasz klientom, sprzedajesz sprzęt i naprawiasz urządzenia.",
+      "wymagania": ["Ukończone 17 lat RP", "Podstawowa znajomość elektroniki"],
+      "wynagrodzenie_min": 180,
+      "wynagrodzenie_max": 450,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Opisz swoją znajomość elektroniki i IT (min. 40 znaków)", "min": 40 },
+        { "id": "naprawa", "pytanie": "Jak diagnozujesz problem z komputerem klienta? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Zawsze diagnozuj przed naprawą — nie naprawiaj na ślepo.\n2. Szanuj dane klientów — nie przeglądaj bez zgody.\n3. Dawaj realistyczne wyceny i terminy naprawy."
+    },
+    {
+      "id": "verwire",
+      "name": "Verwire Worker",
+      "emoji": "⚡",
+      "kategoria": "Handel/Elektryka",
+      "opis": "Pracujesz w Verwire — sklepie z elektroniką i artykułami elektrycznymi. Sprzedajesz kable, osprzęt elektryczny i doradzasz przy instalacjach.",
+      "wymagania": ["Ukończone 17 lat RP"],
+      "wynagrodzenie_min": 165,
+      "wynagrodzenie_max": 410,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co interesuje Cię w elektryce i elektronice? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Przy sprzedaży osprzętu elektrycznego zawsze pytaj o zastosowanie.\n2. Nie doradzaj nielegalnych instalacji.\n3. Dbaj o bezpieczeństwo — elektryczność jest niebezpieczna."
+    },
+    {
+      "id": "brookmere_autos",
+      "name": "Brookmere Autos Worker",
+      "emoji": "🚙",
+      "kategoria": "Motoryzacja",
+      "opis": "Pracujesz w Brookmere Autos — salonie samochodowym w Brookmere. Sprzedajesz nowe i używane pojazdy, doradzasz klientom i opisujesz ich stan techniczny.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B"],
+      "wynagrodzenie_min": 200,
+      "wynagrodzenie_max": 600,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co fascynuje Cię w świecie motoryzacji? (min. 30 znaków)", "min": 30 },
+        { "id": "sprzedaz", "pytanie": "Jak przekonujesz klienta do zakupu konkretnego auta? (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Zawsze podawaj rzetelne informacje o stanie technicznym pojazdu.\n2. Nie wywieraj presji na klientach — szanuj ich decyzję.\n3. Jazdy testowe dozwolone tylko z ważnym prawem jazdy.\n4. Każda sprzedaż wymaga dokumentacji w systemie."
+    },
+    {
+      "id": "celestial_dealership",
+      "name": "Celestial Dealership Worker",
+      "emoji": "✨",
+      "kategoria": "Motoryzacja",
+      "opis": "Pracujesz w Celestial Dealership — ekskluzywnym salonie z luksusowymi pojazdami. Obsługujesz klientów premium i finalizujesz transakcje na wysokie kwoty.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B", "Doświadczenie w sprzedaży"],
+      "wynagrodzenie_min": 250,
+      "wynagrodzenie_max": 800,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz sprzedawać luksusowe pojazdy? (min. 30 znaków)", "min": 30 },
+        { "id": "klient_premium", "pytanie": "Jak traktujesz klienta klasy premium? (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Klienci premium wymagają pełnej dyskrecji — nie ujawniaj ich zakupów.\n2. Przygotuj szczegółowe portfolio każdego pojazdu na ekspozycji.\n3. Dbaj o nieskazitelny wygląd salonu i swój.\n4. Jazdy testowe umawiane z wyprzedzeniem — brak spontanicznych wyjść."
+    },
+    {
+      "id": "ron_rivers_auto",
+      "name": "Ron Rivers Auto Group Worker",
+      "emoji": "🚘",
+      "kategoria": "Motoryzacja",
+      "opis": "Pracujesz w Ron Rivers Auto Group — dużej sieci dealerskiej z szerokim wyborem pojazdów. Sprzedajesz auta, obsługujesz wymianę i finansowanie.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B"],
+      "wynagrodzenie_min": 210,
+      "wynagrodzenie_max": 620,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co przyciąga Cię do pracy w dużej sieci dealerskiej? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Zawsze oferuj klientom opcję finansowania.\n2. Prowadź rzetelne porównania modeli bez manipulacji.\n3. Każda transakcja wymaga zatwierdzenia kierownika."
+    },
+    {
+      "id": "roadmap_dealership",
+      "name": "Roadmap Dealership Worker",
+      "emoji": "🗺️",
+      "kategoria": "Motoryzacja",
+      "opis": "Pracujesz w Roadmap Dealership — salonie specjalizującym się w pojazdach terenowych i SUV-ach. Doradzasz klientom, organizujesz jazdy próbne i sprzedajesz auta.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B"],
+      "wynagrodzenie_min": 205,
+      "wynagrodzenie_max": 610,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego interesujesz się pojazdami terenowymi? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Znaj specyfikacje techniczne każdego modelu na ekspozycji.\n2. Jazdy próbne organizuj na wyznaczonych trasach.\n3. Nie obiecuj modyfikacji pojazdu bez zgody warsztatu."
+    },
+    {
+      "id": "garys_collision",
+      "name": "Gary's Collision & Restoration Worker",
+      "emoji": "🔨",
+      "kategoria": "Motoryzacja",
+      "opis": "Pracujesz w Gary's Collision & Restoration — warsztacie blacharsko-lakierniczym. Naprawiasz powypadkowe pojazdy, przywracasz ich oryginalny wygląd i wykonujesz renowacje.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B"],
+      "wynagrodzenie_min": 220,
+      "wynagrodzenie_max": 580,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co fascynuje Cię w naprawie i renowacji pojazdów? (min. 30 znaków)", "min": 30 },
+        { "id": "umiejetnosci", "pytanie": "Opisz swoje umiejętności mechaniczne lub blacharskie (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Każda naprawa musi być udokumentowana fotograficznie przed i po.\n2. Nie zwracaj pojazdu bez kontroli jakości.\n3. Używaj wyłącznie certyfikowanych materiałów lakierniczych.\n4. Informuj klienta o każdej dodatkowej usterce znalezionej podczas pracy."
+    },
+    {
+      "id": "ignition_motor_parts",
+      "name": "Ignition Motor Parts Worker",
+      "emoji": "🔩",
+      "kategoria": "Motoryzacja",
+      "opis": "Pracujesz w Ignition Motor Parts — sklepie z częściami samochodowymi. Pomagasz klientom znaleźć właściwe części i zarządzasz magazynem.",
+      "wymagania": ["Ukończone 17 lat RP", "Podstawowa wiedza o pojazdach"],
+      "wynagrodzenie_min": 170,
+      "wynagrodzenie_max": 420,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Opisz swoją wiedzę o częściach samochodowych (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Zawsze weryfikuj numer VIN przed sprzedażą części.\n2. Nie sprzedawaj części do tuningu bez informacji o legalności.\n3. Dbaj o dokładną inwentaryzację magazynu."
+    },
+    {
+      "id": "tires_plus",
+      "name": "Tires+ Worker",
+      "emoji": "🛞",
+      "kategoria": "Motoryzacja",
+      "opis": "Pracujesz w Tires+ — serwisie opon i kół. Montujesz, balansujesz i wymieniasz opony, doradzasz przy wyborze ogumienia.",
+      "wymagania": ["Ukończone 17 lat RP"],
+      "wynagrodzenie_min": 175,
+      "wynagrodzenie_max": 430,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w serwisie opon? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Zawsze sprawdzaj ciśnienie po montażu.\n2. Informuj klienta o stanie bieżnika przed wymianą.\n3. Używaj momentu dokręcania zgodnego ze specyfikacją pojazdu."
+    },
+    {
+      "id": "truckplanet",
+      "name": "TruckPlanet Mechanic",
+      "emoji": "🚛",
+      "kategoria": "Motoryzacja",
+      "opis": "Jesteś mechanikiem w TruckPlanet — centrum serwisowym dla pojazdów ciężkich i ciężarówek. Naprawiasz i obsługujesz pojazdy komercyjne.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. C lub doświadczenie z pojazdami ciężkimi"],
+      "wynagrodzenie_min": 230,
+      "wynagrodzenie_max": 600,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co przyciąga Cię do pracy z pojazdami ciężkimi? (min. 30 znaków)", "min": 30 },
+        { "id": "doswiadczenie", "pytanie": "Opisz swoje doświadczenie mechaniczne (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Pojazdy ciężkie wymagają specjalistycznej wiedzy — stale się doszkalaj.\n2. Przed naprawą zawsze wykonaj pełną diagnostykę.\n3. Używaj hydraulicznych podnośników przy pracy pod pojazdem."
+    },
+    {
+      "id": "doms_service",
+      "name": "Dom's Service Worker",
+      "emoji": "⛽",
+      "kategoria": "Motoryzacja/Stacja",
+      "opis": "Pracujesz na stacji benzynowej Dom's Service — obsługujesz dystrybutory, sprzedajesz paliwo i zarządzasz małym sklepem przy stacji.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 148,
+      "wynagrodzenie_max": 365,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować na stacji benzynowej? (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Nigdy nie obsługuj dystrybutora w pobliżu otwartego ognia.\n2. Przy wyciekach paliwa natychmiast ewakuuj okolicę i wezwij pomoc.\n3. Sklep stacyjny zamykaj zgodnie z harmonogramem."
+    },
+    {
+      "id": "rapid_wash",
+      "name": "Rapid Wash Worker",
+      "emoji": "🚿",
+      "kategoria": "Motoryzacja/Myjnia",
+      "opis": "Pracujesz w Rapid Wash — automatycznej myjni samochodowej. Obsługujesz klientów, dbasz o sprzęt i wykonujesz ręczne mycie premium.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 140,
+      "wynagrodzenie_max": 350,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w pracy przy myciu aut? (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Sprawdzaj sprzęt przed każdą zmianą.\n2. Nie myj pojazdów z uszkodzonymi antenami lub lusterkami bez ostrzeżenia klienta.\n3. Dbaj o jakość wody i środków myjących."
+    },
+    {
+      "id": "credit_union",
+      "name": "Credit Union Banker",
+      "emoji": "🏦",
+      "kategoria": "Finanse",
+      "opis": "Pracujesz jako bankier w Credit Union — spółdzielczej kasie oszczędnościowej. Obsługujesz konta, kredyty i inwestycje członków spółdzielni.",
+      "wymagania": ["Ukończone 18 lat RP", "Brak aktywnych wyroków za przestępstwa finansowe"],
+      "wynagrodzenie_min": 300,
+      "wynagrodzenie_max": 750,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co przyciąga Cię do pracy w bankowości spółdzielczej? (min. 40 znaków)", "min": 40 },
+        { "id": "zaufanie", "pytanie": "Jak budujesz zaufanie klienta w kwestiach finansowych? (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Zachowaj pełną poufność danych finansowych klientów.\n2. Nie udzielaj porad finansowych bez pełnej analizy sytuacji.\n3. Każda transakcja musi być zatwierdzona przez system.\n4. Zgłaszaj podejrzane operacje zgodnie z procedurami AML."
+    },
+    {
+      "id": "fox_mountain_banker",
+      "name": "Fox Mountain Banker",
+      "emoji": "💰",
+      "kategoria": "Finanse",
+      "opis": "Pracujesz w Fox Mountain Bank — prywatnym banku obsługującym bogatszych klientów Greenville. Zarządzasz kontami premium i produktami inwestycyjnymi.",
+      "wymagania": ["Ukończone 18 lat RP", "Brak aktywnych wyroków za przestępstwa finansowe"],
+      "wynagrodzenie_min": 320,
+      "wynagrodzenie_max": 800,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w banku premium? (min. 35 znaków)", "min": 35 },
+        { "id": "inwestycje", "pytanie": "Jak doradzasz przy wyborze produktów inwestycyjnych? (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Klienci premium oczekują dyskrecji i spersonalizowanej obsługi.\n2. Nie ujawniaj salda kont bez wielopoziomowej weryfikacji.\n3. Każdy produkt finansowy wyjaśniaj dokładnie przed podpisaniem umowy."
+    },
+    {
+      "id": "allen_insurance",
+      "name": "Allen Insurance Agent",
+      "emoji": "📋",
+      "kategoria": "Finanse",
+      "opis": "Jesteś agentem ubezpieczeniowym w Allen Insurance — lokalnej agencji ubezpieczeń. Sprzedajesz polisy, doradzasz klientom i obsługujesz szkody.",
+      "wymagania": ["Ukończone 18 lat RP", "Umiejętności komunikacyjne"],
+      "wynagrodzenie_min": 250,
+      "wynagrodzenie_max": 650,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w branży ubezpieczeniowej? (min. 30 znaków)", "min": 30 },
+        { "id": "sprzedaz", "pytanie": "Jak przekonujesz klienta do zakupu polisy? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Nie sprzedawaj polis, które nie odpowiadają potrzebom klienta.\n2. Zawsze wyjaśniaj wyłączenia polisy przed podpisaniem.\n3. Obsługuj szkody rzetelnie i bez opóźnień."
+    },
+    {
+      "id": "dmv",
+      "name": "DMV Worker",
+      "emoji": "📄",
+      "kategoria": "Administracja",
+      "opis": "Pracujesz w DMV (Department of Motor Vehicles) — urzędzie komunikacyjnym. Wydajesz prawa jazdy, rejestrujesz pojazdy i obsługujesz petentów.",
+      "wymagania": ["Ukończone 18 lat RP", "Znajomość przepisów drogowych"],
+      "wynagrodzenie_min": 220,
+      "wynagrodzenie_max": 520,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w DMV? (min. 30 znaków)", "min": 30 },
+        { "id": "przepisy", "pytanie": "Opisz proces wydawania prawa jazdy kategorii B (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Każdy dokument musi być zweryfikowany przed wydaniem.\n2. Nie wydawaj praw jazdy osobom z aktywnymi wyrokami drogowymi.\n3. Zachowaj kolejność — każdy petent jest obsługiwany po numerku.\n4. Nie przyjmuj żadnych gratyfikacji za przyspieszone rozpatrzenie."
+    },
+    {
+      "id": "greenville_town_hall",
+      "name": "Greenville Town Hall Worker",
+      "emoji": "🏛️",
+      "kategoria": "Administracja",
+      "opis": "Pracujesz w ratuszu Greenville — centrum administracyjnym miasta. Obsługujesz wnioski mieszkańców, wydajesz zezwolenia i zarządzasz dokumentacją miejską.",
+      "wymagania": ["Ukończone 18 lat RP"],
+      "wynagrodzenie_min": 230,
+      "wynagrodzenie_max": 540,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz służyć społeczności lokalnej? (min. 35 znaków)", "min": 35 }
+      ],
+      "mini_regulamin": "1. Każdego petenta traktuj z szacunkiem, niezależnie od sprawy.\n2. Wnioski rozpatruj zgodnie z kodeksem miejskim.\n3. Nie ujawniaj informacji o innych mieszkańcach.\n4. Każda decyzja musi mieć podstawę prawną."
+    },
+    {
+      "id": "horton_village_hall",
+      "name": "Horton Village Hall Worker",
+      "emoji": "🏘️",
+      "kategoria": "Administracja",
+      "opis": "Pracujesz w urzędzie gminy Horton Village — obsługujesz mieszkańców podmiejskich obszarów, wydajesz zezwolenia budowlane i prowadzisz rejestr gruntów.",
+      "wymagania": ["Ukończone 18 lat RP"],
+      "wynagrodzenie_min": 215,
+      "wynagrodzenie_max": 510,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w pracy w administracji lokalnej? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Rejestr gruntów musi być zawsze aktualny.\n2. Zezwolenia budowlane wymagają inspekcji terenu.\n3. Współpracuj z Greenville Town Hall przy dużych projektach."
+    },
+    {
+      "id": "national_park_service",
+      "name": "National Park Service",
+      "emoji": "🌲",
+      "kategoria": "Administracja",
+      "opis": "Pracujesz jako strażnik parku narodowego — dbasz o tereny zielone Greenville, patrulujesz szlaki, edugujesz turystów i chronisz przyrodę.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B"],
+      "wynagrodzenie_min": 240,
+      "wynagrodzenie_max": 560,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego zależy Ci na ochronie przyrody? (min. 35 znaków)", "min": 35 },
+        { "id": "aktywnosc", "pytanie": "Czy jesteś aktywny fizycznie i lubisz pracę na świeżym powietrzu? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Dbaj o zachowanie naturalnego środowiska parku.\n2. Zawsze informuj turystów o zasadach bezpieczeństwa.\n3. Nie pozwalaj na rozpalanie ognisk poza wyznaczonymi strefami.\n4. Zgłaszaj każde naruszenie zasad parku."
+    },
+    {
+      "id": "heist_crew",
+      "name": "Heist Crew",
+      "emoji": "💀",
+      "kategoria": "Przestępczość",
+      "opis": "Dołączasz do ekipy przestępczej specjalizującej się w napadach i kradzieżach. Działasz w podziemiu Greenville, planujesz i wykonujesz nielegalne operacje.",
+      "wymagania": ["Ukończone 18 lat RP", "Akceptacja konsekwencji — aresztu, mandatów, utraty reputacji"],
+      "wynagrodzenie_min": 0,
+      "wynagrodzenie_max": 2000,
+      "rola_discord": null,
+      "typ": "CRIMINAL",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz żyć poza prawem w Greenville? (min. 40 znaków)", "min": 40 },
+        { "id": "swiadomosc", "pytanie": "Czy rozumiesz, że działalność kryminalna wiąże się z aresztem i utratą przywilejów? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Działalność kryminalna musi być zgodna z zasadami FRP.\n2. Nie możesz atakować służb bez powodu (RDM/VDM).\n3. Przestępstwa muszą być RP — z fabułą i motywacją.\n4. Areszty i kary są częścią gry — akceptujesz je bez OOC narzekania.\n5. Nie możesz być jednocześnie w Heist Crew i w służbach."
+    },
+    {
+      "id": "taxi_driver",
+      "name": "Taxi Driver",
+      "emoji": "🚕",
+      "kategoria": "Transport",
+      "opis": "Jesteś taksówkarzem w Greenville — wozisz pasażerów po mieście i okolicach, dbasz o ich bezpieczeństwo i komfort jazdy.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B", "Brak aktywnych mandatów za rażące naruszenia"],
+      "wynagrodzenie_min": 180,
+      "wynagrodzenie_max": 500,
+      "rola_discord": "Taksówkarz",
+      "typ": "SERVICE",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz zostać taksówkarzem? (min. 30 znaków)", "min": 30 },
+        { "id": "trasy", "pytanie": "Opisz znajomość tras w Greenville (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Zawsze jeździj zgodnie z przepisami — pasażer jest priorytetem.\n2. Nie odmawiaj kursu bez uzasadnionego powodu.\n3. Używaj radia taxi do komunikacji z bazą.\n4. Taksometr musi być zawsze włączony podczas kursu.\n5. Dbaj o czystość i stan techniczny pojazdu."
+    },
+    {
+      "id": "sahara_delivery",
+      "name": "Sahara Delivery Worker",
+      "emoji": "📦",
+      "kategoria": "Transport",
+      "opis": "Pracujesz jako kurier w Sahara Delivery — firmie dostawczej obsługującej Greenville. Dostarczasz paczki, zarządzasz trasami i dbasz o terminowość.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. B"],
+      "wynagrodzenie_min": 170,
+      "wynagrodzenie_max": 420,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w pracy kurierskiej? (min. 25 znaków)", "min": 25 },
+        { "id": "punktualnosc", "pytanie": "Jak zapewniasz terminowość dostaw? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Każda paczka musi być dostarczona w wyznaczonym oknie czasowym.\n2. Uszkodzone przesyłki zgłaszaj do centrum logistycznego.\n3. Zawsze pobieraj potwierdzenie odbioru.\n4. Nie otwieraj paczek klientów."
+    },
+    {
+      "id": "school_bus_driver",
+      "name": "School Bus Driver",
+      "emoji": "🚌",
+      "kategoria": "Transport",
+      "opis": "Jesteś kierowcą autobusu szkolnego — wozisz dzieci i młodzież do szkół w Greenville. Odpowiadasz za ich bezpieczeństwo i punktualność.",
+      "wymagania": ["Ukończone 21 lat RP", "Prawo jazdy kat. D", "Nienaganna historia jazdy"],
+      "wynagrodzenie_min": 200,
+      "wynagrodzenie_max": 480,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować z dziećmi jako kierowca? (min. 35 znaków)", "min": 35 },
+        { "id": "bezpieczenstwo", "pytanie": "Opisz jak dbasz o bezpieczeństwo pasażerów (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Bezpieczeństwo dzieci jest priorytetem absolutnym.\n2. Nie jedź jeśli dzieci nie siedzą — zawsze pasami.\n3. Zero tolerancji dla nadmiernej prędkości na trasie szkolnej.\n4. Prowadź listę pasażerów i sprawdzaj przy wysiadaniu."
+    },
+    {
+      "id": "the_twist",
+      "name": "The Twist Worker",
+      "emoji": "🎡",
+      "kategoria": "Rozrywka",
+      "opis": "Pracujesz w The Twist — parku rozrywki i centrum atrakcji w Greenville. Obsługujesz atrakcje, dbasz o bezpieczeństwo gości i tworzysz magiczną atmosferę.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 150,
+      "wynagrodzenie_max": 380,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co lubisz w pracy w parku rozrywki? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Bezpieczeństwo gości jest ważniejsze niż czas oczekiwania.\n2. Zawsze sprawdzaj zabezpieczenia przed uruchomieniem atrakcji.\n3. Bądź uśmiechnięty — tworzysz magiczne wspomnienia.\n4. Nie uruchamiaj atrakcji bez pełnej obsady stanowisk."
+    },
+    {
+      "id": "greenville_theater",
+      "name": "Greenville Theater Worker",
+      "emoji": "🎭",
+      "kategoria": "Rozrywka",
+      "opis": "Pracujesz w Greenville Theater — lokalnym teatrze i centrum kulturalnym. Obsługujesz widzów, dbasz o technikę sceniczną i pomagasz przy produkcjach.",
+      "wymagania": ["Ukończone 17 lat RP"],
+      "wynagrodzenie_min": 160,
+      "wynagrodzenie_max": 400,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co fascynuje Cię w teatrze i sztuce? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Cisza podczas spektaklu — każdy pracownik jest przykładem.\n2. Obsługuj widzów uprzejmie i sprawnie.\n3. Technika sceniczna jest priorytetem — sprawdzaj przed każdym spektaklem."
+    },
+    {
+      "id": "visit_247_motel",
+      "name": "Visit 24/7 Motel Worker",
+      "emoji": "🏨",
+      "kategoria": "Rozrywka",
+      "opis": "Pracujesz na recepcji Visit 24/7 Motel — całodobowego motelu obsługującego podróżnych. Meldrujesz gości, zarządzasz pokojami i dbasz o bezpieczeństwo obiektu.",
+      "wymagania": ["Ukończone 18 lat RP"],
+      "wynagrodzenie_min": 170,
+      "wynagrodzenie_max": 410,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować na recepcji motelu? (min. 25 znaków)", "min": 25 },
+        { "id": "noc", "pytanie": "Czy jesteś dyspozycyjny na nocne zmiany? (min. 15 znaków)", "min": 15 }
+      ],
+      "mini_regulamin": "1. Recepcja musi być obsadzona 24/7.\n2. Nie udostępniaj kluczy do pokoju osobom nieuprawnionym.\n3. Zgłaszaj podejrzane zachowanie gości do ochrony.\n4. Każdy meldunek i wymeldowanie odnotuj w systemie."
+    },
+    {
+      "id": "teacher",
+      "name": "Teacher",
+      "emoji": "📚",
+      "kategoria": "Edukacja",
+      "opis": "Jesteś nauczycielem w jednej ze szkół Greenville. Prowadzisz lekcje, edugujesz młodych mieszkańców i budujesz przyszłość społeczności.",
+      "wymagania": ["Ukończone 21 lat RP", "Wyższe wykształcenie RP (opcjonalne)"],
+      "wynagrodzenie_min": 250,
+      "wynagrodzenie_max": 580,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz uczyć w Greenville? (min. 40 znaków)", "min": 40 },
+        { "id": "przedmiot", "pytanie": "Jaki przedmiot chciałbyś nauczać i dlaczego? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Traktuj każdego ucznia z szacunkiem i cierpliwością.\n2. Przygotowuj lekcje z wyprzedzeniem.\n3. Nie faworyzuj żadnego ucznia.\n4. Zgłaszaj problemy uczniów do dyrektora."
+    },
+    {
+      "id": "driving_experience_teacher",
+      "name": "Driving Experience Center Teacher",
+      "emoji": "🏎️",
+      "kategoria": "Edukacja",
+      "opis": "Jesteś instruktorem nauki jazdy w Driving Experience Center. Uczysz kursantów przepisów drogowych i techniki jazdy.",
+      "wymagania": ["Ukończone 21 lat RP", "Prawo jazdy kat. B", "Nienaganna historia jazdy"],
+      "wynagrodzenie_min": 270,
+      "wynagrodzenie_max": 600,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co podoba Ci się w uczeniu jazdy? (min. 30 znaków)", "min": 30 },
+        { "id": "cierpliwosc", "pytanie": "Jak radzisz sobie z nerwowym kursantem? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Podczas jazdy szkoleniowej zawsze masz pierwszeństwo przed kursantem.\n2. Nigdy nie pozwalaj kursantowi przekraczać prędkości.\n3. Oceniaj postępy rzetelnie — nie wystawiaj prawa jazdy bez umiejętności."
+    },
+    {
+      "id": "daycare",
+      "name": "Daycare Worker",
+      "emoji": "🧸",
+      "kategoria": "Edukacja",
+      "opis": "Pracujesz w żłobku / przedszkolu Greenville — opiekujesz się małymi dziećmi, organizujesz zajęcia i dbasz o ich bezpieczeństwo.",
+      "wymagania": ["Ukończone 18 lat RP", "Brak wyroków za przestępstwa wobec dzieci"],
+      "wynagrodzenie_min": 200,
+      "wynagrodzenie_max": 450,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować z małymi dziećmi? (min. 35 znaków)", "min": 35 }
+      ],
+      "mini_regulamin": "1. Bezpieczeństwo dzieci jest absolutnym priorytetem.\n2. Nigdy nie zostawiaj dzieci bez nadzoru.\n3. Prowadź dziennik obecności i zdarzeń.\n4. Kontaktuj się z rodzicami przy każdym incydencie."
+    },
+    {
+      "id": "librarian",
+      "name": "Librarian",
+      "emoji": "📖",
+      "kategoria": "Edukacja",
+      "opis": "Jesteś bibliotekarzem w bibliotece publicznej Greenville. Zarządzasz zbiorami, pomagasz czytelnikom i organizujesz wydarzenia kulturalne.",
+      "wymagania": ["Ukończone 18 lat RP"],
+      "wynagrodzenie_min": 190,
+      "wynagrodzenie_max": 430,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co lubisz w literaturze i pracy w bibliotece? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Cisza w bibliotece jest obowiązkiem każdego pracownika.\n2. Karty biblioteczne muszą być aktualne przed wypożyczeniem.\n3. Dbaj o porządek zbiorów i regularną inwentaryzację."
+    },
+    {
+      "id": "heritage_animal_hospital",
+      "name": "Heritage Animal Hospital Worker",
+      "emoji": "🐾",
+      "kategoria": "Zdrowie",
+      "opis": "Pracujesz w Heritage Animal Hospital — klinice weterynaryjnej Greenville. Asystujesz przy zabiegach, opiekujesz się zwierzętami i obsługujesz właścicieli.",
+      "wymagania": ["Ukończone 18 lat RP", "Miłość do zwierząt"],
+      "wynagrodzenie_min": 230,
+      "wynagrodzenie_max": 560,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować z zwierzętami? (min. 35 znaków)", "min": 35 },
+        { "id": "doswiadczenie", "pytanie": "Czy masz doświadczenie z opieką nad zwierzętami? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Każde zwierzę traktuj z troską i cierpliwością.\n2. Nie wykonuj zabiegów bez nadzoru lekarza weterynarii.\n3. Zachowaj spokój przy agresywnych zwierzętach.\n4. Informuj właściciela o każdej procedurze przed jej wykonaniem."
+    },
+    {
+      "id": "lifeguard",
+      "name": "Lifeguard",
+      "emoji": "🏊",
+      "kategoria": "Zdrowie",
+      "opis": "Jesteś ratownikiem wodnym — patrulujesz baseny i zbiorniki wodne w Greenville, zapewniasz bezpieczeństwo kąpiących się i reagujesz na niebezpieczne sytuacje.",
+      "wymagania": ["Ukończone 18 lat RP", "Certyfikat ratownika wodnego RP", "Dobra kondycja fizyczna"],
+      "wynagrodzenie_min": 200,
+      "wynagrodzenie_max": 460,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co skłania Cię do pracy jako ratownik wodny? (min. 30 znaków)", "min": 30 },
+        { "id": "kondycja", "pytanie": "Opisz swoją kondycję fizyczną i umiejętności pływania (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Nie opuszczaj wieżyczki ratowniczej bez zastępcy.\n2. Każdy incydent w wodzie wymaga natychmiastowej reakcji.\n3. Miej pod ręką koło ratunkowe i linę przez cały dyżur.\n4. Dbaj o widoczność — zawsze noś charakterystyczny strój."
+    },
+    {
+      "id": "factory_pulse",
+      "name": "Factory Pulse Employee",
+      "emoji": "🏭",
+      "kategoria": "Przemysł",
+      "opis": "Pracujesz w Factory Pulse — zakładzie przemysłowym Greenville. Obsługujesz maszyny, zarządzasz produkcją i dbasz o bezpieczeństwo na hali.",
+      "wymagania": ["Ukończone 18 lat RP"],
+      "wynagrodzenie_min": 220,
+      "wynagrodzenie_max": 520,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w przemyśle? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Zawsze używaj środków ochrony osobistej na hali.\n2. Nie uruchamiaj maszyn bez przeszkolenia.\n3. Zgłaszaj usterki sprzętu natychmiast.\n4. Przestrzegaj limitów produkcyjnych i terminów."
+    },
+    {
+      "id": "farmer",
+      "name": "Farmer",
+      "emoji": "🌾",
+      "kategoria": "Rolnictwo",
+      "opis": "Jesteś rolnikiem w okolicach Greenville — uprawiasz pola, hodujesz zwierzęta i sprzedajesz plony na lokalnym rynku.",
+      "wymagania": ["Ukończone 18 lat RP", "Prawo jazdy kat. T (zalecane)"],
+      "wynagrodzenie_min": 180,
+      "wynagrodzenie_max": 480,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co przyciąga Cię do życia i pracy na wsi? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Dbaj o zwierzęta i pola zgodnie z harmonogramem.\n2. Nie używaj pestycydów w pobliżu wody.\n3. Plony sprzedawaj wyłącznie przez legalny rynek.\n4. Ciągniki i maszyny rolnicze wymagają kat. T."
+    },
+    {
+      "id": "enderson_cleaners",
+      "name": "Enderson Cleaners",
+      "emoji": "🧹",
+      "kategoria": "Usługi",
+      "opis": "Pracujesz w Enderson Cleaners — firmie sprzątającej obsługującej biura i domy w Greenville. Sprzątasz, dezynfekujesz i dbasz o czystość zleconych obiektów.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 135,
+      "wynagrodzenie_max": 340,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w sprzątaniu? (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Nie dotykaj prywatnych przedmiotów klientów.\n2. Używaj właściwych środków czystości do każdej powierzchni.\n3. Zgłaszaj uszkodzenia zauważone podczas sprzątania."
+    },
+    {
+      "id": "security_guard",
+      "name": "Security Guard",
+      "emoji": "🔐",
+      "kategoria": "Usługi",
+      "opis": "Jesteś ochroniarzem — pilnujesz obiektów, kontrolujesz wejścia i dbasz o bezpieczeństwo mienia i osób na strzeżonym terenie.",
+      "wymagania": ["Ukończone 18 lat RP", "Brak aktywnych wyroków za przestępstwa"],
+      "wynagrodzenie_min": 180,
+      "wynagrodzenie_max": 440,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować w ochronie? (min. 30 znaków)", "min": 30 },
+        { "id": "sytuacja", "pytanie": "Jak reagujesz na awanturnika w strzeżonym obiekcie? (min. 30 znaków)", "min": 30 }
+      ],
+      "mini_regulamin": "1. Nie używaj siły fizycznej bez wcześniejszego ostrzeżenia.\n2. Miej zawsze przy sobie identyfikator i mundur.\n3. Kontaktuj się z policją przy poważnych incydentach.\n4. Prowadź książkę zdarzeń."
+    },
+    {
+      "id": "heenerg",
+      "name": "HeenerG Worker",
+      "emoji": "⚡",
+      "kategoria": "Usługi",
+      "opis": "Pracujesz w HeenerG — firmie energetycznej obsługującej Greenville. Monitorujesz sieci energetyczne, usuwasz awarie i instalujesz nowe przyłącza.",
+      "wymagania": ["Ukończone 18 lat RP", "Uprawnienia elektryczne RP"],
+      "wynagrodzenie_min": 250,
+      "wynagrodzenie_max": 580,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co interesuje Cię w energetyce i elektrotechnice? (min. 30 znaków)", "min": 30 },
+        { "id": "bezpieczenstwo", "pytanie": "Opisz zasady bezpieczeństwa przy pracy z prądem (min. 40 znaków)", "min": 40 }
+      ],
+      "mini_regulamin": "1. Praca pod napięciem wymaga dwóch osób — zawsze.\n2. Używaj rękawic i sprzętu dielektrycznego.\n3. Wyłącz bezpiecznik przed każdą interwencją.\n4. Zgłaszaj awarie do centrum sterowania."
+    },
+    {
+      "id": "beyond_beauty",
+      "name": "Beyond Beauty Worker",
+      "emoji": "💅",
+      "kategoria": "Usługi",
+      "opis": "Pracujesz w Beyond Beauty — salonie kosmetycznym oferującym zabiegi pielęgnacyjne, fryzjerstwo i stylizację paznokci.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 155,
+      "wynagrodzenie_max": 400,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Co fascynuje Cię w świecie urody i kosmetyki? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Dezynfekuj narzędzia po każdym kliencie.\n2. Pytaj o alergie przed każdym zabiegiem.\n3. Nie oceniaj wyglądu klientów — każdy jest piękny.\n4. Dbaj o higienę miejsca pracy."
+    },
+    {
+      "id": "gas_station_clerk",
+      "name": "Gas Station Clerk",
+      "emoji": "⛽",
+      "kategoria": "Usługi",
+      "opis": "Pracujesz jako kasjer na stacji benzynowej — obsługujesz klientów, sprzedajesz paliwo i artykuły w sklepiku przy stacji.",
+      "wymagania": ["Ukończone 16 lat RP"],
+      "wynagrodzenie_min": 138,
+      "wynagrodzenie_max": 345,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "motywacja", "pytanie": "Dlaczego chcesz pracować na stacji benzynowej? (min. 20 znaków)", "min": 20 }
+      ],
+      "mini_regulamin": "1. Nie sprzedawaj alkoholu i papierosów osobom poniżej 21 lat RP.\n2. Przy podejrzeniu rozboju natychmiast wciśnij alarm.\n3. Stacja musi być otwarta całą dobę — rotacja zmian."
+    },
+    {
+      "id": "student",
+      "name": "Student",
+      "emoji": "🎓",
+      "kategoria": "Edukacja",
+      "opis": "Jesteś studentem lub uczniem w Greenville. Uczęszczasz na zajęcia, rozwijasz się i poszukujesz swojej ścieżki kariery w mieście.",
+      "wymagania": ["Ukończone 14 lat RP"],
+      "wynagrodzenie_min": 0,
+      "wynagrodzenie_max": 0,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [
+        { "id": "kierunek", "pytanie": "Jaki kierunek studiów lub szkołę wybrałeś i dlaczego? (min. 25 znaków)", "min": 25 }
+      ],
+      "mini_regulamin": "1. Uczęszczaj regularnie na zajęcia.\n2. Szanuj nauczycieli i rówieśników.\n3. Możesz łączyć studia z pracą dorywczą.\n4. Dyplom ukończenia studiów otwiera drzwi do lepszych prac."
+    },
+    {
+      "id": "unemployed",
+      "name": "Unemployed",
+      "emoji": "😴",
+      "kategoria": "Inne",
+      "opis": "Jesteś bezrobotnym mieszkańcem Greenville. Nie masz stałego zajęcia, ale możesz szukać pracy lub żyć z oszczędności.",
+      "wymagania": [],
+      "wynagrodzenie_min": 0,
+      "wynagrodzenie_max": 0,
+      "rola_discord": null,
+      "typ": "PUBLIC",
+      "formularz": [],
+      "mini_regulamin": "Brak obowiązków zawodowych. Pamiętaj jednak, że długotrwałe bezrobocie może wpłynąć na Twój status w społeczności Greenville."
+    }
+  ],
+
+  "cad": {
+    "role_views": {
+      "OWNER":         { "modules": ["calls","units","warrants","plates","radio","proximity","map","arrests","dispatch","medical","fire","road"], "can_manage": true },
+      "ADMIN":         { "modules": ["calls","units","warrants","plates","radio","proximity","map","arrests","dispatch"], "can_manage": true },
+      "MOD":           { "modules": ["calls","units","warrants","plates","radio","proximity","map"] },
+      "STAFF":         { "modules": ["calls","units","radio","proximity","map"] },
+      "POLICJA":       { "modules": ["calls","units","warrants","plates","radio","proximity","map","arrests"] },
+      "EMS":           { "modules": ["calls","units","radio","proximity","map","medical"] },
+      "STRAZ":         { "modules": ["calls","units","radio","proximity","map","fire"] },
+      "DOT":           { "modules": ["calls","units","radio","proximity","map","road"] },
+      "SM":            { "modules": ["calls","units","warrants","radio","proximity","map"] },
+      "DYSPOZYTORNIA": { "modules": ["calls","units","warrants","plates","radio","proximity","map","dispatch"], "can_dispatch": true },
+      "TAKSOWKARZ":    { "modules": ["radio","proximity","map"] },
+      "CYWIL":         { "modules": ["proximity","map","emergency_call"] }
+    },
+    "radio_channels": [
+      { "id": "DYSPOZYTORNIA", "name": "Dyspozytornia", "color": "#5865F2", "roles": ["POLICJA","EMS","STRAZ","DOT","SM","DYSPOZYTORNIA","ADMIN","OWNER","MOD"] },
+      { "id": "KOMENDA",       "name": "Komenda",       "color": "#ED4245", "roles": ["POLICJA","SM","ADMIN","OWNER","MOD"] },
+      { "id": "ALFA",          "name": "Alfa",          "color": "#57F287", "roles": ["POLICJA","ADMIN","OWNER"] },
+      { "id": "BRAVO",         "name": "Bravo",         "color": "#FEE75C", "roles": ["POLICJA","ADMIN","OWNER"] },
+      { "id": "EMS",           "name": "EMS",           "color": "#EB459E", "roles": ["EMS","ADMIN","OWNER","MOD"] },
+      { "id": "STRAZ",         "name": "Straż",         "color": "#FF7F00", "roles": ["STRAZ","ADMIN","OWNER","MOD"] },
+      { "id": "DOT",           "name": "DOT",           "color": "#FF8C00", "roles": ["DOT","ADMIN","OWNER","MOD"] },
+      { "id": "TAKTYCZNY",     "name": "Taktyczny",     "color": "#808080", "roles": ["POLICJA","ADMIN","OWNER"] },
+      { "id": "TAXI",          "name": "Taxi Radio",    "color": "#F1C40F", "roles": ["TAKSOWKARZ","ADMIN","OWNER"] }
+    ],
+    "call_types": {
+      "POLICJA":       ["Wypadek drogowy","Pościg","Strzelanina","Napad","Bójka","Włamanie","Kontrola rutynowa","Mandat","Areszt","Inne"],
+      "EMS":           ["Wypadek drogowy z ofiarami","Zawał serca","Udar","Utonięcie","Przedawkowanie","Uraz ogólny","Inne medyczne"],
+      "STRAZ":         ["Pożar budynku","Pożar pojazdu","Pożar lasu","Wypadek z uwięzionymi","Wyciek gazu","Inne pożarnicze"],
+      "DOT":           ["Wypadek blokujący drogę","Uszkodzone znaki","Awaria sygnalizacji","Dziura w jezdni","Zamknięcie drogi","Inne drogowe"],
+      "SM":            ["Zakłócenie porządku","Wandalizm","Nielegalne parkowanie","Agresja","Inne SM"],
+      "ADMIN":         ["Wypadek drogowy","Pościg","Strzelanina","Napad","Bójka","Pożar","Pogotowie medyczne","Włamanie","Inne"],
+      "CYWIL":         ["Wypadek drogowy","Pożar","Napad","Osoba nieprzytomna","Awaria","Inne nagłe"]
+    }
+  },
+
+  "proximity_chat": {
+    "locations": [
+      { "id": "centrum",       "name": "Centrum Greenville",     "emoji": "🏙️", "description": "Główne centrum miasta — sklepy, kawiarnie, plac główny" },
+      { "id": "szpital",       "name": "Szpital / Fox Mountain", "emoji": "🏥", "description": "Fox Mountain Medical Center i okolice szpitala" },
+      { "id": "komisariat",    "name": "Komisariat Policji",     "emoji": "🚔", "description": "FVMPD HQ i tereny policyjne" },
+      { "id": "straz_pozarna", "name": "Straż Pożarna",          "emoji": "🚒", "description": "Greenville Fire Station i okolice" },
+      { "id": "lotnisko",      "name": "Lotnisko",               "emoji": "✈️", "description": "Port lotniczy Greenville i okolice" },
+      { "id": "port",          "name": "Port / Nabrzeże",        "emoji": "⚓", "description": "Tereny portowe, nabrzeże i magazyny" },
+      { "id": "ratusz",        "name": "Ratusz / Town Hall",     "emoji": "🏛️", "description": "Centrum administracyjne — ratusz, DMV, urzędy" },
+      { "id": "targ",          "name": "Targ / Market",          "emoji": "🛒", "description": "Lokalny targ i centrum handlowe" },
+      { "id": "park",          "name": "Park Narodowy",          "emoji": "🌲", "description": "Tereny parku narodowego, szlaki i przyroda" },
+      { "id": "szkola",        "name": "Szkoła / Uczelnia",      "emoji": "🏫", "description": "Strefy edukacyjne — szkoły i kampus" },
+      { "id": "restauracja",   "name": "Dzielnica Restauracji",  "emoji": "🍔", "description": "Ulica restauracyjna, fast foody i kawiarnie" },
+      { "id": "warsztat",      "name": "Warsztaty / Mechanicy",  "emoji": "🔧", "description": "Strefa warsztatów, serwisów i garaży" },
+      { "id": "salon_aut",     "name": "Salony Samochodowe",     "emoji": "🚗", "description": "Dzielnica dealerów i salonów motoryzacyjnych" },
+      { "id": "bank",          "name": "Bank / Credit Union",    "emoji": "🏦", "description": "Dzielnica finansowa — banki i ubezpieczenia" },
+      { "id": "przedmiescia",  "name": "Przedmieścia",           "emoji": "🏘️", "description": "Osiedla mieszkaniowe na obrzeżach Greenville" }
+    ],
+    "max_messages_per_location": 100,
+    "message_ttl_minutes": 60
+  },
+
+  "external_bots": [
+    {
+      "name": "Dyno",
+      "invite_url": "https://dyno.gg",
+      "prefix": "?",
+      "purpose": "Automoderation, logi aktywności, moduły antyspam, niestandardowe komendy",
+      "features": ["automod", "modlog", "autorole", "customcommands", "antispam"]
+    },
+    {
+      "name": "FreshTok",
+      "prefix": null,
+      "purpose": "Automatyczne powiadomienia o nowych filmach TikTok — wysyła embed do kanału ogłoszeń",
+      "features": ["tiktok_notifications", "embed_announcements"]
+    },
+    {
+      "name": "GiveawayBot",
+      "prefix": "g!",
+      "purpose": "Organizacja konkursów i giveaway'ów na serwerze — tworzenie, zarządzanie i losowanie",
+      "features": ["giveaways", "reroll", "winners_dm"]
+    },
+    {
+      "name": "Pancake (Nalesnior)",
+      "invite_url": "https://pancake.gg",
+      "prefix": "p!",
+      "purpose": "Odtwarzanie muzyki i moderacja — komenda p!help dla listy funkcji",
+      "features": ["music", "moderation", "fun"]
+    },
+    {
+      "name": "RMF MAXX",
+      "prefix": null,
+      "purpose": "24/7 streaming muzyki (RMF MAXX radio) w kanale głosowym — nie rozłącza się automatycznie",
+      "features": ["24_7_music", "radio_stream"]
+    },
+    {
+      "name": "StartIT",
+      "invite_url": "https://startit.bot",
+      "prefix": null,
+      "purpose": "Weryfikacja i konfiguracja serwera — system powitalny, reguły i setup kanałów",
+      "features": ["verification", "welcome", "setup", "rules"]
+    },
+    {
+      "name": "Tickets v2",
+      "prefix": "/help",
+      "purpose": "Zaawansowany system ticketów — tworzenie, zarządzanie i archiwizacja zgłoszeń wsparcia",
+      "features": ["tickets", "transcripts", "staff_roles", "categories"]
+    }
+  ]
+}

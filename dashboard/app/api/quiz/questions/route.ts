@@ -35,9 +35,10 @@ export async function GET(request: NextRequest) {
     select: {
       id: true,
       question: true,
+      type: true,
       answers: true,
       order: true,
-      // NIE wysyłamy 'correct' — odpowiedź jest sprawdzana server-side
+      // NIE wysyłamy 'correct' ani 'keywords' — sprawdzane server-side
     },
   });
 
@@ -47,8 +48,8 @@ export async function GET(request: NextRequest) {
     questions,
     total: questions.length,
     expiresAt: quizToken.expiresAt,
-    timeLimit: 15 * 60, // 15 minut w sekundach
-    passScore: settings?.quizPassScore || 8,
+    timeLimit: 20 * 60, // 20 minut w sekundach
+    passScore: settings?.quizPassScore || 14,
     userInfo: {
       robloxUsername: quizToken.user.robloxUsername,
     },

@@ -66,7 +66,7 @@ function buildPageEmbed(cases, page, totalPages, targetUser, totalCases) {
         ? `**Podsumowanie:** ${summaryParts.join(' | ')}\n\n**Łącznie case'ów:** ${totalCases}`
         : `Brak wpisów moderacyjnych dla tego gracza.`
     )
-    .setFooter({ text: `Strona ${page + 1}/${totalPages} • Greenville RP — Moderacja` })
+    .setFooter({ text: `Strona ${page + 1}/${totalPages} • AURORA Greenville RP — Moderacja` })
     .setTimestamp();
 
   // Dodanie case'ów dla bieżącej strony

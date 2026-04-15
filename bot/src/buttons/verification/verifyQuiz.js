@@ -76,7 +76,7 @@ module.exports = {
         `✅ Potrzebujesz min. **6/10** punktów.\n` +
         `🏆 Wynik **8+/10** = pełna weryfikacja bez ostrzeżenia.`
       )
-      .setFooter({ text: 'Greenville RP — Quiz weryfikacyjny' })
+      .setFooter({ text: 'AURORA Greenville RP — Quiz weryfikacyjny' })
       .setTimestamp();
 
     try {

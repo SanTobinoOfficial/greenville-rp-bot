@@ -27,7 +27,7 @@ module.exports = {
           `**${member.user.username}** opuścił/a serwer.\n\n` +
           `📅 Był/a z nami od: **${joinedAt}**`
         )
-        .setFooter({ text: 'Greenville RP — Pożegnanie' })
+        .setFooter({ text: 'AURORA Greenville RP — Pożegnanie' })
         .setTimestamp();
 
       const odlotyChannel = guild.channels.cache.find(

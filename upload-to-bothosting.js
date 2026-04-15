@@ -8,9 +8,9 @@ const fs = require('fs');
 const path = require('path');
 
 // ── Konfiguracja ──────────────────────────────────────────────────────────────
-const API_KEY    = process.env.BOT_HOSTING_KEY  || 'ptlc_UrMXR2v4L2p';
+const API_KEY    = process.env.BOT_HOSTING_KEY  || 'ptlc_6frhvjvIykVZ6QvN0p3P19jh0AC8A11MU3oMLKYPeIC';
 const SERVER_ID  = process.env.BOT_HOSTING_SID  || '81f3f88a';
-const PANEL_HOST = 'panel.bot-hosting.net';
+const PANEL_HOST = 'control.bot-hosting.net';
 
 const args = process.argv.slice(2);
 const NO_RESTART  = args.includes('--no-restart');
@@ -21,8 +21,9 @@ const ALL_FILES = [
   // API serwer — rozbudowany o komendy z dashboardu
   ['bot/src/api/server.js',                            '/src/api/server.js'],
 
-  // Weryfikacja — rozbudowany formularz + AI detection
+  // Weryfikacja — rozbudowany formularz + AI detection + quiz engine
   ['bot/src/utils/aiDetector.js',                      '/src/utils/aiDetector.js'],
+  ['bot/src/utils/quizEngine.js',                      '/src/utils/quizEngine.js'],
   ['bot/src/buttons/verification/startVerification.js','/src/buttons/verification/startVerification.js'],
   ['bot/src/modals/verification/verificationModal.js', '/src/modals/verification/verificationModal.js'],
 

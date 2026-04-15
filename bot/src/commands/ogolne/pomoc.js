@@ -38,6 +38,8 @@ const COMMANDS = [
   { cmd: '/sesja-start',   opis: 'Rozpocznij sesję',                                kategoria: '🎪 Sesje RP (Host+)' },
   { cmd: '/sesja-koniec',  opis: 'Zakończ sesję',                                   kategoria: '🎪 Sesje RP (Host+)' },
   { cmd: '/peacetime',     opis: 'Ustaw czas pokoju',                               kategoria: '🎪 Sesje RP (Host+)' },
+  // Praca
+  { cmd: '/wybierz-prace', opis: 'Wybierz lub zmień swoją pracę RP (76 dostępnych prac)', kategoria: '💼 Praca RP' },
   // Ogólne
   { cmd: '/zglos',         opis: 'Szybkie zgłoszenie / ticket',                     kategoria: '📋 Ogólne' },
   { cmd: '/czas',          opis: 'Aktualny czas RP na serwerze',                    kategoria: '📋 Ogólne' },
@@ -47,7 +49,7 @@ const COMMANDS = [
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('pomoc')
-    .setDescription('Lista wszystkich komend bota Greenville RP'),
+    .setDescription('Lista wszystkich komend bota AURORA Greenville RP'),
 
   async execute(interaction, client, prisma) {
     await interaction.deferReply({ ephemeral: true });
@@ -61,9 +63,9 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(COLORS.primary)
-      .setTitle('📖 Pomoc — Greenville RP Bot')
+      .setTitle('📖 Pomoc — AURORA Greenville RP Bot')
       .setDescription('Lista wszystkich dostępnych komend. Użyj `/` aby zobaczyć szczegóły danej komendy.')
-      .setFooter({ text: 'Greenville RP — Pomoc' })
+      .setFooter({ text: 'AURORA Greenville RP — Pomoc' })
       .setTimestamp();
 
     for (const [kategoria, cmds] of Object.entries(grouped)) {

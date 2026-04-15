@@ -109,7 +109,7 @@ module.exports = {
             `🎮 **Serwer:** ${interaction.guild.name}\n\n` +
             `Do zobaczenia na sesji! 🎉`
           )
-          .setFooter({ text: 'Greenville RP — Sesje RP' })
+          .setFooter({ text: 'AURORA Greenville RP — Sesje RP' })
           .setTimestamp();
 
         await interaction.user.send({ embeds: [dmEmbed] });

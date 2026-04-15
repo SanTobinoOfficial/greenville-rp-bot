@@ -21,8 +21,8 @@ const COLORS = {
   mod_unban: 0x57F287,
 };
 
-const FOOTER_TEXT = 'Greenville RP Bot';
-const FOOTER_ICON = 'https://i.imgur.com/greenville_logo.png';
+const FOOTER_TEXT = 'AURORA Greenville RP Bot';
+const FOOTER_ICON = 'https://i.imgur.com/aurora_logo.png';
 
 /**
  * Tworzy bazowy embed z footerем i timestampem

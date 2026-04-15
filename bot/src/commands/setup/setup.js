@@ -1,4 +1,4 @@
-// Komenda /setup — inicjalizacja całego serwera Greenville RP
+// Komenda /setup — inicjalizacja całego serwera AURORA Greenville RP
 // Dostępna tylko dla właściciela serwera
 
 const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
@@ -10,7 +10,7 @@ const logger = require('../../utils/logger');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('setup')
-    .setDescription('Inicjalizuje cały serwer Greenville RP (tylko właściciel)')
+    .setDescription('Inicjalizuje cały serwer AURORA Greenville RP (tylko właściciel)')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
   async execute(interaction, client, prisma) {
@@ -42,7 +42,7 @@ module.exports = {
         new EmbedBuilder()
           .setColor(0x5865F2)
           .setTitle('⚙️ Uruchamianie Setup...')
-          .setDescription('Trwa inicjalizacja serwera Greenville RP. Proszę czekać...')
+          .setDescription('Trwa inicjalizacja serwera AURORA Greenville RP. Proszę czekać...')
           .setFooter({ text: 'To może potrwać kilka minut' })
       ],
       ephemeral: true,
@@ -104,7 +104,7 @@ module.exports = {
             .setColor(0x57F287)
             .setTitle('✅ Setup Zakończony!')
             .setDescription(
-              '🎉 Serwer **Greenville RP** został pomyślnie skonfigurowany!\n\n' +
+              '🎉 Serwer **AURORA Greenville RP** został pomyślnie skonfigurowany!\n\n' +
               '**Co zostało utworzone:**\n' +
               `• **${Object.keys(roles).length}** ról\n` +
               `• **${Object.keys(channels).length}** kanałów i kategorii\n` +
@@ -115,7 +115,7 @@ module.exports = {
               '2. Ustaw bota jako najwyższą rolę w hierarchii\n' +
               '3. Skonfiguruj dashboard pod `/dashboard/ustawienia`'
             )
-            .setFooter({ text: 'Greenville RP — Setup v2.0' })
+            .setFooter({ text: 'AURORA Greenville RP — Setup v2.0' })
             .setTimestamp()
         ],
       });
@@ -149,7 +149,7 @@ const DEFAULT_QUIZ_QUESTIONS = [
     order: 1,
   },
   {
-    question: 'Jaka jest prędkość FRP w Greenville RP?',
+    question: 'Jaka jest prędkość FRP w AURORA Greenville RP?',
     answers: ['100 mph', '120 mph', '131 mph', '150 mph'],
     correct: 2,
     order: 2,

@@ -40,7 +40,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(0x1E3A5F)
-      .setTitle('🪪 DOWÓD OSOBISTY — Greenville RP')
+      .setTitle('🪪 DOWÓD OSOBISTY — AURORA Greenville RP')
       .addFields(
         { name: '👤 Imię i Nazwisko', value: `${char.firstName} ${char.lastName}`, inline: true },
         { name: '🎂 Data urodzenia', value: birthDate, inline: true },

@@ -1,4 +1,4 @@
-// setupServer.js — tworzy pełną strukturę serwera Greenville RP
+// setupServer.js — tworzy pełną strukturę serwera AURORA Greenville RP
 // Uruchamiane przez komendę /setup (tylko Owner)
 // Usuwa istniejące kanały i role, tworzy nowe
 
@@ -85,10 +85,10 @@ function buildStructure(roles, everyoneId) {
     {
       name: '❗ ──── Informacje ────', type: 4,
       children: [
-        { name: '📢│ogłoszenia',        type: 0, perm: readOnly(STAFF), topic: 'Oficjalne ogłoszenia serwera Greenville RP' },
+        { name: '📢│ogłoszenia',        type: 0, perm: readOnly(STAFF), topic: 'Oficjalne ogłoszenia serwera AURORA Greenville RP' },
         { name: '❗│regulamin',         type: 0, perm: readOnly(),       topic: 'Regulamin serwera — przeczytaj przed weryfikacją' },
         { name: '📖│słownik-rp',       type: 0, perm: readOnly(),       topic: 'Pojęcia RP: FRP, NLR, metagaming i inne' },
-        { name: '🗺️│o-greenville',     type: 0, perm: readOnly(),       topic: 'Informacje o mapie i lokacjach w Greenville' },
+        { name: '🗺️│o-aurora',     type: 0, perm: readOnly(),       topic: 'Informacje o mapie i lokacjach w AURORA' },
         { name: '🔔│rola-powiadomień',  type: 0, perm: readOnly(),       topic: 'Kliknij przycisk aby otrzymywać powiadomienia o sesjach' },
         { name: '🏆│rankingi',         type: 0, perm: readOnly(STAFF),   topic: 'Rankingi graczy i służb' },
       ],
@@ -251,15 +251,17 @@ async function setupServer(guild) {
     await delay(350);
   }
 
-  // Twórz role
-  logger.info('🎭 Tworzenie ról...');
+  // Twórz role — w odwróconej kolejności (Owner pierwszy, Niezweryfikowany ostatni)
+  // Discord wstawia każdą nową rolę na pozycję 1, przesuwając poprzednie w górę.
+  // Dlatego pierwsza stworzona rola ląduje najwyżej — tworzymy od najważniejszej do najniższej.
+  logger.info('🎭 Tworzenie ról (od najwyższej do najniższej)...');
   const createdRoles = {};
-  for (const def of ROLE_DEFS) {
+  for (const def of [...ROLE_DEFS].reverse()) {
     try {
       const role = await guild.roles.create({
         name: def.name, color: def.color,
         hoist: def.hoist, mentionable: def.mentionable,
-        reason: 'Setup Greenville RP',
+        reason: 'Setup AURORA Greenville RP',
       });
       createdRoles[def.name] = role;
       logger.info(`  ✅ @${role.name}`);
@@ -279,7 +281,7 @@ async function setupServer(guild) {
         name: cat.name,
         type: cat.type,
         permissionOverwrites: cat.perm ?? [],
-        reason: 'Setup Greenville RP',
+        reason: 'Setup AURORA Greenville RP',
       });
       logger.info(`  📁 ${category.name}`);
       await delay(400);
@@ -293,7 +295,7 @@ async function setupServer(guild) {
             topic: child.topic,
             userLimit: child.limit,
             permissionOverwrites: child.perm ?? cat.perm ?? [],
-            reason: 'Setup Greenville RP',
+            reason: 'Setup AURORA Greenville RP',
           });
           logger.info(`    ✅ ${child.name}`);
           await delay(350);

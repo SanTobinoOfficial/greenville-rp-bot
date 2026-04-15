@@ -1,4 +1,4 @@
-// Player muzyczny Greenville RP
+// Player muzyczny AURORA Greenville RP
 // Obsługuje kolejkę i komendy muzyczne
 
 const {

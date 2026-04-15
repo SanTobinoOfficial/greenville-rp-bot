@@ -7,7 +7,7 @@ Aby GitHub Actions działało poprawnie, dodaj te sekrety w:
 
 | Sekret | Wartość |
 |--------|---------|
-| `BOT_HOSTING_KEY` | `ptlc_UrMXR2v4L2p` |
+| `BOT_HOSTING_KEY` | `ptlc_6frhvjvIykVZ6QvN0p3P19jh0AC8A11MU3oMLKYPeIC` |
 | `BOT_HOSTING_SERVER_ID` | `81f3f88a` |
 
 ## Sekrety dashboardu (Vercel)

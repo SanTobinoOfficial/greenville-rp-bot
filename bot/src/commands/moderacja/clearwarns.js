@@ -60,7 +60,7 @@ module.exports = {
         { name: '📝 Powód', value: powod, inline: false },
         { name: '🛡️ Admin', value: `<@${interaction.user.id}>`, inline: true },
       )
-      .setFooter({ text: 'Greenville RP — Moderacja' })
+      .setFooter({ text: 'AURORA Greenville RP — Moderacja' })
       .setTimestamp();
 
     await logger.botLog(prisma, client, interaction.guild.id, 'logi-moderacji', embed);
@@ -76,7 +76,7 @@ module.exports = {
               { name: '🗑️ Usuniętych warnów', value: `${result.count}`, inline: true },
               { name: '📝 Powód', value: powod, inline: false },
             )
-            .setFooter({ text: 'Greenville RP — Moderacja' })
+            .setFooter({ text: 'AURORA Greenville RP — Moderacja' })
             .setTimestamp(),
         ],
       });

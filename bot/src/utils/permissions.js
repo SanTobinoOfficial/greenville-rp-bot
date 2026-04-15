@@ -1,4 +1,4 @@
-// System uprawnień bota Greenville RP
+// System uprawnień bota AURORA Greenville RP
 // Hierarchia ról i walidacja dostępu do komend
 
 // Hierarchia ról — wyższy indeks = wyższe uprawnienia

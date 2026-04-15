@@ -85,7 +85,7 @@ module.exports = {
             { name: '🕐 Data złożenia', value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: false },
           )
           .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
-          .setFooter({ text: 'Greenville RP — Egzaminy na prawo jazdy' })
+          .setFooter({ text: 'AURORA Greenville RP — Egzaminy na prawo jazdy' })
           .setTimestamp();
 
         // Przyciski akceptacji i odrzucenia terminu egzaminu

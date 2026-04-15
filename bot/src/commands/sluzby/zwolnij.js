@@ -67,7 +67,7 @@ module.exports = {
         { name: '🚔 Funkcjonariusz', value: `<@${interaction.user.id}>`, inline: true },
         { name: '🕐 Czas', value: `<t:${Math.floor(Date.now() / 1000)}:T>`, inline: true },
       )
-      .setFooter({ text: 'Greenville RP — Policja' })
+      .setFooter({ text: 'AURORA Greenville RP — Policja' })
       .setTimestamp();
 
     if (notatka) {
@@ -84,7 +84,7 @@ module.exports = {
             .setColor(COLORS.success)
             .setTitle('✅ Zostałeś/aś zwolniony/a')
             .setDescription('Twoje zatrzymanie zostało zakończone.')
-            .setFooter({ text: 'Greenville RP — Policja' })
+            .setFooter({ text: 'AURORA Greenville RP — Policja' })
             .setTimestamp(),
         ],
       });

@@ -1,4 +1,4 @@
-// Generator tablic rejestracyjnych Greenville RP
+// Generator tablic rejestracyjnych AURORA Greenville RP
 // Format: GV [3 cyfry] [2 litery]
 
 /**

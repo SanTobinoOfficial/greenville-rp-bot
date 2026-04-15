@@ -1,0 +1,42 @@
+# ==============================
+# GREENVILLE RP — .gitignore
+# ==============================
+
+# Zmienne środowiskowe (NIGDY nie commituj!)
+.env
+.env.local
+.env.production
+.env.development
+
+# Node modules
+node_modules/
+bot/node_modules/
+dashboard/node_modules/
+
+# Build output
+dashboard/.next/
+dashboard/out/
+dashboard/build/
+
+# Prisma generated client
+bot/node_modules/.prisma/
+dashboard/node_modules/.prisma/
+
+# Logi
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Greenville RP — pliki tymczasowe
+direct-setup.js
+do-githuba/
+*.zip

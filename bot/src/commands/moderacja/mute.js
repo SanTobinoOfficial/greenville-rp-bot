@@ -122,7 +122,7 @@ module.exports = {
           { name: '🔊 Wyciszenie wygasa', value: `<t:${Math.floor(expiresAt.getTime() / 1000)}:R>`, inline: true },
           { name: '🛡️ Moderator', value: `<@${interaction.user.id}>`, inline: true }
         )
-        .setFooter({ text: 'Greenville RP — Moderacja' })
+        .setFooter({ text: 'AURORA Greenville RP — Moderacja' })
         .setTimestamp();
 
       await targetUser.send({ embeds: [dmEmbed] });
@@ -183,7 +183,7 @@ module.exports = {
           inline: false,
         }
       )
-      .setFooter({ text: 'Greenville RP — System moderacji' })
+      .setFooter({ text: 'AURORA Greenville RP — System moderacji' })
       .setTimestamp();
 
     await logger.botLog(prisma, client, interaction.guild.id, 'logi-moderacji', logEmbed);

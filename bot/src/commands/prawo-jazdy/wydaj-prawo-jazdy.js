@@ -165,7 +165,7 @@ module.exports = {
         { name: '🏷️ Rola', value: roleGiven ? `✅ Nadano \`${roleName}\`` : '⚠️ Nie udało się nadać roli', inline: true },
       )
       .setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
-      .setFooter({ text: 'Greenville RP — Wydział Komunikacji' })
+      .setFooter({ text: 'AURORA Greenville RP — Wydział Komunikacji' })
       .setTimestamp();
 
     try {
@@ -195,7 +195,7 @@ module.exports = {
           { name: '👮 Egzaminator', value: examinator.tag, inline: true },
           { name: '📅 Data', value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: false },
         )
-        .setFooter({ text: 'Greenville RP — Wydział Komunikacji' })
+        .setFooter({ text: 'AURORA Greenville RP — Wydział Komunikacji' })
         .setTimestamp();
 
       await targetUser.send({ embeds: [dmEmbed] });
@@ -217,7 +217,7 @@ module.exports = {
           { name: 'Rola nadana', value: roleGiven ? '✅ Tak' : '❌ Nie', inline: true },
           { name: 'ID licencji', value: `\`${license.id}\``, inline: false },
         )
-        .setFooter({ text: `Greenville RP — Logi` })
+        .setFooter({ text: `AURORA Greenville RP — Logi` })
         .setTimestamp();
 
       await logger.botLog(prisma, client, guild.id, 'logi-weryfikacji', logEmbed);

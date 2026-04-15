@@ -94,13 +94,13 @@ module.exports = {
         const dmEmbed = new EmbedBuilder()
           .setColor(COLORS.error)
           .setTitle('🔨 Zostałeś zbanowany')
-          .setDescription(`Twój dostęp do serwera **Greenville RP** został zablokowany.`)
+          .setDescription(`Twój dostęp do serwera **AURORA Greenville RP** został zablokowany.`)
           .addFields(
             { name: '📝 Powód', value: powod, inline: false },
             { name: '⏱️ Czas trwania', value: durationLabel, inline: true },
             { name: '🛡️ Moderator', value: `<@${interaction.user.id}>`, inline: true }
           )
-          .setFooter({ text: 'Greenville RP — Moderacja' })
+          .setFooter({ text: 'AURORA Greenville RP — Moderacja' })
           .setTimestamp();
 
         if (expiresAt) {
@@ -204,7 +204,7 @@ module.exports = {
         { name: '⏱️ Czas', value: durationLabel, inline: true },
         { name: '📝 Powód', value: powod, inline: false }
       )
-      .setFooter({ text: 'Greenville RP — System moderacji' })
+      .setFooter({ text: 'AURORA Greenville RP — System moderacji' })
       .setTimestamp();
 
     if (expiresAt) {

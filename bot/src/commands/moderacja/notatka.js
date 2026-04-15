@@ -107,7 +107,7 @@ module.exports = {
             `**\`${n.id.slice(-8)}\`** • <t:${Math.floor(n.createdAt.getTime() / 1000)}:D> • @${n.author.discordUsername}\n> ${n.content}`
           ).join('\n\n')
         )
-        .setFooter({ text: `${notes.length} notatek | Greenville RP` })
+        .setFooter({ text: `${notes.length} notatek | AURORA Greenville RP` })
         .setTimestamp();
 
       await interaction.editReply({ embeds: [embed] });

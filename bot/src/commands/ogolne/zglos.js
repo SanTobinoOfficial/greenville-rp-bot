@@ -84,7 +84,7 @@ module.exports = {
         { name: '📂 Kategoria',     value: KATEGORIE_LABELS[kategoria], inline: true },
         { name: '📝 Opis',          value: opis, inline: false },
       )
-      .setFooter({ text: 'Greenville RP — Zgłoszenie' })
+      .setFooter({ text: 'AURORA Greenville RP — Zgłoszenie' })
       .setTimestamp();
 
     if (targetUser) {

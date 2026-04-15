@@ -114,7 +114,7 @@ module.exports = {
           inline: false,
         }
       )
-      .setFooter({ text: `Greenville RP — Historia mandatów • Łącznie: ${allFines.length} wpisów` })
+      .setFooter({ text: `AURORA Greenville RP — Historia mandatów • Łącznie: ${allFines.length} wpisów` })
       .setTimestamp();
 
     // Ostrzeżenie przy bliskim limicie

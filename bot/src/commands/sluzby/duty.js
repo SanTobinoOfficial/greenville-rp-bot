@@ -86,7 +86,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor(config.color)
       .setTimestamp()
-      .setFooter({ text: 'Greenville RP — System Służb' });
+      .setFooter({ text: 'AURORA Greenville RP — System Służb' });
 
     if (isOnDuty) {
       // Wyjście ze służby

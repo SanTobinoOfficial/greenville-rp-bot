@@ -64,7 +64,7 @@ module.exports = {
                 .setColor(0xED4245)
                 .setTitle('❌ Brak w grupie Roblox')
                 .setDescription(
-                  `Twoje konto Roblox **${robloxNick}** nie należy do grupy serwera Greenville RP.\n` +
+                  `Twoje konto Roblox **${robloxNick}** nie należy do grupy serwera AURORA Greenville RP.\n` +
                   `Dołącz do grupy i spróbuj ponownie.`
                 )
             ],
@@ -133,7 +133,7 @@ module.exports = {
               `📱 **Twój numer telefonu RP:** \`${phoneNumber}\`\n\n` +
               `**Następny krok:** Kliknij przycisk **"📋 Przejdź do quizu"** aby dokończyć weryfikację.`
             )
-            .setFooter({ text: 'Greenville RP — Weryfikacja' })
+            .setFooter({ text: 'AURORA Greenville RP — Weryfikacja' })
         ],
       });
 

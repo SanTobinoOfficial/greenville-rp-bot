@@ -152,13 +152,13 @@ module.exports = {
       const dmEmbed = new EmbedBuilder()
         .setColor(typ === 'areszt' ? COLORS.error : COLORS.warning)
         .setTitle(`🚔 Otrzymałeś ${typ === 'mandat' ? 'mandat' : typ === 'grzywna' ? 'grzywnę' : 'areszt'}`)
-        .setDescription('Zostałeś ukarany przez służby porządkowe Greenville RP.')
+        .setDescription('Zostałeś ukarany przez służby porządkowe AURORA Greenville RP.')
         .addFields(
           { name: '📋 Typ', value: typ.charAt(0).toUpperCase() + typ.slice(1), inline: true },
           { name: '📝 Powód', value: powod, inline: false },
           { name: '👮 Wystawił', value: `<@${interaction.user.id}>`, inline: true }
         )
-        .setFooter({ text: 'Greenville RP — Służby Porządkowe' })
+        .setFooter({ text: 'AURORA Greenville RP — Służby Porządkowe' })
         .setTimestamp();
 
       if (kwota) {
@@ -201,7 +201,7 @@ module.exports = {
           inline: false,
         }
       )
-      .setFooter({ text: `Greenville RP — Służby Porządkowe • ${new Date().toLocaleDateString('pl-PL')}` })
+      .setFooter({ text: `AURORA Greenville RP — Służby Porządkowe • ${new Date().toLocaleDateString('pl-PL')}` })
       .setTimestamp();
 
     if (kwota) {

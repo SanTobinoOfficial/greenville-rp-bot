@@ -105,7 +105,7 @@ module.exports = {
           inline: true,
         }
       )
-      .setFooter({ text: `Greenville RP — Moderacja • Case #${caseData.caseNumber}` })
+      .setFooter({ text: `AURORA Greenville RP — Moderacja • Case #${caseData.caseNumber}` })
       .setTimestamp();
 
     // Opcjonalne pola — czas trwania

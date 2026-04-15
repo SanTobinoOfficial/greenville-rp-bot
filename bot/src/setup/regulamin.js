@@ -1,10 +1,10 @@
-// Treść regulaminu Greenville RP jako embedy Discord
+// Treść regulaminu AURORA Greenville RP jako embedy Discord
 // Wysyłany na kanał #regulamin podczas /setup
 
 const { EmbedBuilder } = require('discord.js');
 
 const COLOR = 0xE74C3C;
-const FOOTER = { text: 'Greenville RP — Regulamin Serwera' };
+const FOOTER = { text: 'AURORA Greenville RP — Regulamin Serwera' };
 
 function buildRegulaminEmbeds() {
   const embeds = [];
@@ -13,9 +13,9 @@ function buildRegulaminEmbeds() {
   embeds.push(
     new EmbedBuilder()
       .setColor(COLOR)
-      .setTitle('📜 REGULAMIN SERWERA DISCORD — Greenville RP')
+      .setTitle('📜 REGULAMIN SERWERA DISCORD — AURORA Greenville RP')
       .setDescription(
-        '> Witaj na serwerze **Greenville RP**! Przed rozpoczęciem rozgrywki zapoznaj się z poniższym regulaminem.\n> Dołączając do serwera, automatycznie akceptujesz wszystkie poniższe zasady.'
+        '> Witaj na serwerze **AURORA Greenville RP**! Przed rozpoczęciem rozgrywki zapoznaj się z poniższym regulaminem.\n> Dołączając do serwera, automatycznie akceptujesz wszystkie poniższe zasady.'
       )
       .addFields({
         name: '§1. Postanowienia ogólne',
@@ -131,7 +131,7 @@ function buildRegulaminEmbeds() {
 function buildPojeciaRpEmbed() {
   return new EmbedBuilder()
     .setColor(0x3498DB)
-    .setTitle('📚 Pojęcia Roleplay — Greenville RP')
+    .setTitle('📚 Pojęcia Roleplay — AURORA Greenville RP')
     .setDescription('Znajomość poniższych pojęć jest **obowiązkowa** podczas sesji RP!')
     .addFields(
       {
@@ -172,7 +172,7 @@ function buildPojeciaRpEmbed() {
         ].join('\n'),
       }
     )
-    .setFooter({ text: 'Greenville RP — Pojęcia RP' })
+    .setFooter({ text: 'AURORA Greenville RP — Pojęcia RP' })
     .setTimestamp();
 }
 

@@ -70,7 +70,7 @@ module.exports = {
         { name: '💡 Powód cofnięcia', value: powod, inline: false },
         { name: '🛡️ Staff',     value: `<@${interaction.user.id}>`, inline: true },
       )
-      .setFooter({ text: 'Greenville RP — Mandaty RP' })
+      .setFooter({ text: 'AURORA Greenville RP — Mandaty RP' })
       .setTimestamp();
 
     await logger.botLog(prisma, client, interaction.guild.id, 'logi-mandaty', embed);

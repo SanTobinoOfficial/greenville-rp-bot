@@ -26,19 +26,25 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  character      Character?
-  vehicles       Vehicle[]
-  licenses       License[]
-  casesAsTarget  Case[]          @relation("TargetUser")
-  casesAsMod     Case[]          @relation("ModeratorUser")
-  applications   Application[]
-  tickets        Ticket[]
-  smsSent        SMS[]           @relation("Sender")
-  smsReceived    SMS[]           @relation("Receiver")
-  finesReceived  Fine[]          @relation("TargetFine")
-  finesIssued    Fine[]          @relation("IssuedFine")
-  sessionSignups SessionSignup[]
-  quizTokens     QuizToken[]
+  character        Character?
+  vehicles         Vehicle[]
+  licenses         License[]
+  casesAsTarget    Case[]          @relation("TargetUser")
+  casesAsMod       Case[]          @relation("ModeratorUser")
+  applications     Application[]
+  tickets          Ticket[]
+  smsSent          SMS[]           @relation("Sender")
+  smsReceived      SMS[]           @relation("Receiver")
+  finesReceived    Fine[]          @relation("TargetFine")
+  finesIssued      Fine[]          @relation("IssuedFine")
+  sessionSignups   SessionSignup[]
+  quizTokens       QuizToken[]
+  dutyLogs        DutyLog[]
+  arrests         Arrest[]        @relation("ArrestTarget")
+  officerArrests  Arrest[]        @relation("ArrestOfficer")
+  news            News[]
+  notesReceived   Note[]          @relation("NoteTarget")
+  notesGiven      Note[]          @relation("NoteAuthor")
 }
 
 // ==================== POSTAĆ (DOWÓD OSOBISTY) ====================
@@ -333,4 +339,61 @@ model BotLog {
   message   String
   data      Json?
   createdAt DateTime @default(now())
+}
+
+// ==================== LOGI DUTY SŁUŻB ====================
+
+model DutyLog {
+  id        String   @id @default(cuid())
+  userId    String
+  service   String   // POLICJA, EMS, STRAZ, DOT, STRAZ_MIEJSKA, TAKSOWKARZ
+  action    String   // ON_DUTY, OFF_DUTY
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ==================== ZATRZYMANIA (ARESZT) ====================
+
+model Arrest {
+  id          String    @id @default(cuid())
+  targetId    String
+  officerId   String
+  reason      String
+  active      Boolean   @default(true)
+  releasedAt  DateTime?
+  releasedBy  String?
+  createdAt   DateTime  @default(now())
+
+  target  User @relation("ArrestTarget",  fields: [targetId],  references: [id], onDelete: Cascade)
+  officer User @relation("ArrestOfficer", fields: [officerId], references: [id], onDelete: Cascade)
+}
+
+// ==================== AKTUALNOŚCI (NEWS) ====================
+
+model News {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String   @default("Ogłoszenie")
+  imageUrl  String?
+  pinned    Boolean  @default(false)
+  published Boolean  @default(true)
+  authorId  String
+  createdAt DateTime @default(now())
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+// ==================== NOTATKI MODERACYJNE ====================
+
+model Note {
+  id        String   @id @default(cuid())
+  targetId  String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  target User @relation("NoteTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  author User @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 }

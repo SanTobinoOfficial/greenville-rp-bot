@@ -63,12 +63,12 @@ module.exports = {
       const dmEmbed = new EmbedBuilder()
         .setColor(COLORS.mod_kick)
         .setTitle('👢 Zostałeś wyrzucony z serwera')
-        .setDescription('Twój dostęp do serwera **Greenville RP** został tymczasowo usunięty. Możesz dołączyć ponownie.')
+        .setDescription('Twój dostęp do serwera **AURORA Greenville RP** został tymczasowo usunięty. Możesz dołączyć ponownie.')
         .addFields(
           { name: '📝 Powód', value: powod, inline: false },
           { name: '🛡️ Moderator', value: `<@${interaction.user.id}>`, inline: true }
         )
-        .setFooter({ text: 'Greenville RP — Moderacja' })
+        .setFooter({ text: 'AURORA Greenville RP — Moderacja' })
         .setTimestamp();
 
       await targetUser.send({ embeds: [dmEmbed] });
@@ -121,7 +121,7 @@ module.exports = {
         { name: '🛡️ Moderator', value: `<@${interaction.user.id}>`, inline: true },
         { name: '📝 Powód', value: powod, inline: false }
       )
-      .setFooter({ text: 'Greenville RP — System moderacji' })
+      .setFooter({ text: 'AURORA Greenville RP — System moderacji' })
       .setTimestamp();
 
     await logger.botLog(prisma, client, interaction.guild.id, 'logi-moderacji', logEmbed);

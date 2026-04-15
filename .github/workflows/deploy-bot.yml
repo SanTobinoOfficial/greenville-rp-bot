@@ -46,7 +46,7 @@ jobs:
           BOT_HOSTING_KEY: ${{ secrets.BOT_HOSTING_KEY }}
           BOT_HOSTING_SERVER_ID: ${{ secrets.BOT_HOSTING_SERVER_ID }}
         run: |
-          PANEL_HOST="panel.bot-hosting.net"
+          PANEL_HOST="control.bot-hosting.net"
           SERVER_ID="${BOT_HOSTING_SERVER_ID}"
           API_KEY="${BOT_HOSTING_KEY}"
 
@@ -97,13 +97,13 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.BOT_HOSTING_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{"signal":"restart"}' \
-            "https://panel.bot-hosting.net/api/client/servers/${{ secrets.BOT_HOSTING_SERVER_ID }}/power")
+            "https://control.bot-hosting.net/api/client/servers/${{ secrets.BOT_HOSTING_SERVER_ID }}/power")
 
           if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
             echo "✅ Bot zrestartowany pomyślnie!"
           else
             echo "❌ Restart nieudany (HTTP $HTTP_CODE)"
-            echo "   Zrestartuj ręcznie w panelu: https://panel.bot-hosting.net"
+            echo "   Zrestartuj ręcznie w panelu: https://control.bot-hosting.net"
             exit 1
           fi
 
@@ -114,4 +114,4 @@ jobs:
           echo "- **Czas:** $(date '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Autor:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Panel:** https://panel.bot-hosting.net" >> $GITHUB_STEP_SUMMARY
+          echo "- **Panel:** https://control.bot-hosting.net" >> $GITHUB_STEP_SUMMARY

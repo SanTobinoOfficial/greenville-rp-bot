@@ -102,7 +102,7 @@ module.exports = {
           inline: false,
         }
       )
-      .setFooter({ text: 'Greenville RP — Moderacja' })
+      .setFooter({ text: 'AURORA Greenville RP — Moderacja' })
       .setTimestamp();
 
     if (fine.amount) {

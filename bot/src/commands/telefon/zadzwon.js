@@ -63,12 +63,12 @@ module.exports = {
       const receiverMember = await interaction.guild.members.fetch(receiver.discordId);
       const callEmbed = new EmbedBuilder()
         .setColor(0x25D366)
-        .setTitle('📞 Połączenie przychodzące — Greenville RP')
+        .setTitle('📞 Połączenie przychodzące — AURORA Greenville RP')
         .setDescription(
           `Dzwoni: **\`${caller.phoneNumber}\`**\n\n` +
           'Odbierz lub odrzuć połączenie.'
         )
-        .setFooter({ text: 'Greenville RP — System Telefoniczny' })
+        .setFooter({ text: 'AURORA Greenville RP — System Telefoniczny' })
         .setTimestamp();
 
       const row = new ActionRowBuilder().addComponents(

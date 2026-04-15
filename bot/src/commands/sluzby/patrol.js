@@ -65,7 +65,7 @@ module.exports = {
               { name: '📍 Rejon', value: rejon, inline: true },
               { name: '🕐 Start', value: `<t:${Math.floor(Date.now() / 1000)}:T>`, inline: true },
             )
-            .setFooter({ text: 'Greenville RP — System Patroli' })
+            .setFooter({ text: 'AURORA Greenville RP — System Patroli' })
             .setTimestamp(),
         ],
       });
@@ -94,7 +94,7 @@ module.exports = {
               { name: '📍 Rejon', value: patrol.rejon, inline: true },
               { name: '⏱️ Czas trwania', value: durationStr, inline: true },
             )
-            .setFooter({ text: 'Greenville RP — System Patroli' })
+            .setFooter({ text: 'AURORA Greenville RP — System Patroli' })
             .setTimestamp(),
         ],
       });
@@ -116,7 +116,7 @@ module.exports = {
             .setColor(COLORS.info)
             .setTitle(`🚔 Aktywne patrole (${activePatrols.size})`)
             .setDescription(list)
-            .setFooter({ text: 'Greenville RP — System Patroli' })
+            .setFooter({ text: 'AURORA Greenville RP — System Patroli' })
             .setTimestamp(),
         ],
       });

@@ -43,7 +43,7 @@ module.exports = {
       .setColor(0xF59E0B)
       .setTitle(`🚗 Twoje pojazdy — ${user.vehicles.length}/${maxVehicles}`)
       .setDescription(vehicleList)
-      .setFooter({ text: 'Greenville RP — Rejestracja pojazdów' })
+      .setFooter({ text: 'AURORA Greenville RP — Rejestracja pojazdów' })
       .setTimestamp();
 
     await interaction.editReply({ embeds: [embed] });

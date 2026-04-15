@@ -167,7 +167,7 @@ module.exports = {
         `📂 **Kategoria:** ${categoryLabel}\n` +
         `🕐 **Otwarto:** <t:${Math.floor(Date.now() / 1000)}:F>`
       )
-      .setFooter({ text: `Greenville RP • Ticket #${ticketNumber}` })
+      .setFooter({ text: `AURORA Greenville RP • Ticket #${ticketNumber}` })
       .setTimestamp();
 
     // Przyciski akcji w kanale ticketu

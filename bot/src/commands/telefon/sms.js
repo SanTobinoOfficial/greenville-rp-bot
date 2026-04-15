@@ -70,7 +70,7 @@ module.exports = {
         { name: '📥 Do', value: `\`${targetNumber}\``, inline: true },
         { name: '💬 Treść', value: content, inline: false },
       )
-      .setFooter({ text: 'Greenville RP — System Telefoniczny' })
+      .setFooter({ text: 'AURORA Greenville RP — System Telefoniczny' })
       .setTimestamp();
 
     const telefonChannel = interaction.guild.channels.cache.find(
@@ -87,7 +87,7 @@ module.exports = {
         embeds: [
           new EmbedBuilder()
             .setColor(0x25D366)
-            .setTitle('📱 Nowy SMS — Greenville RP')
+            .setTitle('📱 Nowy SMS — AURORA Greenville RP')
             .addFields(
               { name: '📤 Od numeru', value: `\`${sender.phoneNumber}\``, inline: true },
               { name: '💬 Treść', value: content, inline: false },

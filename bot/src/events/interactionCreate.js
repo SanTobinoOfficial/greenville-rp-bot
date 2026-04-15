@@ -140,8 +140,8 @@ const BUTTON_HANDLERS = {
 const BUTTON_PREFIX_HANDLERS = {
   'quiz':      'verification/quizAnswer',   // quiz_A_0, quiz_B_2, itd.
   'session':   'sessions/sessionButton',
-  'license':   'licenses/licenseButton',
-  'appeal':    'moderation/appealButton',
+  'license':   'licenses/applyLicense',
+  'job':       'jobs/jobApply',             // job_apply_[jobId], job_cancel
 };
 
 const MODAL_HANDLERS = {
@@ -149,17 +149,18 @@ const MODAL_HANDLERS = {
   'modal_verify_roblox':   'verification/robloxModal',        // stary (fallback)
   'modal_character':       'characters/characterModal',
   'modal_vehicle':         'vehicles/vehicleModal',
-  'modal_ticket_category': 'tickets/ticketCategoryModal',
 };
 
 const MODAL_PREFIX_HANDLERS = {
-  'modal': 'genericModal',
+  'job': 'jobs/jobModal',  // job_modal_[jobId]
 };
 
 const SELECT_HANDLERS = {
-  'application_select': 'applications/applicationSelect',
-  'ticket_category':    'tickets/ticketCategorySelect',
-  'license_select':     'licenses/licenseSelect',
+  'application_select':    'applications/applicationSelect',
+  'ticket_category':       'tickets/ticketCategorySelect',
+  'license_select':        'licenses/licenseSelect',
+  'job_select_kategoria':  'jobs/jobSelectKategoria',
+  'job_select_praca':      'jobs/jobSelectPraca',
 };
 
 const SELECT_PREFIX_HANDLERS = {};

@@ -81,7 +81,7 @@ module.exports = {
         `📊 Podsumowanie: ✅ ${activeCount} aktywnych | ⏸️ ${suspendedCount} zawieszonych | ❌ ${revokedCount} unieważnionych`
       )
       .setThumbnail(targetUser.displayAvatarURL({ dynamic: true }))
-      .setFooter({ text: 'Greenville RP — Wydział Komunikacji' })
+      .setFooter({ text: 'AURORA Greenville RP — Wydział Komunikacji' })
       .setTimestamp();
 
     // Dodaj każdą licencję jako osobne pole

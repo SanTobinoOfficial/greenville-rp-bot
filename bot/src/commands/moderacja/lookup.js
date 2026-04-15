@@ -73,7 +73,7 @@ module.exports = {
       .setColor(COLORS.warning)
       .setTitle(`🔍 Lookup — ${targetUser.tag}`)
       .setThumbnail(targetUser.displayAvatarURL())
-      .setFooter({ text: wszystkie ? 'Greenville RP — Pełna historia' : 'Greenville RP — Aktywne kary' })
+      .setFooter({ text: wszystkie ? 'AURORA Greenville RP — Pełna historia' : 'AURORA Greenville RP — Aktywne kary' })
       .setTimestamp();
 
     // Cases

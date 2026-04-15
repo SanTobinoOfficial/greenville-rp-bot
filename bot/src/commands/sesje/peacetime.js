@@ -142,7 +142,7 @@ module.exports = {
         { name: '👤 Zmienił', value: `${interaction.user}`, inline: true },
         { name: '🕐 Kiedy',   value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true },
       )
-      .setFooter({ text: 'Greenville RP — System Peacetime' })
+      .setFooter({ text: 'AURORA Greenville RP — System Peacetime' })
       .setTimestamp();
 
     // Wyślij ogłoszenie do kanału RP

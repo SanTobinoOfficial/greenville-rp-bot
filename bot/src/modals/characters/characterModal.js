@@ -103,7 +103,7 @@ module.exports = {
       // Embed dowodu osobistego
       const dowodEmbed = new EmbedBuilder()
         .setColor(0x1E3A5F)
-        .setTitle('🪪 DOWÓD OSOBISTY — Greenville RP')
+        .setTitle('🪪 DOWÓD OSOBISTY — AURORA Greenville RP')
         .setThumbnail(`https://flagcdn.com/w40/pl.png`)
         .addFields(
           { name: '👤 Imię i Nazwisko', value: `${firstName} ${lastName}`, inline: true },
@@ -113,7 +113,7 @@ module.exports = {
           { name: '🪪 Nr dokumentu', value: `\`${documentId}\``, inline: true },
           { name: '📱 Nr telefonu', value: user.phoneNumber ? `\`${user.phoneNumber}\`` : 'Brak', inline: true },
         )
-        .setFooter({ text: `Greenville RP | Discord: ${interaction.user.tag}` })
+        .setFooter({ text: `AURORA Greenville RP | Discord: ${interaction.user.tag}` })
         .setTimestamp();
 
       if (eyeColor || hairColor) {

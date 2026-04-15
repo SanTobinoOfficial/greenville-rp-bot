@@ -72,7 +72,7 @@ module.exports = {
       // Embed pojazdu
       const vehicleEmbed = new EmbedBuilder()
         .setColor(0xF59E0B)
-        .setTitle('🚗 Dowód Rejestracyjny — Greenville RP')
+        .setTitle('🚗 Dowód Rejestracyjny — AURORA Greenville RP')
         .addFields(
           { name: '🚗 Pojazd', value: `${marka} ${model} (${rok})`, inline: true },
           { name: '🎨 Kolor', value: kolor, inline: true },

@@ -1,4 +1,4 @@
-// Główny plik bota Greenville RP
+// Główny plik bota AURORA Greenville RP
 // Inicjalizuje klienta Discord, ładuje komendy i eventy
 
 require('dotenv').config({ path: require('path').join(__dirname, '../../.env') });
@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const { startStatsUpdater } = require('./utils/statsUpdater');
 const { startRadio } = require('./music/radioManager');
+const { startApiServer } = require('./api/server');
 const logger = require('./utils/logger');
 
 // Inicjalizacja klienta Discord z pełnymi uprawnieniami
@@ -92,6 +93,9 @@ async function main() {
       create: { id: 'global' },
       update: {},
     });
+
+    // Uruchom wewnętrzny serwer API (bot ↔ dashboard)
+    startApiServer(client, prisma);
 
     await client.login(process.env.DISCORD_TOKEN);
   } catch (error) {

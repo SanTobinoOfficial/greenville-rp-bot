@@ -99,7 +99,7 @@ module.exports = {
           inline: true,
         },
       )
-      .setFooter({ text: 'Greenville RP — Profil gracza' })
+      .setFooter({ text: 'AURORA Greenville RP — Profil gracza' })
       .setTimestamp();
 
     if (isArrested) {

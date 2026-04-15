@@ -21,7 +21,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor(0x5865F2)
       .setTitle('🎵 Kolejka muzyczna')
-      .setFooter({ text: 'Greenville RP — Muzyka' })
+      .setFooter({ text: 'AURORA Greenville RP — Muzyka' })
       .setTimestamp();
 
     if (queue.currentTrack) {

@@ -7,7 +7,7 @@ const { COLORS } = require('../../utils/embed');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('czas')
-    .setDescription('Sprawdź aktualny czas na serwerze Greenville RP'),
+    .setDescription('Sprawdź aktualny czas na serwerze AURORA Greenville RP'),
 
   async execute(interaction, client, prisma) {
     await interaction.deferReply({ ephemeral: false });
@@ -38,12 +38,12 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(COLORS.primary)
-      .setTitle('🕐 Czas Serwera — Greenville RP')
+      .setTitle('🕐 Czas Serwera — AURORA Greenville RP')
       .addFields(
         { name: '📅 Aktualna data i czas',     value: `**${plTime}**`, inline: false },
         { name: '🕓 Timestamp Discord',         value: `<t:${Math.floor(now.getTime() / 1000)}:F>`, inline: false },
       )
-      .setFooter({ text: 'Greenville RP — Strefa czasowa: Europe/Warsaw (CET/CEST)' })
+      .setFooter({ text: 'AURORA Greenville RP — Strefa czasowa: Europe/Warsaw (CET/CEST)' })
       .setTimestamp();
 
     if (ongoingSession) {

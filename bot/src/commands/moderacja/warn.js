@@ -219,7 +219,7 @@ module.exports = {
           { name: '🔢 Numer case', value: `#${newCase.caseNumber}`, inline: true },
           { name: '📊 Aktywne ostrzeżenia', value: `${activeWarns}/${warnAutoBanCount}`, inline: true }
         )
-        .setFooter({ text: 'Greenville RP — Moderacja' })
+        .setFooter({ text: 'AURORA Greenville RP — Moderacja' })
         .setTimestamp();
 
       if (expiresAt) {
@@ -253,7 +253,7 @@ module.exports = {
         { name: '📝 Powód', value: powod, inline: false },
         { name: '📊 Aktywne warny', value: `${activeWarns}/${warnAutoBanCount}`, inline: true }
       )
-      .setFooter({ text: 'Greenville RP — System moderacji' })
+      .setFooter({ text: 'AURORA Greenville RP — System moderacji' })
       .setTimestamp();
 
     if (expiresAt) {

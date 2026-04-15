@@ -56,7 +56,7 @@ module.exports = {
           (c.expiresAt ? ` • wygasa <t:${Math.floor(c.expiresAt.getTime() / 1000)}:R>` : '')
         ).join('\n\n')
       )
-      .setFooter({ text: `${activeCases.length} aktywnych kar | Greenville RP` })
+      .setFooter({ text: `${activeCases.length} aktywnych kar | AURORA Greenville RP` })
       .setTimestamp();
 
     await interaction.editReply({ embeds: [embed] });

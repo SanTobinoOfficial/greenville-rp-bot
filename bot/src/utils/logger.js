@@ -1,4 +1,4 @@
-// Centralny system logowania bota Greenville RP
+// Centralny system logowania bota AURORA Greenville RP
 // Loguje zdarzenia do konsoli i opcjonalnie do bazy danych
 
 const { PrismaClient } = require('@prisma/client');

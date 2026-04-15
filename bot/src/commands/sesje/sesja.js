@@ -136,7 +136,7 @@ module.exports = {
         { name: '🕐 Kiedy',         value: `<t:${unixTs}:R>`,               inline: true  },
         { name: '📝 Opis',          value: opisField,                        inline: false },
       )
-      .setFooter({ text: `Greenville RP • Sesja ID: ${session.id.slice(0, 8)}` })
+      .setFooter({ text: `AURORA Greenville RP • Sesja ID: ${session.id.slice(0, 8)}` })
       .setTimestamp();
 
     // Przyciski akcji sesji (ID zawiera ID sesji w bazie)

@@ -138,7 +138,7 @@ module.exports = {
           { name: '📅 Data', value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: false },
           { name: '📝 Powód', value: powod, inline: false },
         )
-        .setFooter({ text: 'Greenville RP — Wydział Komunikacji | Jeśli uważasz to za błąd, skontaktuj się z administracją.' })
+        .setFooter({ text: 'AURORA Greenville RP — Wydział Komunikacji | Jeśli uważasz to za błąd, skontaktuj się z administracją.' })
         .setTimestamp();
 
       await targetUser.send({ embeds: [dmEmbed] });
@@ -161,7 +161,7 @@ module.exports = {
           { name: 'ID licencji', value: `\`${license.id}\``, inline: true },
           { name: 'Powód', value: powod, inline: false },
         )
-        .setFooter({ text: 'Greenville RP — Logi' })
+        .setFooter({ text: 'AURORA Greenville RP — Logi' })
         .setTimestamp();
 
       await logger.botLog(prisma, client, guild.id, 'logi-weryfikacji', logEmbed);

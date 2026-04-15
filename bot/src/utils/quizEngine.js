@@ -1,5 +1,6 @@
-// quizEngine.js — silnik quizu weryfikacyjnego in-Discord
+// quizEngine.js — silnik quizu weryfikacyjnego in-Discord (pytania zamknięte A/B/C/D)
 // Używa in-memory Map do przechowywania stanu quizu (ephemeral wiadomości)
+// Pytania otwarte dostępne są wyłącznie w quizie webowym (/quiz/{token})
 
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const logger = require('./logger');
@@ -7,67 +8,168 @@ const logger = require('./logger');
 // Mapa stanu quizu: discordId → { questionIndex, score, questions, startTime }
 const quizSessions = new Map();
 
-// Pytania quizu — regulamin Greenville RP
+// ─────────────────────────────────────────────────────────────────────────────
+//  BAZA PYTAŃ — 25 pytań zamkniętych (losujemy 10 do każdego podejścia)
+// ─────────────────────────────────────────────────────────────────────────────
 const ALL_QUESTIONS = [
+  // ── Podstawowe pojęcia RP ─────────────────────────────────────────────────
   {
     q: 'Co oznacza skrót **FRP** (Fail Role Play)?',
-    options: ['Zachowanie niezgodne z realiami RP', 'Typ pojazdu w Greenville', 'Komenda bota do sesji', 'Nazwa służby na serwerze'],
+    options: ['Zachowanie niezgodne z realiami RP', 'Typ pojazdu w AURORA', 'Komenda bota do sesji', 'Nazwa służby na serwerze'],
     answer: 0,
-    tip: 'FRP = zachowanie łamiące realizm RP, np. ignorowanie śmierci, teleportowanie się itp.',
+    tip: 'FRP = zachowanie łamiące realizm RP, np. ignorowanie obrażeń, skakanie z dachu bez konsekwencji.',
   },
   {
     q: 'Co to jest **NLR** (New Life Rule)?',
-    options: ['Nowy regulamin serwera', 'Zasada zapominania wszystkiego po śmierci postaci', 'Komenda resetu postaci', 'Nazwa dzielnicy w Greenville'],
+    options: ['Nowy regulamin serwera', 'Zasada zapominania wszystkiego po śmierci postaci', 'Komenda resetu postaci', 'Nazwa dzielnicy w AURORA'],
     answer: 1,
-    tip: 'NLR = po śmierci postaci zapominasz wszystko co zdarzyło się przed śmiercią.',
+    tip: 'NLR = po śmierci postaci zapominasz wszystko — kto cię zabił, gdzie i dlaczego.',
   },
   {
     q: 'Co to jest **metagaming**?',
     options: ['Granie kilkoma postaciami naraz', 'Używanie informacji z zewnątrz (np. Discord) w grze RP', 'Zbieranie punktów doświadczenia', 'Hackowanie serwera Roblox'],
     answer: 1,
-    tip: 'Metagaming = korzystanie z wiedzy zdobytej poza postacią (np. z czatu na Discord) podczas sesji.',
+    tip: 'Metagaming = twoja postać wie tylko to, co sama odkryła w grze.',
   },
   {
-    q: 'Jakie minimum punktów musisz uzyskać w quizie weryfikacyjnym?',
-    options: ['5 na 10', '6 na 10', '7 na 10', '8 na 10'],
-    answer: 3,
-    tip: 'Wymagane minimum to 8/10 punktów.',
-  },
-  {
-    q: 'Czego NIE wolno robić podczas sesji RP?',
-    options: ['Jeździć samochodem zgodnie z przepisami', 'Używać nicków i języka pozaRP w rozmowach IC', 'Zgłaszać problemów przez ticket', 'Wykonywać zleceń swojej służby'],
+    q: 'Co to jest **powergaming**?',
+    options: ['Granie wyłącznie po nagrody', 'Narzucanie innym akcji bez możliwości reakcji, działanie ponad własne możliwości', 'Szybka jazda pojazdem uprzywilejowanym', 'Zbieranie wszystkich dostępnych prac'],
     answer: 1,
-    tip: 'IC (In Character) = rozmawiasz jako postać, nie jako ty. Używanie nicków i OOC-mowy łamie immersję.',
+    tip: 'Powergaming = np. "/me unieruchamia gracza" bez dania mu szansy na odpowiedź.',
   },
   {
-    q: 'Co powinnaś/powinieneś zrobić, jeśli masz problem z innym graczem podczas sesji?',
-    options: ['Kłócić się z nim na kanale głosowym', 'Wyjść z serwera', 'Zignorować i nie reagować', 'Otworzyć ticket lub zgłosić staffowi'],
-    answer: 3,
-    tip: 'Problemy między graczami rozwiązuje się przez system ticketów lub kontakt ze staffem.',
+    q: 'Co to jest **RDM** (Random Death Match)?',
+    options: ['Dozwolony tryb walki w strefy PvP', 'Zabijanie graczy bez uzasadnionego powodu RP', 'Błąd techniczny serwera Roblox', 'Nazwa misji policyjnej'],
+    answer: 1,
+    tip: 'RDM = atak bez scenariusza RP — skutkuje warnem lub banem.',
   },
   {
-    q: 'Czym jest rola **Mieszkaniec**?',
-    options: ['Rola VIP dla boosterów', 'Rola staffu serwera', 'Rola uzyskiwana po pozytywnym przejściu weryfikacji', 'Rola automatyczna dla każdego kto wejdzie na serwer'],
+    q: 'Co to jest **VDM** (Vehicle Death Match)?',
+    options: ['Wyścigi uliczne w strefie auto', 'Celowe potrącanie graczy pojazdem bez powodu fabularnego', 'Zlecenie przewozu dla taksówkarzy', 'System kolizji pojazdów'],
+    answer: 1,
+    tip: 'VDM = trącenie/rozjechanie gracza bez podstawy RP. Karane tak samo jak RDM.',
+  },
+
+  // ── Zasady zachowania ─────────────────────────────────────────────────────
+  {
+    q: 'Czego NIE wolno robić podczas sesji RP w IC?',
+    options: ['Jeździć zgodnie z przepisami', 'Używać nicków Discord i mówić o Roblox w rozmowie IC', 'Zgłaszać problemów przez ticket', 'Wykonywać zleceń swojej służby'],
+    answer: 1,
+    tip: 'IC = rozmawiasz jako postać. Wyrwanie się z roli niszczy immersję.',
+  },
+  {
+    q: 'Czym jest zasada **Fear RP**?',
+    options: ['Zakaz agresywnego RP', 'Zasada nakazująca postaci zachowywać się ze strachem w sytuacjach zagrożenia życia', 'System zarządzania ryzykiem dla policji', 'Wyjście z sesji gdy boisz się konsekwencji'],
+    answer: 1,
+    tip: 'Fear RP = gdy ktoś przyłożył ci broń do głowy, twoja postać się boi i nie atakuje.',
+  },
+  {
+    q: 'Kiedy zasada Fear RP przestaje obowiązywać?',
+    options: ['Nigdy', 'Gdy kupisz pancerz lub tarczę', 'Gdy bezpośrednie zagrożenie dla postaci minie', 'Gdy wejdziesz do pojazdu'],
     answer: 2,
-    tip: 'Mieszkaniec = pełna weryfikacja — połączyłeś Roblox i zdałeś quiz. Masz dostęp do kanałów RP.',
+    tip: 'Fear RP wygasa gdy broń nie jest wycelowana lub napastnik odszedł.',
   },
   {
-    q: 'Jakiego języka należy używać na serwerze Discord Greenville RP?',
-    options: ['Angielskiego', 'Polskiego', 'Dowolnego europejskiego', 'Polskiego lub angielskiego'],
+    q: 'Jakie działanie jest przykładem naruszenia **NLR**?',
+    options: ['Powrót do domu po zakończeniu scenariusza', 'Powrót na miejsce własnej śmierci, żeby zemścić się lub odzyskać rzeczy', 'Używanie nowego pojazdu po utracie poprzedniego', 'Kontaktowanie się ze staffem przez ticket'],
     answer: 1,
-    tip: 'Greenville RP to polski serwer — obowiązuje język polski.',
+    tip: 'NLR zakazuje powrotu w to samo miejsce i zemsty — twoja postać nie pamięta zdarzenia.',
   },
   {
-    q: 'Co grozi za **rdm** (Random Death Match) — zabijanie bez powodu RP?',
-    options: ['Nic, to dozwolone', 'Ostrzeżenie lub ban', 'Tylko kick z sesji', 'Tylko usunięcie roli'],
+    q: 'W jakim języku należy rozmawiać podczas sesji RP na AURORA Greenville RP?',
+    options: ['Angielskim', 'Polskim', 'Angielskim lub polskim do wyboru', 'Dowolnym europejskim'],
     answer: 1,
-    tip: 'RDM jest poważnym naruszeniem regulaminu i może skutkować warnem lub banem.',
+    tip: 'AURORA Greenville RP to polskojęzyczny serwer — obowiązuje język polski IC i OOC.',
   },
+
+  // ── Służby i role ─────────────────────────────────────────────────────────
   {
-    q: 'Ile kanałów głosowych ma kategoria **Głosowe** dostępna dla wszystkich mieszkańców?',
-    options: ['2', '4', '8', '12'],
+    q: 'Czym jest rola **Mieszkaniec** na serwerze Discord?',
+    options: ['Rola VIP za Nitro Boost', 'Rola nadawana automatycznie po dołączeniu', 'Pełna weryfikacja — połączony Roblox + zdany quiz', 'Rola moderatora z ograniczonymi uprawnieniami'],
     answer: 2,
-    tip: 'Kategoria Głosowe zawiera: Lobby, Ogólny 1-3, Prywatny 2os, Prywatny 4os, Radio RMF MAXX, AFK = 8 kanałów.',
+    tip: 'Mieszkaniec = weryfikacja ukończona. Masz dostęp do kanałów sesji i pełne prawa gracza AURORA.',
+  },
+  {
+    q: 'Jakie uprawnienia mają pojazdy **uprzywilejowane** (policja, EMS, straż)?',
+    options: ['Mogą jeździć bez ograniczeń prędkości zawsze', 'Mogą przekraczać przepisy tylko podczas aktywnej interwencji z włączonymi sygnałami', 'Nie mają żadnych szczególnych uprawnień', 'Mogą parkować w każdym miejscu na stałe'],
+    answer: 1,
+    tip: 'Służby uprzywilejowane używają sygnałów (kogut, syrena) podczas realnej interwencji — nie bez powodu.',
+  },
+  {
+    q: 'Co grozi za użycie komendy moderacyjnej w złej wierze przez osobę ze staffu?',
+    options: ['Nic, staff może używać komend swobodnie', 'Upomnienie lub degradacja ze stanowiska staffu', 'Tymczasowe zawieszenie w prawach gracza', 'Automatyczne usunięcie komendy'],
+    answer: 1,
+    tip: 'Staff działa zgodnie z regulaminem — nadużycie uprawnień skutkuje konsekwencjami dyscyplinarnymi.',
+  },
+  {
+    q: 'Co to jest **OOC** (Out of Character)?',
+    options: ['Specjalna strefa RP poza miastem', 'Komunikacja lub zachowanie jako gracz, a nie jako postać', 'Komenda do wyjścia z sesji', 'Nazwa kanału głosowego dla obserwatorów'],
+    answer: 1,
+    tip: 'OOC = poza postacią. Np. "//" lub nawiasy kwadratowe [tak] oznaczają, że mówisz jako ty, nie jako postać.',
+  },
+
+  // ── System i zasady administracyjne ──────────────────────────────────────
+  {
+    q: 'Co powinieneś/powinnaś zrobić, gdy inny gracz poważnie łamie regulamin?',
+    options: ['Kłócić się z nim publicznie na kanale ogólnym', 'Opuścić serwer i nie wracać', 'Zignorować', 'Otworzyć ticket i opisać sytuację z dowodem'],
+    answer: 3,
+    tip: 'Regulaminowe problemy zgłasza się zawsze przez ticket — publiczne oskarżenia są zabronione.',
+  },
+  {
+    q: 'Ile mandatów RP może maksymalnie otrzymać postać przed wezwaniem na przesłuchanie?',
+    options: ['3', '5', '10', 'Brak limitu'],
+    answer: 2,
+    tip: 'Limit mandatów to 10 — po przekroczeniu postać trafia na wezwanie sądowe.',
+  },
+  {
+    q: 'Czy wolno reklamować inne serwery RP na kanałach AURORA?',
+    options: ['Tak, na kanale #offtopic', 'Tak, jeśli masz rangę Mieszkaniec', 'Nie — reklama innych serwerów jest zakazana', 'Tak, ale tylko przez wiadomość prywatną z adminem'],
+    answer: 2,
+    tip: 'Reklama innych serwerów Discord/Roblox jest całkowicie zakazana i skutkuje banem.',
+  },
+  {
+    q: 'Co to jest **combat logging**?',
+    options: ['Zapisywanie przebiegu walki w notatniku', 'Opuszczenie gry/sesji w trakcie aktywnej interakcji RP by uniknąć konsekwencji', 'Specjalna technika bojowa policji', 'System rejestracji incydentów w CAD'],
+    answer: 1,
+    tip: 'Combat logging = wychodzenie z sesji gdy coś ci grozi. Skutkuje karą tak jak gdybyś pozostał/a.',
+  },
+  {
+    q: 'Co to jest **stream sniping**?',
+    options: ['Oglądanie streamu gry w celu zdobycia przewagi RP (np. lokalizacji gracza)', 'Kradnięcie transmisji wideo innego streamera', 'Specjalny tryb obserwatora w sesji', 'Nagrywanie sesji bez zgody innych graczy'],
+    answer: 0,
+    tip: 'Stream sniping = metagaming przez stream. Zakazane — postać nie może wiedzieć tego, co widzi kamera.',
+  },
+
+  // ── Praktyczne sytuacje ────────────────────────────────────────────────────
+  {
+    q: 'Czy wolno ci przełączyć się na inną postać w trakcie trwającej interakcji RP?',
+    options: ['Tak, zawsze', 'Nie — zmiana postaci w trakcie aktywnego RP to naruszenie regulaminu', 'Tak, jeśli masz dwie zatwierdzone postacie', 'Tak, po uzyskaniu zgody od streamera'],
+    answer: 1,
+    tip: 'Zmiana postaci w połowie scenariusza to ucieczka od konsekwencji — niedozwolone.',
+  },
+  {
+    q: 'Jak należy oznaczyć rozmowę **Out of Character** (OOC) podczas sesji?',
+    options: ['Słowem "OOC" lub podwójnym ukośnikiem // przed wiadomością', 'Caps Lockiem', 'Wykrzyknikiem na początku zdania', 'Specjalną komendą /ooc'],
+    answer: 0,
+    tip: '// lub [nawiasy kwadratowe] sygnalizują OOC. Przykład: // przepraszam, rozłączyło mnie',
+  },
+  {
+    q: 'Czy wolno nagrywać i publikować nagrania z sesji RP?',
+    options: ['Tak, bez żadnych ograniczeń', 'Tak, ale tylko za zgodą wszystkich nagrywanych graczy i staffu', 'Nie — nagrywanie sesji jest całkowicie zakazane', 'Tak, ale tylko własna gra (nie innych graczy)'],
+    answer: 1,
+    tip: 'Publikowanie nagrań z rozpoznawalnymi postaciami innych graczy wymaga ich zgody.',
+  },
+  {
+    q: 'Co powinieneś/powinnaś zrobić gdy usterka techniczna (bug, crash) przerwie twój scenariusz RP?',
+    options: ['Udawać, że nic się nie stało i kontynuować', 'Natychmiast poinformować pozostałych graczy OOC i ustalić jak wznowić RP', 'Opuścić serwer bez słowa', 'Wymagać anulowania całego scenariusza'],
+    answer: 1,
+    tip: 'Bugi są nieplanowane — uczciwe OOC wyjaśnienie i porozumienie to właściwe postępowanie.',
+  },
+  {
+    q: 'Gdzie znajdziesz aktualne zasady serwera AURORA Greenville RP?',
+    options: ['Wyłącznie na stronie internetowej', 'Na kanale #regulamin na serwerze Discord', 'W grze Roblox w menu opcji', 'Musisz zapytać admina przez ticket'],
+    answer: 1,
+    tip: 'Aktualny regulamin zawsze jest na kanale #regulamin — warto go regularnie sprawdzać.',
   },
 ];
 
@@ -88,7 +190,7 @@ function buildQuestionEmbed(questionIndex, question, score) {
     .setColor(0x5865F2)
     .setTitle(`📋 Quiz weryfikacyjny — Pytanie ${questionIndex + 1}/10`)
     .setDescription(`**${question.q}**\n\n${optionsText}`)
-    .setFooter({ text: `Wynik: ${score}/${questionIndex} • Wymagane: 8/10` })
+    .setFooter({ text: `Wynik: ${score}/${questionIndex} • Wymagane: 8/10 • AURORA Greenville RP` })
     .setTimestamp();
 }
 
@@ -104,7 +206,7 @@ function buildAnswerButtons(questionIndex) {
   return new ActionRowBuilder().addComponents(buttons);
 }
 
-// Rozpoczyna quiz (wywoływane po weryfikacji Roblox)
+// Rozpoczyna quiz (wywoływane po weryfikacji formularza)
 async function startQuiz(interaction, client, prisma, dbUser) {
   const userId = interaction.user.id;
 
@@ -196,7 +298,6 @@ async function handleQuizAnswer(interaction, client, prisma) {
   if (session.questionIndex < 10) {
     const nextQ = session.questions[session.questionIndex];
     const embed = buildQuestionEmbed(session.questionIndex, nextQ, session.score);
-    // Pokaż krótki feedback przed następnym pytaniem
     const feedbackEmbed = new EmbedBuilder()
       .setColor(isCorrect ? 0x57F287 : 0xED4245)
       .setDescription(
@@ -225,7 +326,6 @@ async function finishQuiz(interaction, client, prisma, session, lastCorrect, las
   const passed = score >= 8;
 
   if (passed) {
-    // Nadaj rolę Mieszkaniec, usuń Niezweryfikowany
     try {
       const guild = client.guilds.cache.get(session.guildId) ?? await client.guilds.fetch(session.guildId);
       const member = await guild.members.fetch(interaction.user.id);
@@ -273,12 +373,12 @@ async function finishQuiz(interaction, client, prisma, session, lastCorrect, las
       passed
         ? `Uzyskałeś **${score}/10** punktów i pomyślnie zdałeś quiz!\n\n` +
           `🏠 Otrzymujesz rolę **Mieszkaniec** — masz teraz dostęp do wszystkich kanałów RP!\n` +
-          `Witaj w **Greenville RP**! 🎊`
+          `Witaj w **AURORA Greenville RP**! 🎊`
         : `Uzyskałeś **${score}/10** punktów.\n\n` +
           `Wymagane minimum to **8/10**.\n` +
-          `Przeczytaj dokładnie <#regulamin> i spróbuj ponownie za 24 godziny.`
+          `📖 Przeczytaj dokładnie kanał **#regulamin** i spróbuj ponownie za 24 godziny.`
     )
-    .setFooter({ text: 'Greenville RP — Weryfikacja' })
+    .setFooter({ text: 'AURORA Greenville RP — Weryfikacja' })
     .setTimestamp();
 
   await interaction.editReply({

@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import Link from 'next/link';
+import { CadButton } from '@/components/CadButton';
 
 async function getDashboardData() {
   const [
@@ -83,13 +84,17 @@ export default async function DashboardPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-1">
-          Witaj, {session.user.name?.split('#')[0] ?? 'Staff'}!
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          Przegląd aktywności serwera Greenville RP
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold mb-1">
+            Witaj, {session.user.name?.split('#')[0] ?? 'Staff'}!
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Przegląd aktywności serwera Greenville RP
+          </p>
+        </div>
+        {/* Przycisk CAD */}
+        <CadButton label="🖥️ Otwórz CAD" />
       </div>
 
       {/* Stats cards */}

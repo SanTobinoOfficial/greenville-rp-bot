@@ -48,7 +48,7 @@ module.exports = {
             { name: '⏱️ Czas', value: `${minutes}:${String(seconds).padStart(2, '0')}`, inline: true },
             { name: '👤 Dodał', value: interaction.user.tag, inline: true },
           )
-          .setFooter({ text: 'Greenville RP — Muzyka' })
+          .setFooter({ text: 'AURORA Greenville RP — Muzyka' })
           .setTimestamp()
       ],
     });

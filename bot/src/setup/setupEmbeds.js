@@ -19,34 +19,37 @@ function ch(guild, name) {
 async function setupEmbeds(guild) {
   logger.info('📨 setupEmbeds: start');
 
-  // ── 1. #zacznij-tutaj — weryfikacja ─────────────────────────────────────────
+  // ── 1. #zacznij-tutaj — weryfikacja (formularz webowy) ──────────────────────
   const verifyChannel = ch(guild, '📋│zacznij-tutaj');
   if (verifyChannel) {
     const embed = new EmbedBuilder()
       .setColor(0x30d158)
-      .setTitle('✅ Witaj w Greenville RP!')
+      .setTitle('✅ Witaj w AURORA Greenville RP!')
       .setDescription(
-        '**Greenville RP** to polski serwer Roleplay na Roblox.\n' +
-        'Aby uzyskać dostęp do serwera, musisz przejść weryfikację.\n\n' +
-        '**Na czym polega weryfikacja?**\n' +
-        '> 🔗 Powiążesz swoje konto **Roblox** z Discordem\n' +
-        '> 📋 Odpiszesz na **10 pytań** z regulaminu RP\n' +
-        '> ✅ Uzyski minimum **8/10 punktów**\n' +
-        '> 🏠 Otrzymasz rolę **Mieszkaniec** i pełny dostęp\n\n' +
+        '**AURORA Greenville RP** to polski serwer Roleplay na Roblox.\n' +
+        'Aby uzyskać dostęp do serwera, wypełnij formularz weryfikacyjny.\n\n' +
+        '**Jak przebiega weryfikacja?**\n' +
+        '> 📋 Wejdź na formularz pod linkiem poniżej\n' +
+        '> 🔗 Podaj swój **Discord ID** oraz **nick Roblox**\n' +
+        '> ❓ Odpowiedz na **10 pytań** z regulaminu serwera\n' +
+        '> ✅ Uzyskaj minimum **8/10 punktów**\n' +
+        '> 🏠 Rola **Mieszkaniec** zostanie nadana automatycznie!\n\n' +
+        '**Jak znaleźć swoje Discord ID?**\n' +
+        '> Ustawienia → Zaawansowane → włącz **Tryb dewelopera**\n' +
+        '> Kliknij prawym na swój nick → **Kopiuj ID użytkownika**\n\n' +
         '**Zanim zaczniesz:**\n' +
         '• Przeczytaj regulamin na kanale <#regulamin>\n' +
-        '• Zapoznaj się z pojęciami RP (FRP, NLR, metagaming)\n' +
-        '• Upewnij się, że masz aktywne konto Roblox\n\n' +
-        '*Kliknij przycisk poniżej aby rozpocząć!*'
+        '• Zapoznaj się z pojęciami RP (FRP, NLR, metagaming)\n\n' +
+        '*Kliknij przycisk poniżej, aby otworzyć formularz!*'
       )
-      .setFooter({ text: 'Greenville RP — System weryfikacji' })
+      .setFooter({ text: 'AURORA Greenville RP — System weryfikacji' })
       .setTimestamp();
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId('verify_start')
-        .setLabel('🔍 Zweryfikuj się')
-        .setStyle(ButtonStyle.Success)
+        .setURL('https://greenville-rp-bot.vercel.app/weryfikacja')
+        .setLabel('📋 Wypełnij formularz weryfikacyjny')
+        .setStyle(ButtonStyle.Link)
     );
 
     await verifyChannel.send({ embeds: [embed], components: [row] }).catch(e =>
@@ -60,7 +63,7 @@ async function setupEmbeds(guild) {
   if (regulaminChannel) {
     const embed = new EmbedBuilder()
       .setColor(0xED4245)
-      .setTitle('📜 Regulamin Greenville RP')
+      .setTitle('📜 Regulamin AURORA Greenville RP')
       .setDescription(
         '**§1 — Zasady ogólne**\n' +
         '> • Szanuj innych graczy i staff\n' +
@@ -82,7 +85,7 @@ async function setupEmbeds(guild) {
         '> • Poważne naruszenia skutkują natychmiastowym banem\n\n' +
         '*Nieznajomość regulaminu nie zwalnia z odpowiedzialności.*'
       )
-      .setFooter({ text: 'Greenville RP — Regulamin' })
+      .setFooter({ text: 'AURORA Greenville RP — Regulamin' })
       .setTimestamp();
 
     await regulaminChannel.send({ embeds: [embed] }).catch(e =>
@@ -113,7 +116,7 @@ async function setupEmbeds(guild) {
         '🟢 **Służby** — Policja, EMS, Straż Pożarna, DOT, Straż Miejska, Taksówkarz\n' +
         '🟢 **Sesja** — zorganizowany czas gry RP na serwerze Roblox'
       )
-      .setFooter({ text: 'Greenville RP — Słownik RP' });
+      .setFooter({ text: 'AURORA Greenville RP — Słownik RP' });
 
     await slownikChannel.send({ embeds: [embed] }).catch(e =>
       logger.error('Błąd wysyłania słownika:', e)
@@ -142,7 +145,7 @@ async function setupEmbeds(guild) {
         '> 4️⃣ Poczekaj na odpowiedź staffu\n\n' +
         '*Nie nadużywaj ticketów — służą do poważnych spraw.*'
       )
-      .setFooter({ text: 'Greenville RP — Support' })
+      .setFooter({ text: 'AURORA Greenville RP — Support' })
       .setTimestamp();
 
     const row = new ActionRowBuilder().addComponents(
@@ -176,7 +179,7 @@ async function setupEmbeds(guild) {
         '> • Imię i nazwisko muszą brzmieć realistycznie\n\n' +
         '**Komenda:** `/postac stworz`'
       )
-      .setFooter({ text: 'Greenville RP — Postacie' });
+      .setFooter({ text: 'AURORA Greenville RP — Postacie' });
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
@@ -211,7 +214,7 @@ async function setupEmbeds(guild) {
         '**Komenda:** `/prawojazdy egzamin [kategoria]`\n\n' +
         '*Egzamin składa się z 10 pytań — wymagane 8/10.*'
       )
-      .setFooter({ text: 'Greenville RP — Prawo jazdy' });
+      .setFooter({ text: 'AURORA Greenville RP — Prawo jazdy' });
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
@@ -244,7 +247,7 @@ async function setupEmbeds(guild) {
         '> 💎 Nitro Booster — do **10** pojazdów\n\n' +
         '**Komenda:** `/pojazd rejestruj`'
       )
-      .setFooter({ text: 'Greenville RP — Pojazdy' });
+      .setFooter({ text: 'AURORA Greenville RP — Pojazdy' });
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
@@ -271,7 +274,7 @@ async function setupEmbeds(guild) {
         '**🔔 Powiadomienia** — będziesz oznaczany przy ogłoszeniach sesji!\n\n' +
         '*Możesz w każdej chwili usunąć rolę klikając ponownie.*'
       )
-      .setFooter({ text: 'Greenville RP — Powiadomienia' });
+      .setFooter({ text: 'AURORA Greenville RP — Powiadomienia' });
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
@@ -294,8 +297,8 @@ async function setupEmbeds(guild) {
       .setTitle('❓ Najczęściej zadawane pytania')
       .setDescription(
         '**Jak dołączyć do serwera RP?**\n' +
-        '> Wejdź na kanał <#zacznij-tutaj> i kliknij "Zweryfikuj się".\n\n' +
-        '**Ile mam czasu na quiz?**\n' +
+        '> Wejdź na kanał <#zacznij-tutaj> i kliknij **Wypełnij formularz weryfikacyjny**.\n\n' +
+        '**Ile mam czasu na formularz?**\n' +
         '> Nie ma limitu czasu. Po nieudanej próbie odczekaj 24 godziny.\n\n' +
         '**Jak zmienić nick Roblox?**\n' +
         '> Otwórz ticket — staff pomoże zmienić powiązanie.\n\n' +
@@ -306,7 +309,7 @@ async function setupEmbeds(guild) {
         '**Mam problem z botem — co robić?**\n' +
         '> Otwórz ticket na <#otwórz-ticket>.'
       )
-      .setFooter({ text: 'Greenville RP — FAQ' });
+      .setFooter({ text: 'AURORA Greenville RP — FAQ' });
 
     await faqChannel.send({ embeds: [embed] }).catch(e =>
       logger.error('Błąd wysyłania FAQ:', e)
@@ -317,4 +320,5 @@ async function setupEmbeds(guild) {
   logger.info('✅ setupEmbeds: gotowe');
 }
 
-module.exports = { setupEmbeds };
+// Eksportuj obie nazwy dla kompatybilności
+module.exports = { setupEmbeds, sendSetupEmbeds: setupEmbeds };

@@ -48,7 +48,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(COLORS.rp)
-      .setTitle('🪪 Dowód Osobisty — Greenville RP')
+      .setTitle('🪪 Dowód Osobisty — AURORA Greenville RP')
       .setDescription('**RZECZPOSPOLITA POLSKA**\nDOWÓD OSOBISTY / IDENTITY CARD')
       .addFields(
         { name: '👤 Imię i Nazwisko', value: `${char.firstName} ${char.lastName}`, inline: true },
@@ -60,7 +60,7 @@ module.exports = {
         { name: '💇 Kolor włosów', value: char.hairColor || 'Nie podano', inline: true },
       )
       .setThumbnail(char.photoUrl || lookupUser.displayAvatarURL())
-      .setFooter({ text: 'Greenville RP — Dowód Osobisty' })
+      .setFooter({ text: 'AURORA Greenville RP — Dowód Osobisty' })
       .setTimestamp();
 
     await interaction.editReply({ embeds: [embed] });

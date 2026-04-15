@@ -44,11 +44,11 @@ module.exports = {
         .setTitle('🛬 Nowy mieszkaniec!')
         .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 128 }))
         .setDescription(
-          `**${member.user.username}** dołączył/a do **Greenville RP**!\n\n` +
+          `**${member.user.username}** dołączył/a do **AURORA Greenville RP**!\n\n` +
           `👤 Member **#${memberCount}** | Dołączył: ${joinDate}\n\n` +
           `👉 Zacznij od kanału <#${guild.channels.cache.find(c => c.name === '📋│weryfikacja')?.id || 'weryfikacja'}>`
         )
-        .setFooter({ text: 'Greenville RP — Przywitanie' })
+        .setFooter({ text: 'AURORA Greenville RP — Przywitanie' })
         .setTimestamp();
 
       const przylotypChannel = guild.channels.cache.find(

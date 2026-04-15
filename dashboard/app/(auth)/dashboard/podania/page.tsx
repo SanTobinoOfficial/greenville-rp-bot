@@ -78,7 +78,7 @@ export default function PodaniaPage() {
       const res = await fetch('/api/review-application', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ applicationId: id, status: action }),
+        body: JSON.stringify({ applicationId: id, action }),
       });
       if (!res.ok) throw new Error();
       showToast('Status zaktualizowany.', 'success');

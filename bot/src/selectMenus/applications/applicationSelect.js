@@ -85,7 +85,7 @@ module.exports = {
         `⏱️ Link wygasa za **24 godziny**.\n` +
         `📝 Wypełnij wszystkie pola starannie — niekompletne podania zostaną odrzucone.`
       )
-      .setFooter({ text: 'Greenville RP — Podania' })
+      .setFooter({ text: 'AURORA Greenville RP — Podania' })
       .setTimestamp();
 
     try {

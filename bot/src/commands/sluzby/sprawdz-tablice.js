@@ -51,7 +51,7 @@ module.exports = {
             .setColor(COLORS.error)
             .setTitle('🚗 Baza Pojazdów — Brak wyników')
             .setDescription(`Nie znaleziono pojazdu z tablicą **${tablica}** w rejestrze.`)
-            .setFooter({ text: 'Greenville RP — System Policyjny' })
+            .setFooter({ text: 'AURORA Greenville RP — System Policyjny' })
             .setTimestamp(),
         ],
       });
@@ -82,7 +82,7 @@ module.exports = {
           inline: true,
         },
       )
-      .setFooter({ text: 'Greenville RP — System Policyjny' })
+      .setFooter({ text: 'AURORA Greenville RP — System Policyjny' })
       .setTimestamp();
 
     const alerts = [];
