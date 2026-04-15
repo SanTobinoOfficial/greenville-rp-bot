@@ -105,6 +105,9 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
                 {l.label}
               </a>
             ))}
+            <Link href="/cad" className="text-sm text-white/60 hover:text-[#5865F2] transition-colors font-medium">
+              CAD
+            </Link>
           </div>
 
           <div className="flex items-center gap-3">
@@ -186,6 +189,14 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
                 ▶ Mój Panel gracza
               </button>
             )}
+            {isLoggedIn && (
+              <Link
+                href="/cad"
+                className="inline-flex items-center gap-2 bg-[#5865F2]/15 hover:bg-[#5865F2]/25 text-[#818cf8] font-bold px-8 py-4 rounded-xl text-sm transition-all border border-[#5865F2]/30 hover:scale-105"
+              >
+                🚨 Otwórz CAD
+              </Link>
+            )}
           </div>
 
           {/* Live stats */}
@@ -203,6 +214,78 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
                 <div className="text-xs text-white/40 mt-1">{s.label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CAD Preview Section ── */}
+      <section className="py-24 px-6 bg-[#0d1117]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="text-[#5865F2] text-xs font-mono uppercase tracking-widest mb-3">PANEL CAD</div>
+            <h2 className="text-4xl md:text-5xl font-black mb-4">
+              Panel CAD —{' '}
+              <span className="bg-gradient-to-r from-[#5865F2] to-[#818cf8] bg-clip-text text-transparent">
+                Centrum Dowodzenia
+              </span>
+            </h2>
+            <p className="text-white/50 max-w-xl mx-auto text-base leading-relaxed">
+              Pełny system zarządzania służbami w czasie rzeczywistym. Zgłoszenia, units, radio, proximity chat.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            {[
+              {
+                icon: '🚨',
+                title: 'Zgłoszenia 112',
+                desc: 'Twórz i zarządzaj zgłoszeniami w czasie rzeczywistym. System priorytetów CRITICAL / HIGH / MEDIUM / LOW.',
+                color: '#ef4444',
+              },
+              {
+                icon: '🚓',
+                title: 'Jednostki online',
+                desc: 'Podgląd wszystkich aktywnych jednostek z ich statusem i callsignem na żywo.',
+                color: '#3b82f6',
+              },
+              {
+                icon: '📡',
+                title: 'Kanały radiowe',
+                desc: 'Radio per służba — DYSPOZYTORNIA, ALFA, BRAVO, EMS, STRAŻ i więcej.',
+                color: '#818cf8',
+              },
+              {
+                icon: '💬',
+                title: 'Proximity Chat',
+                desc: 'Czat lokacyjny — rozmawiaj z graczami w tej samej lokacji na mapie Greenville.',
+                color: '#22c55e',
+              },
+            ].map(f => (
+              <div
+                key={f.title}
+                className="bg-[#070d14] border border-white/8 rounded-xl p-5 hover:border-white/16 transition-all group"
+                style={{ boxShadow: `0 0 24px ${f.color}08` }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-4 transition-all group-hover:scale-110"
+                  style={{ background: f.color + '20', border: `1px solid ${f.color}30` }}
+                >
+                  {f.icon}
+                </div>
+                <div className="font-bold text-white mb-2 text-sm">{f.title}</div>
+                <div className="text-xs text-white/50 leading-relaxed">{f.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link
+              href="/cad"
+              className="inline-flex items-center gap-3 bg-[#22c55e] hover:bg-[#16a34a] text-black font-black px-10 py-4 rounded-xl text-base transition-all shadow-xl shadow-[#22c55e]/25 hover:scale-105"
+            >
+              Otwórz CAD →
+            </Link>
+            <p className="text-white/25 text-xs mt-3">Zaloguj się przez Discord aby korzystać ze wszystkich funkcji</p>
           </div>
         </div>
       </section>
@@ -390,6 +473,7 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
           </div>
           <div className="flex gap-4 text-xs text-white/30">
             <a href="https://discord.gg/BU8EBPsYXV" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Discord</a>
+            <Link href="/cad" className="hover:text-[#5865F2] transition-colors">CAD</Link>
             <Link href="/login" className="hover:text-white transition-colors">Logowanie</Link>
           </div>
         </div>
