@@ -26,25 +26,33 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  character        Character?
-  vehicles         Vehicle[]
-  licenses         License[]
-  casesAsTarget    Case[]          @relation("TargetUser")
-  casesAsMod       Case[]          @relation("ModeratorUser")
-  applications     Application[]
-  tickets          Ticket[]
-  smsSent          SMS[]           @relation("Sender")
-  smsReceived      SMS[]           @relation("Receiver")
-  finesReceived    Fine[]          @relation("TargetFine")
-  finesIssued      Fine[]          @relation("IssuedFine")
-  sessionSignups   SessionSignup[]
-  quizTokens       QuizToken[]
-  dutyLogs        DutyLog[]
-  arrests         Arrest[]        @relation("ArrestTarget")
-  officerArrests  Arrest[]        @relation("ArrestOfficer")
-  news            News[]
-  notesReceived   Note[]          @relation("NoteTarget")
-  notesGiven      Note[]          @relation("NoteAuthor")
+  character      Character?
+  vehicles       Vehicle[]
+  licenses       License[]
+  casesAsTarget  Case[]          @relation("TargetUser")
+  casesAsMod     Case[]          @relation("ModeratorUser")
+  applications   Application[]
+  tickets        Ticket[]
+  smsSent        SMS[]           @relation("Sender")
+  smsReceived    SMS[]           @relation("Receiver")
+  finesReceived  Fine[]          @relation("TargetFine")
+  finesIssued    Fine[]          @relation("IssuedFine")
+  sessionSignups SessionSignup[]
+  quizTokens     QuizToken[]
+  notes             Note[]             @relation("NoteTarget")
+  notesAuthored     Note[]             @relation("NoteAuthor")
+  dutyLogs          DutyLog[]
+  arrests           Arrest[]           @relation("ArrestTarget")
+  arrestsMade       Arrest[]           @relation("ArrestOfficer")
+  news              News[]
+  jobApplications   JobApplication[]
+  proximityMessages ProximityMessage[]
+
+  // ── Praca RP ─────────────────────────────────────────────────
+  currentJob      String?
+  jobCategory     String?
+  jobAssignedAt   DateTime?
+  jobCooldownEnd  DateTime?
 }
 
 // ==================== POSTAĆ (DOWÓD OSOBISTY) ====================
@@ -278,8 +286,11 @@ model SessionSignup {
 model QuizQuestion {
   id       String   @id @default(cuid())
   question String
-  answers  String[]
-  correct  Int
+  type     String   @default("CLOSED")  // "CLOSED" = wybór spośród opcji, "OPEN" = odpowiedź tekstowa
+  answers  String[]                     // dla CLOSED: opcje A/B/C/D; dla OPEN: pusta tablica
+  correct  Int      @default(0)         // dla CLOSED: indeks poprawnej odpowiedzi; dla OPEN: -1
+  keywords String[] @default([])        // dla OPEN: słowa kluczowe punktujące odpowiedź
+  tip      String   @default("")        // wyjaśnienie po odpowiedzi
   active   Boolean  @default(true)
   order    Int      @default(0)
 }
@@ -310,35 +321,108 @@ model ApplicationToken {
 
 model Settings {
   id                    String @id @default("global")
+
+  // ── Pojazdy ──────────────────────────────────────────────────
   maxVehiclesBase       Int    @default(5)
   maxVehiclesSupporter  Int    @default(9)
   maxVehiclesBooster    Int    @default(10)
+
+  // ── Quiz / Weryfikacja ────────────────────────────────────────
   quizPassScore         Int    @default(8)
   quizTotalQuestions    Int    @default(10)
   quizCooldownHours     Int    @default(24)
   robloxGroupId         String @default("")
+
+  // ── RP Zasady ─────────────────────────────────────────────────
   frpSpeedLimit         Int    @default(131)
   maxMandaty            Int    @default(10)
   maxGrzywny            Int    @default(5)
   maxAreszty            Int    @default(5)
   licenseSuspensionDays Int    @default(30)
-  radioUrl              String @default("https://www.youtube.com/watch?v=9WIfFbHmhkI")
+
+  // ── Ostrzeżenia auto-kary ─────────────────────────────────────
   warnAutoMuteCount     Int    @default(3)
   warnAutoBanCount      Int    @default(5)
+
+  // ── Radio / CAD ───────────────────────────────────────────────
+  radioUrl              String @default("https://www.youtube.com/watch?v=9WIfFbHmhkI")
+
+  // ── Kanały Discord ────────────────────────────────────────────
+  auditLogChannelId     String @default("")
+  welcomeChannelId      String @default("")
+  regulaminChannelId    String @default("")
+  ogloszeniaChanelId    String @default("")
+  zacznijTutajChannelId String @default("")
+  ogolneChatChannelId   String @default("")
+
+  // ── Tickety ───────────────────────────────────────────────────
+  ticketEmbedChannelId  String @default("")
+  ticketLogsChannelId   String @default("")
+  ticketCategoryId      String @default("")
+  ticketAdminRoleId     String @default("")
+  ticketPingRoleId      String @default("")
+
+  // ── Role Discord ──────────────────────────────────────────────
+  roleOwner             String @default("")
+  roleCoOwner           String @default("")
+  roleAdmin             String @default("")
+  roleMod               String @default("")
+  roleHelper            String @default("")
+  roleHR                String @default("")
+  roleHost              String @default("")
+  rolePolicja           String @default("")
+  roleEMS               String @default("")
+  roleStraz             String @default("")
+  roleDOT               String @default("")
+  roleMieszkaniec       String @default("1487555467302539368")
+  roleNitroBooster      String @default("")
+  roleWspierajacy       String @default("")
+
+  // ── Embedy ────────────────────────────────────────────────────
+  regulaminText         String @default("")
+  regulaminMessageId    String @default("")
+  embedColor            String @default("#5865F2")
+
+  // ── Inne ──────────────────────────────────────────────────────
   setupCompleted        Boolean @default(false)
   guildId               String @default("")
+  serverDescription     String @default("")
+  maintenanceMode       Boolean @default(false)
+  maintenanceMessage    String @default("Przerwa techniczna. Wrócimy wkrótce!")
 }
 
-// ==================== LOGI BOTA ====================
+// ==================== PODANIA O PRACĘ ====================
 
-model BotLog {
+model JobApplication {
+  id               String            @id @default(cuid())
+  userId           String
+  jobName          String
+  jobCategory      String
+  jobType          String            @default("PUBLIC")
+  answers          Json
+  status           ApplicationStatus @default(PENDING)
+  reviewedBy       String?
+  reviewNote       String?
+  appliedAt        DateTime          @default(now())
+  cooldownEnd      DateTime?
+  reviewedAt       DateTime?
+  discordMessageId String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ==================== NOTATKI MODERACYJNE ====================
+
+model Note {
   id        String   @id @default(cuid())
-  type      String
-  userId    String?
-  guildId   String?
-  message   String
-  data      Json?
+  targetId  String
+  authorId  String
+  content   String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  target User @relation("NoteTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  author User @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 }
 
 // ==================== LOGI DUTY SŁUŻB ====================
@@ -346,14 +430,14 @@ model BotLog {
 model DutyLog {
   id        String   @id @default(cuid())
   userId    String
-  service   String   // POLICJA, EMS, STRAZ, DOT, STRAZ_MIEJSKA, TAKSOWKARZ
-  action    String   // ON_DUTY, OFF_DUTY
+  service   String
+  action    String
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// ==================== ZATRZYMANIA (ARESZT) ====================
+// ==================== ZATRZYMANIA ====================
 
 model Arrest {
   id          String    @id @default(cuid())
@@ -369,31 +453,87 @@ model Arrest {
   officer User @relation("ArrestOfficer", fields: [officerId], references: [id], onDelete: Cascade)
 }
 
-// ==================== AKTUALNOŚCI (NEWS) ====================
+// ==================== NEWSY / OGŁOSZENIA ====================
 
 model News {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  category  String   @default("Ogłoszenie")
-  imageUrl  String?
-  pinned    Boolean  @default(false)
-  published Boolean  @default(true)
-  authorId  String
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  imageUrl    String?
+  category    String   @default("Ogłoszenie")
+  authorId    String
+  published   Boolean  @default(true)
+  pinned      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
 }
 
-// ==================== NOTATKI MODERACYJNE ====================
+// ==================== PROXIMITY CHAT ====================
 
-model Note {
+model ProximityMessage {
+  id         String   @id @default(cuid())
+  locationId String
+  userId     String
+  username   String
+  content    String
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ==================== CAD SYSTEM ====================
+
+model CadCall {
+  id           String    @id @default(cuid())
+  number       Int       @unique @default(autoincrement())
+  nature       String
+  location     String
+  description  String?
+  priority     String    @default("MEDIUM")   // LOW/MEDIUM/HIGH/CRITICAL
+  status       String    @default("PENDING")  // PENDING/ACTIVE/CLOSED
+  dispatchedTo String[]  @default([])
+  reportedBy   String?
+  closedAt     DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model CadWarrant {
+  id              String   @id @default(cuid())
+  targetDiscordId String?
+  targetName      String
+  robloxName      String?
+  reason          String
+  issuedBy        String
+  issuedByName    String
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+}
+
+model CadUnit {
+  id          String   @id @default(cuid())
+  discordId   String   @unique
+  callsign    String
+  name        String
+  service     String
+  cadRole     String   @default("CYWIL")
+  status      String   @default("AVAILABLE")
+  onDutySince DateTime @default(now())
+  lastSeen    DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==================== LOGI BOTA ====================
+
+model BotLog {
   id        String   @id @default(cuid())
-  targetId  String
-  authorId  String
-  content   String
+  type      String
+  userId    String?
+  guildId   String?
+  message   String
+  data      Json?
   createdAt DateTime @default(now())
-
-  target User @relation("NoteTarget", fields: [targetId], references: [id], onDelete: Cascade)
-  author User @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 }

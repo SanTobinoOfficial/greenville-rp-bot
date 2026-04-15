@@ -1,0 +1,13 @@
+# Railway — konfiguracja deploymentu dashboardu (Next.js)
+# Plik musi być w katalogu dashboard/ gdy Railway używa go jako źródła
+
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm install && npx prisma generate && npm run build"
+
+[deploy]
+startCommand = "npm start"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+healthcheckPath = "/api/auth/session"
+healthcheckTimeout = 30

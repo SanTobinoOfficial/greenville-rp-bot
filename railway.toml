@@ -1,37 +1,13 @@
-# Konfiguracja deploymentu Railway
-# Trzy osobne usługi: bot, dashboard, baza danych
+# Railway — główna konfiguracja projektu
+# Każda usługa (bot, dashboard) ma własny railway.toml w swoim katalogu.
+# Ten plik jest ignorowany przez Railway przy deploymencie z podkatalogu.
+#
+# Konfiguracja Railway (ustawić w Railway Dashboard UI):
+#   Service 1 "greenville-dashboard": Root Directory = /dashboard
+#   Service 2 "greenville-bot":       Root Directory = /bot
+#
+# Każdy z tych katalogów ma własny railway.toml z poprawną konfiguracją.
+# Zmienne środowiskowe: patrz .env.example
 
 [build]
 builder = "NIXPACKS"
-
-# ==================== BOT ====================
-[[services]]
-name = "greenville-bot"
-source = "bot"
-
-[services.build]
-buildCommand = "npm install && npx prisma generate"
-
-[services.deploy]
-startCommand = "npm start"
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 3
-
-[[services.envs]]
-name = "NODE_ENV"
-value = "production"
-
-# ==================== DASHBOARD ====================
-[[services]]
-name = "greenville-dashboard"
-source = "dashboard"
-
-[services.build]
-buildCommand = "npm install && npx prisma generate && npm run build"
-
-[services.deploy]
-startCommand = "npm start"
-
-[[services.envs]]
-name = "NODE_ENV"
-value = "production"
