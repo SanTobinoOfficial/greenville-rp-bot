@@ -1,7 +1,66 @@
 'use client';
 
 import { useState } from 'react';
-import { Settings } from '@prisma/client';
+
+// Typ kompatybilny zarówno z Prisma Settings jak i z configToSettings()
+export type SettingsData = {
+  id: string;
+  guildId: string;
+  serverDescription: string;
+  robloxGroupId: string;
+  embedColor: string;
+  radioUrl: string;
+  maintenanceMode: boolean;
+  maintenanceMessage: string;
+  setupCompleted: boolean;
+  maxVehiclesBase: number;
+  maxVehiclesSupporter: number;
+  maxVehiclesBooster: number;
+  quizPassScore: number;
+  quizTotalQuestions: number;
+  quizCooldownHours: number;
+  frpSpeedLimit: number;
+  maxMandaty: number;
+  maxGrzywny: number;
+  maxAreszty: number;
+  licenseSuspensionDays: number;
+  warnAutoMuteCount: number;
+  warnAutoBanCount: number;
+  regulaminText: string;
+  regulaminMessageId: string;
+  auditLogChannelId: string;
+  welcomeChannelId: string;
+  ogloszeniaChanelId: string;
+  ogolneChatChannelId: string;
+  zacznijTutajChannelId: string;
+  regulaminChannelId: string;
+  ticketEmbedChannelId: string;
+  ticketLogsChannelId: string;
+  ticketCategoryId: string;
+  roleOwner: string;
+  roleCoOwner: string;
+  roleAdmin: string;
+  roleMod: string;
+  roleHelper: string;
+  roleHR: string;
+  roleHost: string;
+  rolePolicja: string;
+  roleEMS: string;
+  roleStraz: string;
+  roleDOT: string;
+  roleMieszkaniec: string;
+  roleNitroBooster: string;
+  roleWspierajacy: string;
+  ticketAdminRoleId: string;
+  ticketPingRoleId: string;
+  cadEnabled?: boolean;
+  cadAllowCivilians?: boolean;
+  cadProximityChatEnabled?: boolean;
+  cadProximityTtlMinutes?: number;
+  cadMapImageUrl?: string;
+  cadEmergencyCallChannelId?: string;
+  [key: string]: unknown;
+};
 
 type Tab = 'ogolne' | 'kanaly' | 'role' | 'tickety' | 'quiz' | 'rp' | 'warny' | 'regulamin' | 'embedy' | 'cad' | 'boty';
 
@@ -19,17 +78,17 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'boty',      label: 'Zewn. Boty', icon: '🤖' },
 ];
 
-interface Props { initialSettings: Settings; }
+interface Props { initialSettings: SettingsData; }
 
 export function SettingsForm({ initialSettings }: Props) {
   const [tab, setTab] = useState<Tab>('ogolne');
-  const [s, setS] = useState<Settings>(initialSettings);
+  const [s, setS] = useState<SettingsData>(initialSettings);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [regulaminSaving, setRegulaminSaving] = useState(false);
   const [regulaminMsg, setRegulaminMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  const set = (k: keyof Settings, v: unknown) => setS(prev => ({ ...prev, [k]: v }));
+  const set = (k: keyof SettingsData, v: unknown) => setS(prev => ({ ...prev, [k]: v }));
 
   async function save() {
     setSaving(true);
@@ -84,7 +143,7 @@ export function SettingsForm({ initialSettings }: Props) {
   }
 
   const Input = ({ label, field, type = 'text', placeholder = '' }: {
-    label: string; field: keyof Settings; type?: string; placeholder?: string;
+    label: string; field: keyof SettingsData; type?: string; placeholder?: string;
   }) => (
     <div className="space-y-1">
       <label className="text-xs text-white/60 font-medium uppercase tracking-wide">{label}</label>
@@ -98,7 +157,7 @@ export function SettingsForm({ initialSettings }: Props) {
     </div>
   );
 
-  const Toggle = ({ label, field, desc }: { label: string; field: keyof Settings; desc?: string }) => (
+  const Toggle = ({ label, field, desc }: { label: string; field: keyof SettingsData; desc?: string }) => (
     <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
       <div>
         <div className="text-sm text-white font-medium">{label}</div>

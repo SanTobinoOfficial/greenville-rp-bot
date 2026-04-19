@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions, ACCESS_LEVELS } from '@/lib/auth';
+import { readServerConfig, writeServerConfig, configToSettings, settingsToConfig } from '@/lib/serverConfig';
 import { prisma } from '@/lib/prisma';
-
-const STR = (v: unknown) => (v !== undefined && v !== null ? String(v) : undefined);
-const NUM = (v: unknown) => (v !== undefined && v !== null ? Number(v) : undefined);
-const BOOL = (v: unknown) => (v !== undefined && v !== null ? Boolean(v) : undefined);
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -13,13 +10,21 @@ export async function GET() {
     return NextResponse.json({ error: 'Brak dostępu' }, { status: 403 });
   }
 
+  // Próbuj odczytać z server-config.json
+  const cfg = readServerConfig();
+  if (cfg) {
+    const settings = configToSettings(cfg);
+    return NextResponse.json({ ...settings, _source: 'server-config' });
+  }
+
+  // Fallback: baza danych (Prisma)
+  console.warn('[settings GET] Nie można odczytać server-config.json, używam bazy danych');
   const settings = await prisma.settings.upsert({
     where: { id: 'global' },
     update: {},
     create: { id: 'global' },
   });
-
-  return NextResponse.json(settings);
+  return NextResponse.json({ ...settings, _source: 'database' });
 }
 
 export async function POST(req: NextRequest) {
@@ -28,7 +33,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Brak dostępu' }, { status: 403 });
   }
 
-  const body = await req.json();
+  const body = await req.json() as Record<string, unknown>;
+
+  // Zapisz do server-config.json
+  const cfg = readServerConfig();
+  let savedToFile = false;
+
+  if (cfg) {
+    const updated = settingsToConfig(cfg, body);
+    savedToFile = writeServerConfig(updated);
+    if (savedToFile) {
+      return NextResponse.json({
+        success: true,
+        _source: 'server-config',
+        message: 'Zapisano do server-config.json',
+      });
+    }
+  }
+
+  // Fallback: zapisz do bazy danych jeśli plik niedostępny
+  console.warn('[settings POST] Nie można zapisać do pliku, używam bazy danych');
+
+  const STR  = (v: unknown) => (v != null ? String(v) : undefined);
+  const NUM  = (v: unknown) => (v != null ? Number(v) : undefined);
+  const BOOL = (v: unknown) => (v != null ? Boolean(v) : undefined);
 
   const settings = await prisma.settings.upsert({
     where: { id: 'global' },
@@ -85,5 +113,5 @@ export async function POST(req: NextRequest) {
     create: { id: 'global' },
   });
 
-  return NextResponse.json(settings);
+  return NextResponse.json({ ...settings, _source: 'database' });
 }
