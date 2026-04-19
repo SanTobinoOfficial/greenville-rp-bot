@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import {
   Hash, Volume2, Folder, Megaphone, AlertCircle, RefreshCw,
   Plus, Pencil, Trash2, X, Check, ChevronRight, ChevronDown,
@@ -2183,7 +2183,7 @@ export default function ServerManager() {
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     refresh('all');
   }, []);
 
