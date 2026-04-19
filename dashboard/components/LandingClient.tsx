@@ -7,38 +7,43 @@ import Link from 'next/link';
 // ─── Animated number counter ────────────────────────────────────────────────
 function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-
   useEffect(() => {
     if (target === 0) return;
-    let start = 0;
-    const duration = 2000;
-    const step = Math.max(1, Math.ceil(target / (duration / 16)));
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
+    let cur = 0;
+    const step = Math.max(1, Math.ceil(target / 80));
+    const t = setInterval(() => {
+      cur = Math.min(cur + step, target);
+      setCount(cur);
+      if (cur >= target) clearInterval(t);
     }, 16);
-    return () => clearInterval(timer);
+    return () => clearInterval(t);
   }, [target]);
-
-  return <span ref={ref}>{count.toLocaleString('pl-PL')}{suffix}</span>;
+  return <>{count.toLocaleString('pl-PL')}{suffix}</>;
 }
 
-const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
-  Ogłoszenie:   { bg: 'bg-blue-500/15',   text: 'text-blue-300'   },
-  Sesja:        { bg: 'bg-green-500/15',  text: 'text-green-300'  },
-  Aktualizacja: { bg: 'bg-purple-500/15', text: 'text-purple-300' },
-  Ważne:        { bg: 'bg-red-500/15',    text: 'text-red-300'    },
-  Rekrutacja:   { bg: 'bg-yellow-500/15', text: 'text-yellow-300' },
-  Wydarzenie:   { bg: 'bg-cyan-500/15',   text: 'text-cyan-300'   },
+// ─── Glow border card ───────────────────────────────────────────────────────
+function GlowCard({ children, color = '#30d158', className = '' }: { children: React.ReactNode; color?: string; className?: string }) {
+  return (
+    <div
+      className={`relative rounded-2xl p-px ${className}`}
+      style={{ background: `linear-gradient(135deg, ${color}40, transparent 60%, ${color}20)` }}
+    >
+      <div className="rounded-2xl bg-[#080e18] h-full">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  Ogłoszenie:   { bg: 'bg-blue-500/10',   text: 'text-blue-300',   border: 'border-blue-500/30'   },
+  Sesja:        { bg: 'bg-green-500/10',  text: 'text-green-300',  border: 'border-green-500/30'  },
+  Aktualizacja: { bg: 'bg-purple-500/10', text: 'text-purple-300', border: 'border-purple-500/30' },
+  Ważne:        { bg: 'bg-red-500/10',    text: 'text-red-300',    border: 'border-red-500/30'    },
+  Rekrutacja:   { bg: 'bg-yellow-500/10', text: 'text-yellow-300', border: 'border-yellow-500/30' },
+  Wydarzenie:   { bg: 'bg-cyan-500/10',   text: 'text-cyan-300',   border: 'border-cyan-500/30'   },
 };
 
-// ─── Props ───────────────────────────────────────────────────────────────────
 interface NewsItem {
   id: string;
   title: string;
@@ -51,12 +56,7 @@ interface NewsItem {
 }
 
 interface Props {
-  stats: {
-    memberCount: number;
-    verifiedUsers: number;
-    totalSessions: number;
-    ongoingSession: boolean;
-  };
+  stats: { memberCount: number; verifiedUsers: number; totalSessions: number; ongoingSession: boolean };
   news: NewsItem[];
   isLoggedIn: boolean;
   userName: string | null;
@@ -68,254 +68,246 @@ function formatDate(d: Date | string) {
   return new Date(d).toLocaleDateString('pl-PL', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
-// ─── Main ────────────────────────────────────────────────────────────────────
 export default function LandingClient({ stats, news, isLoggedIn, userName, userAvatar, accessLevel }: Props) {
-  // suppress unused warnings — reserved for future use
   void userAvatar; void accessLevel;
 
-  const navLinks = [
-    { label: 'Start',    href: '#hero'   },
-    { label: 'O nas',    href: '#about'  },
-    { label: 'Służby',   href: '#sluzby' },
-    { label: 'Newsy',    href: '#news'   },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#070d14] text-white font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-[#050a12] text-white font-sans overflow-x-hidden">
 
-      {/* ── Thin accent bar ── */}
-      <div className="h-[2px] bg-gradient-to-r from-[#30d158] via-[#00c8ff] to-[#30d158]" />
+      {/* ── Top neon line ── */}
+      <div className="h-[2px] bg-gradient-to-r from-transparent via-[#30d158] to-transparent" />
 
       {/* ── Navbar ── */}
-      <nav className="sticky top-0 z-40 bg-[#070d14]/90 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <a href="#hero" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#30d158] to-[#00c8ff] flex items-center justify-center font-black text-black text-sm shadow-lg shadow-[#30d158]/30">
-              G
+      <nav className="sticky top-0 z-50 bg-[#050a12]/80 backdrop-blur-xl border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+          {/* Logo */}
+          <a href="#hero" className="flex items-center gap-3">
+            <div className="relative w-9 h-9">
+              <div className="absolute inset-0 rounded-full bg-[#30d158] blur-md opacity-40" />
+              <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-[#30d158] to-[#00c8ff] flex items-center justify-center font-black text-black text-sm">G</div>
             </div>
-            <span className="font-bold text-lg tracking-wide">
-              <span className="text-[#30d158]">GREENVILLE</span>
-              <span className="text-white"> RP</span>
+            <span className="font-black text-base tracking-widest uppercase">
+              <span className="text-[#30d158]">Greenville</span>
+              <span className="text-white/70"> RP</span>
             </span>
           </a>
 
-          <div className="hidden md:flex items-center gap-6">
-            {navLinks.map(l => (
-              <a key={l.href} href={l.href} className="text-sm text-white/60 hover:text-[#30d158] transition-colors font-medium">
+          {/* Nav links */}
+          <div className="hidden md:flex items-center gap-1">
+            {[
+              { label: 'Start', href: '#hero' },
+              { label: 'O nas', href: '#about' },
+              { label: 'Służby', href: '#sluzby' },
+              { label: 'Newsy', href: '#news' },
+            ].map(l => (
+              <a key={l.href} href={l.href}
+                className="text-sm text-white/50 hover:text-white px-4 py-2 rounded-lg hover:bg-white/[0.05] transition-all">
                 {l.label}
               </a>
             ))}
-            <Link href="/cad" className="text-sm text-white/60 hover:text-[#5865F2] transition-colors font-medium">
+            <Link href="/cad"
+              className="text-sm text-[#5865F2]/80 hover:text-[#5865F2] px-4 py-2 rounded-lg hover:bg-[#5865F2]/10 transition-all">
               CAD
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Auth */}
+          <div className="flex items-center gap-2">
             {isLoggedIn ? (
               <>
-                {/* Portal gracza — dla wszystkich */}
-                <Link
-                  href="/portal"
-                  className="hidden sm:inline-flex items-center gap-2 bg-[#30d158]/15 hover:bg-[#30d158]/25 text-[#30d158] border border-[#30d158]/30 text-sm font-medium px-4 py-2 rounded-lg transition-all"
-                >
+                <Link href="/portal"
+                  className="flex items-center gap-2 text-sm font-semibold text-[#30d158] border border-[#30d158]/30 hover:border-[#30d158]/60 bg-[#30d158]/5 hover:bg-[#30d158]/10 px-4 py-2 rounded-xl transition-all">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
                   Mój Panel
                 </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  className="text-xs text-white/30 hover:text-white/60 transition-colors"
-                >
+                <button onClick={() => signOut({ callbackUrl: '/' })}
+                  className="text-xs text-white/25 hover:text-white/50 px-3 py-2 transition-colors">
                   Wyloguj
                 </button>
               </>
             ) : (
-              <button
-                onClick={() => signIn('discord')}
-                className="flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752c4] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-lg shadow-[#5865F2]/30"
-              >
+              <button onClick={() => signIn('discord')}
+                className="flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752c4] text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-[#5865F2]/25">
                 <DiscordIcon className="w-4 h-4" />
-                Login z Discord
+                Discord
               </button>
             )}
           </div>
         </div>
       </nav>
 
-      {/* ── Hero ── */}
-      <section id="hero" className="relative min-h-[88vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(48,209,88,0.08)_0%,transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_80%,rgba(0,200,255,0.05)_0%,transparent_60%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(48,209,88,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(48,209,88,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+      {/* ── HERO ── */}
+      <section id="hero" className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
 
-        <div className="relative text-center px-6 max-w-5xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-[#30d158]/10 border border-[#30d158]/25 rounded-full px-4 py-1.5 text-sm text-[#30d158] font-medium mb-8">
-            <span className="w-2 h-2 rounded-full bg-[#30d158] animate-pulse" />
-            {stats.ongoingSession ? 'Sesja RP aktywna' : 'Serwer aktywny'}
+        {/* Background effects */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(48,209,88,0.12),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_60%_at_80%_90%,rgba(0,200,255,0.07),transparent)]" />
+        {/* Grid */}
+        <div className="absolute inset-0 opacity-[0.025]"
+          style={{ backgroundImage: 'linear-gradient(#30d158 1px,transparent 1px),linear-gradient(90deg,#30d158 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
+        {/* Scan line */}
+        <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.15)_2px,rgba(0,0,0,0.15)_4px)]" />
+
+        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+
+          {/* Status badge */}
+          <div className="inline-flex items-center gap-2.5 border border-[#30d158]/25 bg-[#30d158]/5 rounded-full px-5 py-2 text-sm text-[#30d158] font-medium mb-10 backdrop-blur-sm">
+            <span className="relative flex w-2.5 h-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#30d158] opacity-60" />
+              <span className="relative inline-flex rounded-full w-2.5 h-2.5 bg-[#30d158]" />
+            </span>
+            {stats.ongoingSession ? '🟢 Sesja RP aktualnie trwa' : 'Serwer online · Polska #1 Roblox RP'}
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-black tracking-tight mb-6 leading-none">
-            <span className="text-white">GREENVILLE</span>
-            <br />
-            <span className="bg-gradient-to-r from-[#30d158] to-[#00c8ff] bg-clip-text text-transparent">
-              ROLEPLAY
+          {/* Title */}
+          <h1 className="text-7xl md:text-[9rem] font-black tracking-tighter leading-none mb-6">
+            <span className="block text-white">GREEN</span>
+            <span className="block bg-gradient-to-r from-[#30d158] via-[#00e87a] to-[#00c8ff] bg-clip-text text-transparent"
+              style={{ filter: 'drop-shadow(0 0 40px rgba(48,209,88,0.4))' }}>
+              VILLE
             </span>
+            <span className="block text-white/20 text-4xl md:text-5xl font-bold tracking-[0.5em] mt-2">ROLEPLAY</span>
           </h1>
 
-          <p className="text-white/50 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-            Największy polski serwer Roleplay na Roblox. Dołącz, buduj swoją postać,
-            zdobywaj uprawnienia i kształtuj miasto Greenville!
+          {/* Description */}
+          <p className="text-white/45 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
+            Największy polski serwer Roleplay na platformie Roblox.<br />
+            Stwórz postać, zdobądź pracę, patroluj ulice lub buduj swoje imperium.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
-            <a
-              href="https://discord.gg/BU8EBPsYXV"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold px-8 py-4 rounded-xl text-sm transition-all shadow-xl shadow-[#5865F2]/30 hover:scale-105"
-            >
+          {/* CTA buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16">
+            <a href="https://discord.gg/BU8EBPsYXV" target="_blank" rel="noopener noreferrer"
+              className="group inline-flex items-center gap-3 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold px-8 py-4 rounded-2xl text-sm transition-all shadow-2xl shadow-[#5865F2]/30 hover:shadow-[#5865F2]/50 hover:-translate-y-0.5">
               <DiscordIcon className="w-5 h-5" />
               Dołącz do Discord
+              <span className="text-white/50 group-hover:translate-x-0.5 transition-transform">→</span>
             </a>
             {isLoggedIn ? (
-              <Link
-                href="/portal"
-                className="inline-flex items-center gap-2 bg-[#30d158]/15 hover:bg-[#30d158]/25 text-[#30d158] font-bold px-8 py-4 rounded-xl text-sm transition-all border border-[#30d158]/30 hover:scale-105"
-              >
+              <Link href="/portal"
+                className="inline-flex items-center gap-3 border border-[#30d158]/40 hover:border-[#30d158]/80 bg-[#30d158]/5 hover:bg-[#30d158]/10 text-[#30d158] font-bold px-8 py-4 rounded-2xl text-sm transition-all hover:-translate-y-0.5">
                 ▶ Mój Panel gracza
               </Link>
             ) : (
-              <button
-                onClick={() => signIn('discord')}
-                className="inline-flex items-center gap-2 bg-[#30d158]/15 hover:bg-[#30d158]/25 text-[#30d158] font-bold px-8 py-4 rounded-xl text-sm transition-all border border-[#30d158]/30 hover:scale-105"
-              >
+              <button onClick={() => signIn('discord')}
+                className="inline-flex items-center gap-3 border border-[#30d158]/40 hover:border-[#30d158]/80 bg-[#30d158]/5 hover:bg-[#30d158]/10 text-[#30d158] font-bold px-8 py-4 rounded-2xl text-sm transition-all hover:-translate-y-0.5">
                 ▶ Mój Panel gracza
               </button>
             )}
-            {isLoggedIn && (
-              <Link
-                href="/cad"
-                className="inline-flex items-center gap-2 bg-[#5865F2]/15 hover:bg-[#5865F2]/25 text-[#818cf8] font-bold px-8 py-4 rounded-xl text-sm transition-all border border-[#5865F2]/30 hover:scale-105"
-              >
-                🚨 Otwórz CAD
-              </Link>
-            )}
+            <Link href="/cad"
+              className="inline-flex items-center gap-3 border border-[#5865F2]/30 hover:border-[#5865F2]/60 bg-[#5865F2]/5 hover:bg-[#5865F2]/10 text-[#818cf8] font-bold px-8 py-4 rounded-2xl text-sm transition-all hover:-translate-y-0.5">
+              🚨 Otwórz CAD
+            </Link>
           </div>
 
-          {/* Live stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto">
             {[
-              { label: 'Członkowie Discord',    value: stats.memberCount,  suffix: '+' },
-              { label: 'Zweryfikowani gracze',  value: stats.verifiedUsers, suffix: '' },
-              { label: 'Przeprowadzone sesje',  value: stats.totalSessions, suffix: '' },
-              { label: 'Uptime serwera',        value: 99,                  suffix: '%' },
+              { label: 'Członkowie Discord', value: stats.memberCount,  suffix: '+', color: '#30d158' },
+              { label: 'Zweryfikowani gracze', value: stats.verifiedUsers, suffix: '',  color: '#00c8ff' },
+              { label: 'Sesje RP',            value: stats.totalSessions, suffix: '',  color: '#818cf8' },
+              { label: 'Uptime',               value: 99,                  suffix: '%', color: '#f59e0b' },
             ].map(s => (
-              <div key={s.label} className="bg-white/3 border border-white/8 rounded-xl p-4 text-center backdrop-blur-sm">
-                <div className="text-2xl font-black text-[#30d158]">
-                  <AnimatedCounter target={s.value} suffix={s.suffix} />
+              <div key={s.label}
+                className="relative rounded-2xl p-px"
+                style={{ background: `linear-gradient(135deg, ${s.color}30, transparent)` }}>
+                <div className="rounded-2xl bg-[#080e18] px-4 py-4 text-center">
+                  <div className="text-2xl md:text-3xl font-black mb-1" style={{ color: s.color }}>
+                    <AnimatedCounter target={s.value} suffix={s.suffix} />
+                  </div>
+                  <div className="text-[10px] text-white/35 uppercase tracking-wider">{s.label}</div>
                 </div>
-                <div className="text-xs text-white/40 mt-1">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Bottom fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050a12] to-transparent" />
       </section>
 
-      {/* ── CAD Preview Section ── */}
-      <section className="py-24 px-6 bg-[#0d1117]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="text-[#5865F2] text-xs font-mono uppercase tracking-widest mb-3">PANEL CAD</div>
+      {/* ── CAD Section ── */}
+      <section className="py-28 px-6 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_50%,rgba(88,101,242,0.06),transparent)]" />
+        <div className="max-w-6xl mx-auto relative">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-[#5865F2]/10 border border-[#5865F2]/20 rounded-full px-4 py-1.5 text-xs text-[#818cf8] font-mono uppercase tracking-widest mb-4">
+              ◈ Panel CAD
+            </div>
             <h2 className="text-4xl md:text-5xl font-black mb-4">
-              Panel CAD —{' '}
+              Centrum{' '}
               <span className="bg-gradient-to-r from-[#5865F2] to-[#818cf8] bg-clip-text text-transparent">
-                Centrum Dowodzenia
+                Dowodzenia
               </span>
             </h2>
-            <p className="text-white/50 max-w-xl mx-auto text-base leading-relaxed">
-              Pełny system zarządzania służbami w czasie rzeczywistym. Zgłoszenia, units, radio, proximity chat.
+            <p className="text-white/40 max-w-lg mx-auto text-base">
+              Pełny system zarządzania służbami w czasie rzeczywistym. Dostępny dla każdej roli — od Cywila po Admina.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             {[
-              {
-                icon: '🚨',
-                title: 'Zgłoszenia 112',
-                desc: 'Twórz i zarządzaj zgłoszeniami w czasie rzeczywistym. System priorytetów CRITICAL / HIGH / MEDIUM / LOW.',
-                color: '#ef4444',
-              },
-              {
-                icon: '🚓',
-                title: 'Jednostki online',
-                desc: 'Podgląd wszystkich aktywnych jednostek z ich statusem i callsignem na żywo.',
-                color: '#3b82f6',
-              },
-              {
-                icon: '📡',
-                title: 'Kanały radiowe',
-                desc: 'Radio per służba — DYSPOZYTORNIA, ALFA, BRAVO, EMS, STRAŻ i więcej.',
-                color: '#818cf8',
-              },
-              {
-                icon: '💬',
-                title: 'Proximity Chat',
-                desc: 'Czat lokacyjny — rozmawiaj z graczami w tej samej lokacji na mapie Greenville.',
-                color: '#22c55e',
-              },
+              { icon: '🚨', title: 'Zgłoszenia 112',    desc: 'System priorytetów CRITICAL / HIGH / MEDIUM / LOW w czasie rzeczywistym.',  color: '#ef4444' },
+              { icon: '🚓', title: 'Jednostki online',   desc: 'Callsign, status i lokalizacja wszystkich aktywnych służb na żywo.',         color: '#3b82f6' },
+              { icon: '📡', title: 'Radio służbowe',     desc: 'Kanały per służba — Dyspozytornia, ALFA, BRAVO, EMS, Straż i więcej.',       color: '#818cf8' },
+              { icon: '💬', title: 'Proximity Chat',     desc: 'Czat lokacyjny — rozmawiaj z graczami w tej samej lokacji na mapie.',        color: '#30d158' },
             ].map(f => (
-              <div
-                key={f.title}
-                className="bg-[#070d14] border border-white/8 rounded-xl p-5 hover:border-white/16 transition-all group"
-                style={{ boxShadow: `0 0 24px ${f.color}08` }}
-              >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-4 transition-all group-hover:scale-110"
-                  style={{ background: f.color + '20', border: `1px solid ${f.color}30` }}
-                >
-                  {f.icon}
+              <GlowCard key={f.title} color={f.color}>
+                <div className="p-5 h-full">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl mb-4"
+                    style={{ background: f.color + '15', border: `1px solid ${f.color}30` }}>
+                    {f.icon}
+                  </div>
+                  <div className="font-bold text-white mb-2 text-sm">{f.title}</div>
+                  <div className="text-xs text-white/40 leading-relaxed">{f.desc}</div>
                 </div>
-                <div className="font-bold text-white mb-2 text-sm">{f.title}</div>
-                <div className="text-xs text-white/50 leading-relaxed">{f.desc}</div>
-              </div>
+              </GlowCard>
             ))}
           </div>
 
           <div className="text-center">
-            <Link
-              href="/cad"
-              className="inline-flex items-center gap-3 bg-[#22c55e] hover:bg-[#16a34a] text-black font-black px-10 py-4 rounded-xl text-base transition-all shadow-xl shadow-[#22c55e]/25 hover:scale-105"
-            >
+            <Link href="/cad"
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-[#30d158] to-[#00c8ff] text-black font-black px-10 py-4 rounded-2xl text-sm transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-2xl shadow-[#30d158]/20">
               Otwórz CAD →
             </Link>
-            <p className="text-white/25 text-xs mt-3">Zaloguj się przez Discord aby korzystać ze wszystkich funkcji</p>
+            <p className="text-white/20 text-xs mt-3">Zaloguj się przez Discord aby uzyskać dostęp do swojej roli</p>
           </div>
         </div>
       </section>
 
       {/* ── O nas ── */}
-      <section id="about" className="py-24 px-6">
-        <div className="max-w-6xl mx-auto">
+      <section id="about" className="py-28 px-6 relative bg-[#070d17]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_20%_50%,rgba(48,209,88,0.04),transparent)]" />
+        <div className="max-w-6xl mx-auto relative">
           <div className="text-center mb-16">
-            <div className="text-[#30d158] text-xs font-mono uppercase tracking-widest mb-3">O SERWERZE</div>
+            <div className="inline-flex items-center gap-2 bg-[#30d158]/10 border border-[#30d158]/20 rounded-full px-4 py-1.5 text-xs text-[#30d158] font-mono uppercase tracking-widest mb-4">
+              ◈ O serwerze
+            </div>
             <h2 className="text-4xl md:text-5xl font-black mb-4">
               Czym jest <span className="text-[#30d158]">Greenville RP</span>?
             </h2>
-            <p className="text-white/50 max-w-xl mx-auto">
-              Pełnoprawny serwer Roleplay oparty na grze Roblox. Stwórz postać, zarejestruj pojazd, zdobądź pracę i żyj w mieście Greenville!
+            <p className="text-white/40 max-w-xl mx-auto">
+              Pełnoprawny serwer Roleplay na Roblox. Stwórz postać, zarejestruj pojazd, zdobądź pracę i żyj w mieście.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
-              { icon: '🪪', title: 'Tożsamość RP',       desc: 'Stwórz unikalną postać z dowodem osobistym, PESEL-em i historią.' },
-              { icon: '🚔', title: 'Służby mundurowe',   desc: 'Dołącz do Policji, EMS, Straży Pożarnej lub DOT i patroluj ulice.' },
-              { icon: '🚗', title: 'Rejestracja pojazdów', desc: 'Zarejestruj swój samochód, zdobądź prawo jazdy i korzystaj z dróg legalnie.' },
-              { icon: '⚖️', title: 'System prawny',      desc: 'Mandaty, grzywny, areszty — pełen system prawny inspirowany rzeczywistością.' },
-              { icon: '📱', title: 'Telefon RP',          desc: 'Dzwoń i pisz SMS-y do innych graczy przez własny numer telefonu.' },
-              { icon: '🎪', title: 'Sesje RP',            desc: 'Regularne sesje organizowane przez Hostów z ogłoszeniami i zapisami.' },
+              { icon: '🪪', title: 'Tożsamość RP',        desc: 'Dowód osobisty, PESEL, konto bankowe i unikalna historia postaci.',     color: '#30d158' },
+              { icon: '🚔', title: 'Służby mundurowe',    desc: 'Policja, EMS, Straż, DOT — złóż podanie i zacznij patrolować.',        color: '#3b82f6' },
+              { icon: '🚗', title: 'Pojazdy i licencje',  desc: 'Rejestracja aut, kategorie praw jazdy, mandaty i kontrole drogowe.',    color: '#f59e0b' },
+              { icon: '⚖️', title: 'System prawny',       desc: 'Mandaty, areszty, sprawy — pełen kodeks karny RP.',                    color: '#ef4444' },
+              { icon: '📱', title: 'Telefon RP',           desc: 'Własny numer, połączenia, SMS-y do innych graczy na żywo.',            color: '#a855f7' },
+              { icon: '🎪', title: 'Sesje RP',             desc: 'Regularne sesje organizowane przez Hostów z zapisami i ogłoszeniami.', color: '#00c8ff' },
             ].map(f => (
-              <div key={f.title} className="bg-[#0d1117] border border-white/8 rounded-xl p-6 hover:border-[#30d158]/30 transition-all group">
-                <div className="text-3xl mb-3">{f.icon}</div>
-                <div className="font-bold text-white mb-2 group-hover:text-[#30d158] transition-colors">{f.title}</div>
-                <div className="text-sm text-white/50">{f.desc}</div>
+              <div key={f.title}
+                className="group relative rounded-2xl p-px transition-all duration-300 hover:-translate-y-1"
+                style={{ background: `linear-gradient(135deg, transparent, ${f.color}15, transparent)` }}>
+                <div className="rounded-2xl bg-[#070d17] border border-white/[0.06] group-hover:border-white/10 p-6 h-full transition-colors">
+                  <div className="text-3xl mb-4">{f.icon}</div>
+                  <div className="font-bold text-white mb-2 group-hover:text-[#30d158] transition-colors">{f.title}</div>
+                  <div className="text-sm text-white/40 leading-relaxed">{f.desc}</div>
+                </div>
               </div>
             ))}
           </div>
@@ -323,96 +315,104 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
       </section>
 
       {/* ── Służby ── */}
-      <section id="sluzby" className="py-24 px-6 bg-[#0a0f18]">
-        <div className="max-w-6xl mx-auto">
+      <section id="sluzby" className="py-28 px-6 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_50%,rgba(0,200,255,0.05),transparent)]" />
+        <div className="max-w-6xl mx-auto relative">
           <div className="text-center mb-16">
-            <div className="text-[#00c8ff] text-xs font-mono uppercase tracking-widest mb-3">SŁUŻBY</div>
-            <h2 className="text-4xl font-black">Dołącz do <span className="text-[#00c8ff]">służb mundurowych</span></h2>
-            <p className="text-white/50 mt-3 max-w-lg mx-auto">Każda służba ma własny panel, procedury i możliwości. Złóż podanie przez bot Discord.</p>
+            <div className="inline-flex items-center gap-2 bg-[#00c8ff]/10 border border-[#00c8ff]/20 rounded-full px-4 py-1.5 text-xs text-[#00c8ff] font-mono uppercase tracking-widest mb-4">
+              ◈ Służby mundurowe
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black mb-4">
+              Dołącz do <span className="text-[#00c8ff]">służb</span>
+            </h2>
+            <p className="text-white/40 max-w-lg mx-auto">
+              Każda służba ma własny panel CAD, procedury i możliwości. Złóż podanie przez bot Discord.
+            </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
-              { icon: '🚔', name: 'Policja',       color: '#003087', desc: 'Utrzymuj porządek' },
-              { icon: '🚑', name: 'EMS',           color: '#c0392b', desc: 'Ratuj życie' },
-              { icon: '🚒', name: 'Straż Pożarna', color: '#e74c3c', desc: 'Gaś pożary' },
-              { icon: '🚧', name: 'DOT',           color: '#e67e22', desc: 'Zarządzaj drogami' },
-              { icon: '🚕', name: 'Taksówkarz',    color: '#f1c40f', desc: 'Przewoź pasażerów' },
+              { icon: '🚔', name: 'Policja',        tag: 'FVMPD / OCSO / WSP', color: '#3b82f6',  desc: 'Utrzymuj porządek i ścigaj przestępców' },
+              { icon: '🚑', name: 'EMS',             tag: 'Fox Mountain Medical', color: '#ec4899', desc: 'Ratuj życie i udzielaj pomocy medycznej' },
+              { icon: '🚒', name: 'Straż Pożarna',  tag: 'BFD / GFR',           color: '#f97316', desc: 'Gaś pożary i ratuj uwięzionych' },
+              { icon: '🚧', name: 'DOT',             tag: 'Wisconsin DOT',        color: '#f59e0b', desc: 'Zarządzaj ruchem i drogami' },
+              { icon: '📡', name: 'Dyspozytornia',  tag: 'OCC',                  color: '#818cf8', desc: 'Koordynuj wszystkie służby' },
             ].map(s => (
-              <div
-                key={s.name}
-                className="bg-[#0d1117] border border-white/8 rounded-xl p-5 text-center hover:scale-105 transition-all cursor-default"
-                style={{ boxShadow: `0 0 20px ${s.color}15` }}
-              >
-                <div className="text-3xl mb-2">{s.icon}</div>
-                <div className="font-bold text-sm mb-1">{s.name}</div>
-                <div className="text-xs text-white/40">{s.desc}</div>
+              <div key={s.name}
+                className="group relative rounded-2xl p-px transition-all duration-300 hover:-translate-y-1 cursor-default"
+                style={{ background: `linear-gradient(160deg, ${s.color}40, transparent 60%)` }}>
+                <div className="rounded-2xl bg-[#050a12] border border-white/[0.05] p-5 h-full text-center">
+                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">{s.icon}</div>
+                  <div className="font-black text-white mb-1">{s.name}</div>
+                  <div className="text-[10px] font-mono mb-3 opacity-50" style={{ color: s.color }}>{s.tag}</div>
+                  <div className="text-xs text-white/35 leading-snug">{s.desc}</div>
+                </div>
               </div>
             ))}
           </div>
-          <div className="text-center mt-10">
-            <p className="text-sm text-white/40">Wejdź na Discord i użyj komendy <code className="text-[#00c8ff]">/aplikuj</code> aby złożyć podanie</p>
+
+          <div className="mt-10 text-center">
+            <div className="inline-flex items-center gap-3 bg-white/[0.03] border border-white/8 rounded-2xl px-6 py-3 text-sm text-white/40">
+              Wejdź na Discord i użyj{' '}
+              <code className="text-[#00c8ff] bg-[#00c8ff]/10 px-2 py-0.5 rounded-md font-mono text-xs">/aplikuj</code>{' '}
+              aby złożyć podanie
+            </div>
           </div>
         </div>
       </section>
 
       {/* ── Newsy ── */}
-      <section id="news" className="py-24 px-6">
+      <section id="news" className="py-28 px-6 bg-[#070d17]">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="text-[#30d158] text-xs font-mono uppercase tracking-widest mb-3">AKTUALNOŚCI</div>
-            <h2 className="text-4xl font-black">Najnowsze <span className="text-[#30d158]">ogłoszenia</span></h2>
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-[#30d158]/10 border border-[#30d158]/20 rounded-full px-4 py-1.5 text-xs text-[#30d158] font-mono uppercase tracking-widest mb-4">
+              ◈ Aktualności
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black">
+              Najnowsze <span className="text-[#30d158]">ogłoszenia</span>
+            </h2>
           </div>
 
           {news.length === 0 ? (
-            <div className="text-center py-16 text-white/30">
-              <div className="text-5xl mb-4">📋</div>
-              <p className="text-lg">Brak ogłoszeń — sprawdź nasz Discord po najnowsze informacje.</p>
-              <a
-                href="https://discord.gg/BU8EBPsYXV"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-4 text-sm text-[#5865F2] hover:underline"
-              >
+            <div className="text-center py-20">
+              <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/8 flex items-center justify-center text-3xl mx-auto mb-4">📋</div>
+              <p className="text-white/30 mb-4">Brak ogłoszeń — sprawdź nasz Discord po najnowsze informacje.</p>
+              <a href="https://discord.gg/BU8EBPsYXV" target="_blank" rel="noopener noreferrer"
+                className="text-sm text-[#5865F2] hover:text-[#818cf8] transition-colors">
                 Przejdź na Discord →
               </a>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {news.map((n) => {
-                  const colors = CATEGORY_COLORS[n.category] ?? { bg: 'bg-white/10', text: 'text-white/60' };
+                  const col = CATEGORY_COLORS[n.category] ?? { bg: 'bg-white/5', text: 'text-white/50', border: 'border-white/10' };
                   return (
-                    <div
-                      key={n.id}
-                      className={`bg-[#0d1117] border rounded-xl p-5 hover:border-[#30d158]/50 transition-all hover:-translate-y-0.5 ${
-                        n.pinned ? 'border-[#30d158]/30' : 'border-white/8'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-3">
-                        {n.pinned && <span className="text-[#30d158] text-xs">📌</span>}
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors.bg} ${colors.text}`}>
-                          {n.category}
-                        </span>
-                        <span className="text-xs text-white/30 ml-auto">{formatDate(n.createdAt)}</span>
-                      </div>
+                    <div key={n.id}
+                      className={`group rounded-2xl border bg-[#070d17] hover:-translate-y-1 transition-all duration-300 overflow-hidden ${n.pinned ? 'border-[#30d158]/25' : 'border-white/[0.06]'}`}>
                       {n.imageUrl && (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={n.imageUrl} alt={n.title} className="w-full h-32 object-cover rounded-lg mb-3" />
+                        <img src={n.imageUrl} alt={n.title} className="w-full h-36 object-cover" />
                       )}
-                      <div className="font-semibold text-white mb-1">{n.title}</div>
-                      <div className="text-sm text-white/50 line-clamp-3">{n.content}</div>
-                      <div className="text-xs text-white/20 mt-3">— {n.author.discordUsername}</div>
+                      <div className="p-5">
+                        <div className="flex items-center gap-2 mb-3">
+                          {n.pinned && <span className="text-[#30d158] text-xs">📌</span>}
+                          <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border ${col.bg} ${col.text} ${col.border}`}>
+                            {n.category}
+                          </span>
+                          <span className="text-xs text-white/25 ml-auto">{formatDate(n.createdAt)}</span>
+                        </div>
+                        <div className="font-bold text-white mb-2 group-hover:text-[#30d158] transition-colors leading-snug">{n.title}</div>
+                        <div className="text-sm text-white/40 line-clamp-3 leading-relaxed">{n.content}</div>
+                        <div className="text-xs text-white/20 mt-3 pt-3 border-t border-white/[0.05]">— {n.author.discordUsername}</div>
+                      </div>
                     </div>
                   );
                 })}
               </div>
               <div className="text-center mt-8">
-                <a
-                  href="https://discord.gg/BU8EBPsYXV"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-white/40 hover:text-[#30d158] transition-colors"
-                >
+                <a href="https://discord.gg/BU8EBPsYXV" target="_blank" rel="noopener noreferrer"
+                  className="text-sm text-white/30 hover:text-[#30d158] transition-colors">
                   Więcej ogłoszeń na Discordzie →
                 </a>
               </div>
@@ -421,58 +421,66 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
         </div>
       </section>
 
-      {/* ── CTA Login ── */}
-      <section className="py-24 px-6 bg-[#0a0f18]">
-        <div className="max-w-2xl mx-auto text-center">
-          <DiscordIcon className="w-16 h-16 mx-auto text-[#5865F2] mb-6" />
-          <h2 className="text-3xl font-black mb-4">
-            Zaloguj się <span className="text-[#5865F2]">Discordem</span>
+      {/* ── CTA ── */}
+      <section className="py-28 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(88,101,242,0.08),transparent)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(88,101,242,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(88,101,242,0.02)_1px,transparent_1px)] bg-[size:40px_40px]" />
+        <div className="max-w-2xl mx-auto text-center relative">
+          <div className="w-20 h-20 mx-auto mb-8 relative">
+            <div className="absolute inset-0 rounded-full bg-[#5865F2] blur-2xl opacity-30" />
+            <div className="relative w-20 h-20 rounded-2xl bg-[#5865F2]/20 border border-[#5865F2]/30 flex items-center justify-center">
+              <DiscordIcon className="w-10 h-10 text-[#5865F2]" />
+            </div>
+          </div>
+
+          <h2 className="text-4xl md:text-5xl font-black mb-4">
+            Zaloguj się przez{' '}
+            <span className="text-[#5865F2]">Discord</span>
           </h2>
-          <p className="text-white/50 mb-8">
-            Bot automatycznie zsynchronizuje Twoje role z serwera Discord.
-            Zyskasz dostęp do panelu gracza dopasowanego do Twojej roli.
+          <p className="text-white/40 mb-10 leading-relaxed">
+            Bot automatycznie zsynchronizuje Twoje role. Zyskasz dostęp do panelu gracza,<br className="hidden md:block" />
+            portalu służb i systemu CAD dostosowanego do Twojej roli.
           </p>
+
           {isLoggedIn ? (
-            <div className="space-y-3">
-              <div className="flex items-center justify-center gap-3 text-[#30d158] font-medium">
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-3 text-[#30d158] font-semibold">
                 <span className="w-2 h-2 rounded-full bg-[#30d158] animate-pulse" />
                 Zalogowany jako {userName}
               </div>
-              <Link
-                href="/portal"
-                className="inline-flex items-center gap-2 bg-[#30d158] hover:bg-[#27ae60] text-black font-bold px-8 py-4 rounded-xl text-sm transition-all shadow-xl shadow-[#30d158]/30"
-              >
+              <Link href="/portal"
+                className="inline-flex items-center gap-3 bg-gradient-to-r from-[#30d158] to-[#00c8ff] text-black font-black px-10 py-4 rounded-2xl text-sm transition-all hover:opacity-90 hover:-translate-y-0.5 shadow-2xl shadow-[#30d158]/20">
                 Otwórz Mój Panel →
               </Link>
             </div>
           ) : (
-            <button
-              onClick={() => signIn('discord')}
-              className="inline-flex items-center gap-3 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold px-10 py-4 rounded-xl text-base transition-all shadow-xl shadow-[#5865F2]/30 hover:scale-105"
-            >
-              <DiscordIcon className="w-5 h-5" />
+            <button onClick={() => signIn('discord')}
+              className="inline-flex items-center gap-3 bg-[#5865F2] hover:bg-[#4752c4] text-white font-black px-12 py-5 rounded-2xl text-base transition-all hover:-translate-y-0.5 shadow-2xl shadow-[#5865F2]/30">
+              <DiscordIcon className="w-6 h-6" />
               Zaloguj się z Discord
             </button>
           )}
-          <div className="mt-4 text-xs text-white/20">
+
+          <p className="text-white/15 text-xs mt-6">
             Synchronizacja ról następuje automatycznie po zalogowaniu.
-          </div>
+          </p>
         </div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-white/5 px-6 py-10">
+      <footer className="border-t border-white/[0.05] px-6 py-8">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#30d158] to-[#00c8ff] flex items-center justify-center font-black text-black text-xs">
-              G
-            </div>
-            <span className="font-bold text-sm"><span className="text-[#30d158]">GREENVILLE</span> RP</span>
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#30d158] to-[#00c8ff] flex items-center justify-center font-black text-black text-xs">G</div>
+            <span className="font-bold text-sm">
+              <span className="text-[#30d158]">GREENVILLE</span>
+              <span className="text-white/40"> RP</span>
+            </span>
           </div>
-          <div className="text-xs text-white/30">
-            © {new Date().getFullYear()} Greenville RP. Wszelkie prawa zastrzeżone.
+          <div className="text-xs text-white/20">
+            © {new Date().getFullYear()} Greenville RP · Wszelkie prawa zastrzeżone
           </div>
-          <div className="flex gap-4 text-xs text-white/30">
+          <div className="flex gap-5 text-xs text-white/25">
             <a href="https://discord.gg/BU8EBPsYXV" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Discord</a>
             <Link href="/cad" className="hover:text-[#5865F2] transition-colors">CAD</Link>
             <Link href="/login" className="hover:text-white transition-colors">Logowanie</Link>
