@@ -1,11 +1,11 @@
 {
   "meta": {
-    "version": "3.0",
-    "generated": "2026-04-09",
+    "version": "4.0",
+    "generated": "2026-04-19",
     "description": "Kompletna konfiguracja serwera AURORA Greenville RP — role, kanały, embedy, quiz, regulamin"
   },
   "server": {
-    "name": "AURORA AURORA Greenville RP",
+    "name": "AURORA Greenville RP",
     "description": "Oficjalny serwer Discord polskiej społeczności AURORA Greenville RP na Roblox. Dołącz do służb, bierz udział w sesjach i baw się razem z nami!",
     "verification_level": 1,
     "default_message_notifications": 1,
@@ -2009,7 +2009,7 @@
       "id": "nerd_squad",
       "name": "Nerd Squad Worker",
       "emoji": "💻",
-      "kategoria": "Handel/IT",
+      "kategoria": "Handel",
       "opis": "Pracujesz w Nerd Squad — sklepie z elektroniką i centrum serwisowym. Doradzasz klientom, sprzedajesz sprzęt i naprawiasz urządzenia.",
       "wymagania": [
         "Ukończone 17 lat RP",
@@ -2037,7 +2037,7 @@
       "id": "verwire",
       "name": "Verwire Worker",
       "emoji": "⚡",
-      "kategoria": "Handel/Elektryka",
+      "kategoria": "Handel",
       "opis": "Pracujesz w Verwire — sklepie z elektroniką i artykułami elektrycznymi. Sprzedajesz kable, osprzęt elektryczny i doradzasz przy instalacjach.",
       "wymagania": [
         "Ukończone 17 lat RP"
@@ -2263,7 +2263,7 @@
       "id": "doms_service",
       "name": "Dom's Service Worker",
       "emoji": "⛽",
-      "kategoria": "Motoryzacja/Stacja",
+      "kategoria": "Motoryzacja",
       "opis": "Pracujesz na stacji benzynowej Dom's Service — obsługujesz dystrybutory, sprzedajesz paliwo i zarządzasz małym sklepem przy stacji.",
       "wymagania": [
         "Ukończone 16 lat RP"
@@ -2285,7 +2285,7 @@
       "id": "rapid_wash",
       "name": "Rapid Wash Worker",
       "emoji": "🚿",
-      "kategoria": "Motoryzacja/Myjnia",
+      "kategoria": "Motoryzacja",
       "opis": "Pracujesz w Rapid Wash — automatycznej myjni samochodowej. Obsługujesz klientów, dbasz o sprzęt i wykonujesz ręczne mycie premium.",
       "wymagania": [
         "Ukończone 16 lat RP"
@@ -3454,7 +3454,8 @@
       "features": [
         "tiktok_notifications",
         "embed_announcements"
-      ]
+      ],
+      "invite_url": ""
     },
     {
       "name": "GiveawayBot",
@@ -3464,7 +3465,8 @@
         "giveaways",
         "reroll",
         "winners_dm"
-      ]
+      ],
+      "invite_url": ""
     },
     {
       "name": "Pancake (Nalesnior)",
@@ -3484,7 +3486,8 @@
       "features": [
         "24_7_music",
         "radio_stream"
-      ]
+      ],
+      "invite_url": ""
     },
     {
       "name": "StartIT",
@@ -3507,12 +3510,13 @@
         "transcripts",
         "staff_roles",
         "categories"
-      ]
+      ],
+      "invite_url": ""
     }
   ],
   "discord_ids": {
     "_comment": "ID kanałów i ról Discord — edytowane przez dashboard /ustawienia",
-    "guild_id": "",
+    "guild_id": "1487482322742804610",
     "channels": {
       "audit_log": "",
       "welcome": "",
@@ -3522,7 +3526,12 @@
       "regulamin": "",
       "ticket_embed": "",
       "ticket_logs": "",
-      "ticket_category": ""
+      "ticket_category": "",
+      "sesje": "",
+      "moja_postac": "",
+      "moje_pojazdy": "",
+      "podania_sluzb": "",
+      "logi_moderacji": ""
     },
     "roles": {
       "owner": "",
@@ -3540,18 +3549,21 @@
       "nitro_booster": "",
       "wspierajacy": "",
       "ticket_admin": "",
-      "ticket_ping": ""
+      "ticket_ping": "",
+      "straz_miejska": "",
+      "taksowkarz": "",
+      "dyspozytornia": ""
     }
   },
   "settings": {
     "_comment": "Ustawienia globalne — synchronizowane z dashboardem",
-    "server_description": "Oficjalny serwer Discord polskiej społeczności GreenvilleRP na Roblox.",
+    "server_description": "Oficjalny serwer Discord polskiej społeczności AURORA Greenville RP na Roblox. Dołącz do służb, bierz udział w sesjach i buduj swoją historię!",
     "roblox_group_id": "",
     "embed_color": "#5865F2",
     "radio_url": "https://www.youtube.com/watch?v=9WIfFbHmhkI",
     "maintenance_mode": false,
     "maintenance_message": "Przerwa techniczna. Wrócimy wkrótce!",
-    "setup_completed": false,
+    "setup_completed": true,
     "vehicles": {
       "max_base": 5,
       "max_supporter": 9,
@@ -3584,6 +3596,8 @@
       "proximity_ttl_minutes": 60,
       "map_image_url": "",
       "emergency_call_channel_id": ""
-    }
+    },
+    "version": "4.0",
+    "last_updated": "2026-04-19"
   }
 }
