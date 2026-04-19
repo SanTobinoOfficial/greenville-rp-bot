@@ -37,6 +37,7 @@ module.exports = {
         licenses: true,
         tickets: true,
         arrests: true,
+        jobApplications: { orderBy: { appliedAt: 'desc' }, take: 5 },
       },
     });
 
@@ -106,7 +107,25 @@ module.exports = {
             `Roblox: ${user.robloxUsername ? `@${user.robloxUsername}` : '❌ Nie połączono'}`,
           ].join('\n'),
           inline: false,
-        }
+        },
+        {
+          name: '💼 Praca RP',
+          value: (() => {
+            const lines = [];
+            if (user.currentJob) {
+              lines.push(`Aktualna: **${user.currentJob}**`);
+              if (user.jobCategory) lines.push(`Kategoria: ${user.jobCategory}`);
+            } else {
+              lines.push('Brak aktualnej pracy');
+            }
+            const apps = user.jobApplications ?? [];
+            const pending = apps.filter(a => a.status === 'PENDING').length;
+            const accepted = apps.filter(a => a.status === 'ACCEPTED').length;
+            lines.push(`Złożone podania: **${apps.length}** (oczek.: ${pending}, zaakc.: ${accepted})`);
+            return lines.join('\n') || '—';
+          })(),
+          inline: false,
+        },
       )
       .setFooter({ text: 'AURORA Greenville RP — Statystyki gracza' })
       .setTimestamp();

@@ -39,7 +39,13 @@ const COMMANDS = [
   { cmd: '/sesja-koniec',  opis: 'Zakończ sesję',                                   kategoria: '🎪 Sesje RP (Host+)' },
   { cmd: '/peacetime',     opis: 'Ustaw czas pokoju',                               kategoria: '🎪 Sesje RP (Host+)' },
   // Praca
-  { cmd: '/wybierz-prace', opis: 'Wybierz lub zmień swoją pracę RP (76 dostępnych prac)', kategoria: '💼 Praca RP' },
+  { cmd: '/wybierz-prace',    opis: 'Wybierz lub zmień swoją pracę RP (76 dostępnych prac)',    kategoria: '💼 Praca RP' },
+  { cmd: '/moja-praca',       opis: 'Sprawdź swoją aktualną pracę i cooldown zmiany',            kategoria: '💼 Praca RP' },
+  { cmd: '/lista-prac',       opis: 'Przeglądaj wszystkie dostępne prace (bez aplikowania)',      kategoria: '💼 Praca RP' },
+  { cmd: '/anuluj-podanie',   opis: 'Anuluj swoje oczekujące podanie o pracę służbową',          kategoria: '💼 Praca RP' },
+  { cmd: '/ranking-prac',     opis: 'Ranking najpopularniejszych prac i statystyki zatrudnienia', kategoria: '💼 Praca RP' },
+  { cmd: '/ustaw-prace',      opis: '[STAFF] Ręcznie ustaw pracę gracza (pomija cooldown)',      kategoria: '💼 Praca RP' },
+  { cmd: '/rozpatrz-podanie', opis: '[STAFF] Zatwierdź lub odrzuć podanie o pracę służbową',    kategoria: '💼 Praca RP' },
   // Ogólne
   { cmd: '/zglos',         opis: 'Szybkie zgłoszenie / ticket',                     kategoria: '📋 Ogólne' },
   { cmd: '/czas',          opis: 'Aktualny czas RP na serwerze',                    kategoria: '📋 Ogólne' },

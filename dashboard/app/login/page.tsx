@@ -15,7 +15,7 @@ function LoginContent() {
       <div className="bg-[#1E2124] rounded-2xl p-8 w-full max-w-sm shadow-2xl border border-white/10">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">🏙️ Greenville RP</h1>
-          <p className="text-gray-400 text-sm">Panel Administracyjny</p>
+          <p className="text-gray-400 text-sm">Portal Gracza & Panel Staffu</p>
         </div>
 
         {error && (
@@ -25,7 +25,7 @@ function LoginContent() {
         )}
 
         <button
-          onClick={() => signIn('discord', { callbackUrl: '/dashboard' })}
+          onClick={() => signIn('discord', { callbackUrl: '/portal' })}
           className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-3"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -35,7 +35,7 @@ function LoginContent() {
         </button>
 
         <p className="text-center text-gray-500 text-xs mt-6">
-          Dostęp tylko dla członków staffu serwera Greenville RP
+          Zaloguj się przez Discord aby wejść do portalu gracza lub panelu staffu
         </p>
       </div>
     </div>

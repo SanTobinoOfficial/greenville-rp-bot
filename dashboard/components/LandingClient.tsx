@@ -70,7 +70,7 @@ function formatDate(d: Date | string) {
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 export default function LandingClient({ stats, news, isLoggedIn, userName, userAvatar, accessLevel }: Props) {
-  // suppress unused warning — userAvatar may be used in future
+  // suppress unused warnings — reserved for future use
   void userAvatar; void accessLevel;
 
   const navLinks = [
@@ -113,6 +113,7 @@ export default function LandingClient({ stats, news, isLoggedIn, userName, userA
           <div className="flex items-center gap-3">
             {isLoggedIn ? (
               <>
+                {/* Portal gracza — dla wszystkich */}
                 <Link
                   href="/portal"
                   className="hidden sm:inline-flex items-center gap-2 bg-[#30d158]/15 hover:bg-[#30d158]/25 text-[#30d158] border border-[#30d158]/30 text-sm font-medium px-4 py-2 rounded-lg transition-all"

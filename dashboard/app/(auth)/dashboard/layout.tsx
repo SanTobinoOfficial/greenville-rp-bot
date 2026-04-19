@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { authOptions, ACCESS_LEVELS } from '@/lib/auth';
 import { DashboardNav } from '@/components/dashboard/DashboardNav';
 
 export default async function DashboardLayout({
@@ -12,6 +12,11 @@ export default async function DashboardLayout({
 
   if (!session) {
     redirect('/login');
+  }
+
+  // Dashboard jest tylko dla Staffu — gracze trafią do portalu gracza
+  if (session.user.accessLevel < ACCESS_LEVELS.HELPER) {
+    redirect('/portal');
   }
 
   return (

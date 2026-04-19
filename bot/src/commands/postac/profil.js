@@ -38,6 +38,12 @@ module.exports = {
         finesReceived: { where: { active: true } },
         arrests: { where: { active: true } },
       },
+      // Dodaj pola pracy
+    });
+    // Pobierz pola pracy osobno (mogą nie być w include)
+    const userJob = await prisma.user.findUnique({
+      where: { discordId },
+      select: { currentJob: true, jobCategory: true, jobAssignedAt: true },
     });
 
     if (!user) {
@@ -101,6 +107,15 @@ module.exports = {
       )
       .setFooter({ text: 'AURORA Greenville RP — Profil gracza' })
       .setTimestamp();
+
+    // Praca RP
+    if (userJob?.currentJob) {
+      embed.addFields({
+        name: '💼 Praca RP',
+        value: `${userJob.currentJob}\n📁 ${userJob.jobCategory ?? '—'}${userJob.jobAssignedAt ? `\n📅 Od <t:${Math.floor(userJob.jobAssignedAt.getTime()/1000)}:D>` : ''}`,
+        inline: true,
+      });
+    }
 
     if (isArrested) {
       embed.addFields({ name: '🚔 STATUS', value: '**ZATRZYMANY/A przez Policję**', inline: false });

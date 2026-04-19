@@ -177,6 +177,23 @@ const COMMANDS = [
       ]},
     ],
   },
+  // Praca RP
+  {
+    id: 'set-job', label: 'Ustaw pracę gracza', emoji: '💼', category: 'Praca RP', minLevel: ACCESS.HELPER, color: 'blue',
+    desc: 'Ręcznie przypisz pracę graczowi (odpowiednik /ustaw-prace). Pomija cooldown.',
+    fields: [
+      { key: 'targetDiscordId', label: 'Gracz', type: 'member', required: true },
+      { key: 'jobId', label: 'ID pracy', type: 'text', required: true, placeholder: 'np. burger_knight_cashier, fox_valley_police...' },
+      { key: 'resetCooldown', label: 'Zresetuj cooldown', type: 'checkbox', required: false },
+    ],
+  },
+  {
+    id: 'clear-job', label: 'Wyczyść pracę gracza', emoji: '🗑️', category: 'Praca RP', minLevel: ACCESS.HELPER, color: 'red',
+    desc: 'Usuń aktualną pracę gracza (ustawia bezrobotnego).',
+    fields: [
+      { key: 'targetDiscordId', label: 'Gracz', type: 'member', required: true },
+    ],
+  },
 ] as const;
 
 type CmdDef = typeof COMMANDS[number];

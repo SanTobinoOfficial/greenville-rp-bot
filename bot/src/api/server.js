@@ -162,6 +162,18 @@ function startApiServer(client, prisma) {
           res.writeHead(result.ok ? 200 : 400);
           res.end(JSON.stringify(result));
 
+        // ==================== SET JOB ====================
+        } else if (url === '/cmd/set-job' && req.method === 'POST') {
+          const result = await handleSetJob(client, prisma, data);
+          res.writeHead(result.ok ? 200 : 400);
+          res.end(JSON.stringify(result));
+
+        // ==================== CLEAR JOB ====================
+        } else if (url === '/cmd/clear-job' && req.method === 'POST') {
+          const result = await handleClearJob(client, prisma, data);
+          res.writeHead(result.ok ? 200 : 400);
+          res.end(JSON.stringify(result));
+
         // ==================== GET GUILD INFO ====================
         } else if (url === '/guild/info' && req.method === 'GET') {
           const result = await getGuildInfo(client, prisma);
@@ -810,6 +822,73 @@ async function handleRole(client, prisma, data) {
     else return { ok: false, error: 'Nieprawidłowa akcja (add/remove)' };
 
     return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
+// ==================== SET JOB ====================
+
+async function handleSetJob(client, prisma, data) {
+  const { targetDiscordId, jobId, resetCooldown, issuerName } = data;
+  if (!targetDiscordId || !jobId) return { ok: false, error: 'Brak wymaganych pól (targetDiscordId, jobId)' };
+  try {
+    const path = require('path');
+    const fs = require('fs');
+    const configPath = path.resolve(__dirname, '../../../../server-config.json');
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    const job = (config.jobs ?? []).find(j => j.id === jobId || j.name === jobId);
+    if (!job) return { ok: false, error: `Nie znaleziono pracy: ${jobId}` };
+
+    const targetDb = await prisma.user.findUnique({ where: { discordId: targetDiscordId } });
+    if (!targetDb) return { ok: false, error: 'Gracz nie znaleziony w bazie' };
+
+    const now = new Date();
+    await prisma.user.update({
+      where: { id: targetDb.id },
+      data: {
+        currentJob: job.name,
+        jobCategory: job.kategoria,
+        jobAssignedAt: now,
+        ...(resetCooldown ? { jobCooldownEnd: new Date(now.getTime() + 2 * 60 * 60 * 1000) } : {}),
+      },
+    });
+
+    // Powiadom gracza DM
+    try {
+      const { EmbedBuilder } = require('discord.js');
+      const discordUser = await client.users.fetch(targetDiscordId);
+      if (discordUser) {
+        const embed = new EmbedBuilder()
+          .setColor(0x22c55e)
+          .setTitle(`✅ Praca przypisana: ${job.emoji} ${job.name}`)
+          .setDescription(`Staff przypisał Ci pracę **${job.name}** na serwerze AURORA Greenville RP.`)
+          .addFields({ name: '🛡️ Przypisał', value: issuerName ?? 'Dashboard Staff', inline: true })
+          .setTimestamp();
+        await discordUser.send({ embeds: [embed] }).catch(() => {});
+      }
+    } catch { /* DM zablokowane */ }
+
+    return { ok: true, job: job.name, kategoria: job.kategoria };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
+async function handleClearJob(client, prisma, data) {
+  const { targetDiscordId, issuerName } = data;
+  if (!targetDiscordId) return { ok: false, error: 'Brak targetDiscordId' };
+  try {
+    const targetDb = await prisma.user.findUnique({ where: { discordId: targetDiscordId } });
+    if (!targetDb) return { ok: false, error: 'Gracz nie znaleziony w bazie' };
+
+    const prevJob = targetDb.currentJob;
+    await prisma.user.update({
+      where: { id: targetDb.id },
+      data: { currentJob: null, jobCategory: null, jobAssignedAt: null, jobCooldownEnd: null },
+    });
+
+    return { ok: true, clearedJob: prevJob };
   } catch (err) {
     return { ok: false, error: err.message };
   }

@@ -27,6 +27,9 @@ const CMD_MIN_LEVEL: Record<string, number> = {
   clearwarns:      ACCESS_LEVELS.MOD,     // Moderator+
   notatka:         ACCESS_LEVELS.HELPER,  // Helper+
   role:            ACCESS_LEVELS.ADMIN,   // Admin+
+  // ── Praca RP ──────────────────────────────────────────────────────────────
+  'set-job':       ACCESS_LEVELS.HELPER,  // Helper+ (HR może ustawiać prace)
+  'clear-job':     ACCESS_LEVELS.HELPER,  // Helper+
 };
 
 export async function POST(req: NextRequest) {

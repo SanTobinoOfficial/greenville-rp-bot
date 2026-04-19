@@ -156,11 +156,12 @@ const MODAL_PREFIX_HANDLERS = {
 };
 
 const SELECT_HANDLERS = {
-  'application_select':    'applications/applicationSelect',
-  'ticket_category':       'tickets/ticketCategorySelect',
-  'license_select':        'licenses/licenseSelect',
-  'job_select_kategoria':  'jobs/jobSelectKategoria',
-  'job_select_praca':      'jobs/jobSelectPraca',
+  'application_select':       'applications/applicationSelect',
+  'ticket_category':          'tickets/ticketCategorySelect',
+  'license_select':           'licenses/licenseSelect',
+  'job_select_kategoria':     'jobs/jobSelectKategoria',
+  'job_select_praca':         'jobs/jobSelectPraca',
+  'listprac_select_kategoria':'jobs/listpracSelectKategoria',
 };
 
 const SELECT_PREFIX_HANDLERS = {};

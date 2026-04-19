@@ -76,6 +76,8 @@ export default async function PortalPage() {
             <span className="font-bold text-sm"><span className="text-[#30d158]">GREENVILLE</span> RP</span>
           </Link>
           <div className="flex items-center gap-4">
+            {/* CAD button — available for all users */}
+            <CadButton label="🖥️ Otwórz CAD" />
             <div className="flex items-center gap-2">
               {session.user.image && (
                 // eslint-disable-next-line @next/next/no-img-element

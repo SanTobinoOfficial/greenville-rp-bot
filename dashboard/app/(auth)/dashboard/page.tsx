@@ -22,6 +22,8 @@ async function getDashboardData() {
     openTickets,
     activeCases,
     recentLogs,
+    employedMembers,
+    pendingJobApps,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { verifiedAt: { not: null } } }),
@@ -31,16 +33,18 @@ async function getDashboardData() {
       orderBy: { createdAt: 'desc' },
       take: 10,
     }),
+    prisma.user.count({ where: { currentJob: { not: null } } }),
+    prisma.jobApplication.count({ where: { status: 'PENDING' } }),
   ]);
 
-  return { totalMembers, verifiedMembers, openTickets, activeCases, recentLogs };
+  return { totalMembers, verifiedMembers, openTickets, activeCases, recentLogs, employedMembers, pendingJobApps };
 }
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/login');
 
-  const { totalMembers, verifiedMembers, openTickets, activeCases, recentLogs } =
+  const { totalMembers, verifiedMembers, openTickets, activeCases, recentLogs, employedMembers, pendingJobApps } =
     await getDashboardData();
 
   const stats = [
@@ -72,12 +76,31 @@ export default async function DashboardPage() {
       color: 'text-red-400',
       bg: 'bg-red-500/10',
     },
+    {
+      label: 'Zatrudnionych graczy',
+      value: employedMembers,
+      icon: Activity,
+      color: 'text-purple-400',
+      bg: 'bg-purple-500/10',
+      href: '/dashboard/prace',
+    },
+    {
+      label: 'Podania o pracę',
+      value: pendingJobApps,
+      icon: CheckCircle2,
+      color: 'text-orange-400',
+      bg: 'bg-orange-500/10',
+      href: '/dashboard/podania-pracy',
+      badge: pendingJobApps > 0 ? 'Oczekują!' : undefined,
+    },
   ];
 
   const quickActions = [
     { href: '/dashboard/podania', label: 'Podania', desc: 'Przeglądaj nowe podania' },
+    { href: '/dashboard/podania-pracy', label: 'Podania o pracę', desc: `${pendingJobApps > 0 ? `🔔 ${pendingJobApps} oczekujących` : 'Rozpatruj podania o pracę'}` },
     { href: '/dashboard/tickety', label: 'Tickety', desc: 'Obsłuż otwarte tickety' },
     { href: '/dashboard/gracze', label: 'Gracze', desc: 'Wyszukaj gracza' },
+    { href: '/dashboard/prace', label: 'Prace RP', desc: 'Baza wszystkich 76 prac' },
     { href: '/dashboard/logi', label: 'Logi', desc: 'Przeglądaj logi bota' },
   ];
 
@@ -98,23 +121,31 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
         {stats.map((stat) => {
           const Icon = stat.icon;
-          return (
+          const card = (
             <div
               key={stat.label}
-              className="bg-card border border-border rounded-xl p-5 flex items-start gap-4"
+              className={`bg-card border border-border rounded-xl p-5 flex items-start gap-4 relative overflow-hidden ${stat.href ? 'hover:border-white/20 transition-colors cursor-pointer' : ''}`}
             >
-              <div className={`${stat.bg} p-2.5 rounded-lg`}>
+              <div className={`${stat.bg} p-2.5 rounded-lg shrink-0`}>
                 <Icon className={`w-5 h-5 ${stat.color}`} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-muted-foreground text-xs mb-1">{stat.label}</p>
                 <p className="text-2xl font-bold">{stat.value.toLocaleString('pl')}</p>
               </div>
+              {(stat as { badge?: string }).badge && (
+                <span className="absolute top-2 right-2 text-[10px] bg-orange-500/20 border border-orange-500/30 text-orange-400 px-2 py-0.5 rounded-full">
+                  {(stat as { badge?: string }).badge}
+                </span>
+              )}
             </div>
           );
+          return (stat as { href?: string }).href ? (
+            <Link key={stat.label} href={(stat as { href: string }).href}>{card}</Link>
+          ) : card;
         })}
       </div>
 

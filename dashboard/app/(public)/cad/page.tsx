@@ -1081,6 +1081,19 @@ export default function CadPage() {
               Zaloguj przez Discord
             </button>
           )}
+          {/* Pop-out button — opens CAD in a separate window */}
+          <button
+            title="Otwórz CAD w osobnym oknie"
+            onClick={() => {
+              const w = 1440, h = 900;
+              const left = Math.round(window.screenX + (window.outerWidth - w) / 2);
+              const top  = Math.round(window.screenY + (window.outerHeight - h) / 2);
+              window.open('/cad', 'GreenvilleCAD', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=no,toolbar=no,menubar=no,location=no,status=no`);
+            }}
+            className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-[#1e2332] text-[#475569] hover:text-[#00c8ff] hover:border-[#00c8ff]/40 hover:bg-[#00c8ff]/5 transition-all"
+          >
+            ⧉ Okno
+          </button>
         </div>
       </header>
 
