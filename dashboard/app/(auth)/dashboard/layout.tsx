@@ -14,8 +14,8 @@ export default async function DashboardLayout({
     redirect('/login');
   }
 
-  // Dashboard jest tylko dla Staffu — gracze trafią do CAD
-  if (session.user.accessLevel < ACCESS_LEVELS.HELPER) {
+  // Dashboard tylko dla OWNER — reszta staffu pracuje z CAD
+  if (session.user.accessLevel < ACCESS_LEVELS.OWNER) {
     redirect('/cad');
   }
 

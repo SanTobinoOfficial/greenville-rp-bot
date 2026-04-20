@@ -97,10 +97,10 @@ const CH_CFG: Record<RadioChannel, { color: string; roles: CadRole[] }> = {
 
 // Moduły (zakładki główne) dostępne per rola
 const ROLE_MODULES: Record<CadRole, string[]> = {
-  OWNER:        ['panel','calls','units','warrants','plates','map','arrests','medical','fire','road','dispatch'],
-  ADMIN:        ['panel','calls','units','warrants','plates','map','arrests','dispatch'],
-  MOD:          ['panel','calls','units','warrants','plates','map'],
-  STAFF:        ['panel','calls','units','map'],
+  OWNER:        ['staff','panel','calls','units','warrants','plates','map','arrests','medical','fire','road','dispatch'],
+  ADMIN:        ['staff','panel','calls','units','warrants','plates','map','arrests','dispatch'],
+  MOD:          ['staff','panel','calls','units','warrants','plates','map'],
+  STAFF:        ['staff','panel','calls','units','map'],
   POLICJA:      ['panel','calls','units','warrants','plates','map','arrests'],
   EMS:          ['panel','calls','units','map','medical'],
   STRAZ:        ['panel','calls','units','map','fire'],
@@ -132,6 +132,7 @@ const MODULE_LABEL: Record<string, { label: string; icon: string }> = {
   rides:         { label: 'Kursy',        icon: '🚗' },
   emergency_call:{ label: 'Zgłoś 112',   icon: '🆘' },
   panel:         { label: 'Mój Panel',   icon: '👤' },
+  staff:         { label: 'Staff',       icon: '🛡️' },
 };
 
 const CALL_NATURES: Record<CadRole, string[]> = {
@@ -1059,6 +1060,282 @@ function MapPanel({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// STAFF PANEL (ADMIN / MOD / STAFF — zamiast dashboardu)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface AppItem {
+  id: string;
+  type: string;
+  status: string;
+  content: string;
+  createdAt: string;
+  user: { discordUsername: string; robloxUsername?: string | null; discordId: string } | null;
+}
+interface PlayerItem {
+  id: string;
+  discordId: string;
+  discordUsername: string;
+  robloxUsername?: string | null;
+  verifiedAt?: string | null;
+  createdAt: string;
+}
+interface SessionItem {
+  id: string;
+  status: string;
+  date: string;
+  description?: string | null;
+  _count: { signups: number };
+}
+
+const SESSION_STATUS_CFG: Record<string, { label: string; color: string; bg: string }> = {
+  UPCOMING:  { label: 'Nadchodząca', color: '#3b82f6', bg: 'bg-blue-500/10 border-blue-500/30' },
+  ONGOING:   { label: '🟢 Trwa teraz', color: '#22c55e', bg: 'bg-green-500/10 border-green-500/30' },
+  ENDED:     { label: 'Zakończona',  color: '#6b7280', bg: 'bg-gray-500/10 border-gray-500/20' },
+  CANCELLED: { label: 'Odwołana',   color: '#ef4444', bg: 'bg-red-500/10 border-red-500/20' },
+};
+
+function PodaniaPanel() {
+  const [apps, setApps] = useState<AppItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [acting, setActing] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try { setApps(await fetch('/api/applications?status=PENDING&type=SERVICE').then(r => r.ok ? r.json() : [])); }
+    catch {} finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function review(id: string, action: 'ACCEPTED' | 'REJECTED') {
+    setActing(id);
+    try {
+      await fetch('/api/review-application', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ applicationId: id, action }),
+      });
+      await load();
+    } finally { setActing(null); }
+  }
+
+  return (
+    <div className="flex flex-col h-full p-4 gap-3">
+      <div className="flex items-center justify-between flex-shrink-0">
+        <SLabel>Oczekujące podania ({apps.length})</SLabel>
+        <button onClick={load} className="text-xs text-[#475569] hover:text-[#94a3b8] transition-colors">↻ Odśwież</button>
+      </div>
+      <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
+        {loading && <div className="flex justify-center pt-8"><Spinner /></div>}
+        {!loading && apps.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-3xl mb-2">🎉</div>
+            <p className="text-[#475569] text-sm">Brak oczekujących podań</p>
+          </div>
+        )}
+        {apps.map(app => (
+          <div key={app.id} className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div>
+                <div className="text-xs font-semibold text-white">{app.user?.discordUsername ?? '?'}</div>
+                {app.user?.robloxUsername && <div className="text-xs text-[#475569]">@{app.user.robloxUsername}</div>}
+              </div>
+              <span className="text-xs text-[#475569] font-mono flex-shrink-0">{fmtAgo(app.createdAt)}</span>
+            </div>
+            <div className="text-xs text-[#94a3b8] mb-3 line-clamp-4 leading-relaxed">{app.content}</div>
+            <div className="flex gap-2 pt-2 border-t border-[#1e2332]">
+              <button onClick={() => review(app.id, 'ACCEPTED')} disabled={acting === app.id}
+                className="flex-1 bg-green-500/10 hover:bg-green-500/20 border border-green-500/25 text-[#22c55e] rounded-lg py-1.5 text-xs font-semibold transition-colors disabled:opacity-40">
+                {acting === app.id ? '…' : '✓ Akceptuj'}
+              </button>
+              <button onClick={() => review(app.id, 'REJECTED')} disabled={acting === app.id}
+                className="flex-1 bg-red-500/10 hover:bg-red-500/20 border border-red-500/25 text-red-400 rounded-lg py-1.5 text-xs font-semibold transition-colors disabled:opacity-40">
+                ✕ Odrzuć
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GraczePanel({ accessLevel }: { accessLevel: number }) {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<PlayerItem[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [warnTarget, setWarnTarget] = useState<{ id: string; name: string } | null>(null);
+  const [warnReason, setWarnReason] = useState('');
+  const [acting, setActing] = useState(false);
+  const [warnDone, setWarnDone] = useState(false);
+
+  useEffect(() => {
+    if (query.length < 2) { setResults([]); return; }
+    const t = setTimeout(async () => {
+      setSearching(true);
+      try { setResults(await fetch(`/api/players/search?q=${encodeURIComponent(query)}`).then(r => r.ok ? r.json() : [])); }
+      catch {} finally { setSearching(false); }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [query]);
+
+  async function issueWarn() {
+    if (!warnTarget || !warnReason.trim()) return;
+    setActing(true);
+    try {
+      await fetch('/api/cases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetId: warnTarget.id, type: 'WARN', reason: warnReason }),
+      });
+      setWarnDone(true);
+      setTimeout(() => { setWarnTarget(null); setWarnReason(''); setWarnDone(false); }, 2000);
+    } finally { setActing(false); }
+  }
+
+  return (
+    <div className="flex flex-col h-full p-4 gap-3">
+      <input value={query} onChange={e => setQuery(e.target.value)}
+        placeholder="Szukaj gracza (nick Discord lub Roblox)…"
+        className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors flex-shrink-0" />
+
+      {/* Warn form */}
+      {warnTarget && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 flex-shrink-0">
+          {warnDone ? (
+            <div className="text-center text-[#22c55e] text-xs font-semibold py-1">✅ Warn wystawiony dla {warnTarget.name}</div>
+          ) : (
+            <>
+              <div className="text-xs font-semibold text-yellow-400 mb-2">⚠️ Ostrzeżenie → {warnTarget.name}</div>
+              <input value={warnReason} onChange={e => setWarnReason(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && issueWarn()}
+                placeholder="Powód ostrzeżenia…"
+                className="w-full bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-yellow-500/50 mb-2 transition-colors" />
+              <div className="flex gap-2">
+                <button onClick={issueWarn} disabled={acting || !warnReason.trim()}
+                  className="flex-1 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/30 disabled:opacity-40 text-yellow-400 rounded-lg py-1.5 text-xs font-semibold transition-colors">
+                  {acting ? '…' : '⚠️ Wyślij warn'}
+                </button>
+                <button onClick={() => setWarnTarget(null)} className="px-3 text-xs text-[#475569] hover:text-[#94a3b8] transition-colors">Anuluj</button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
+        {searching && <div className="flex justify-center pt-4"><Spinner /></div>}
+        {!searching && query.length >= 2 && results.length === 0 && (
+          <div className="text-center text-[#475569] text-xs pt-6">Nie znaleziono gracza</div>
+        )}
+        {query.length < 2 && !searching && (
+          <div className="text-center text-[#475569] text-xs pt-6">Wpisz min. 2 znaki aby szukać</div>
+        )}
+        {results.map(p => (
+          <div key={p.id} className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-3">
+            <div className="flex items-start justify-between gap-2 mb-1.5">
+              <div>
+                <div className="text-xs font-semibold text-white">{p.discordUsername}</div>
+                {p.robloxUsername && <div className="text-xs text-[#475569]">Roblox: @{p.robloxUsername}</div>}
+                <div className="text-xs text-[#2a3040] font-mono mt-0.5">{p.discordId}</div>
+              </div>
+              {p.verifiedAt
+                ? <span className="text-xs text-[#22c55e] flex-shrink-0">✓ Zweryfik.</span>
+                : <span className="text-xs text-yellow-500 flex-shrink-0">⚠ Niezweryf.</span>
+              }
+            </div>
+            {accessLevel >= 2 && (
+              <button onClick={() => { setWarnTarget({ id: p.id, name: p.discordUsername }); setWarnReason(''); }}
+                className="text-xs bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/20 text-yellow-400 rounded-lg px-3 py-1 transition-colors mt-1">
+                ⚠️ Warn
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SesjePanel() {
+  const [sessions, setSessions] = useState<SessionItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/sessions').then(r => r.ok ? r.json() : []).then(setSessions).catch(() => setSessions([])).finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <div className="flex flex-col h-full p-4 gap-3">
+      <SLabel>Sesje RP</SLabel>
+      <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
+        {loading && <div className="flex justify-center pt-8"><Spinner /></div>}
+        {!loading && sessions.length === 0 && <div className="text-center text-[#475569] text-sm pt-8">Brak sesji</div>}
+        {sessions.map(s => {
+          const cfg = SESSION_STATUS_CFG[s.status] ?? SESSION_STATUS_CFG.ENDED;
+          return (
+            <div key={s.id} className={`rounded-xl border p-4 ${cfg.bg}`}>
+              <div className="flex justify-between items-start mb-1.5">
+                <span className="text-xs font-semibold text-white">
+                  {new Date(s.date).toLocaleString('pl-PL', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                </span>
+                <span className="text-xs font-bold flex-shrink-0" style={{ color: cfg.color }}>{cfg.label}</span>
+              </div>
+              {s.description && <div className="text-xs text-[#94a3b8] mb-1">{s.description}</div>}
+              <div className="text-xs text-[#475569]">👥 {s._count.signups} zapisanych</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+type StaffSubTab = 'podania' | 'gracze' | 'sesje';
+
+function StaffPanel({ accessLevel }: { accessLevel: number }) {
+  const tabs = [
+    { id: 'podania' as StaffSubTab, label: '📋 Podania', minLevel: 1 },
+    { id: 'sesje'   as StaffSubTab, label: '🎪 Sesje',   minLevel: 1 },
+    { id: 'gracze'  as StaffSubTab, label: '🔍 Gracze',  minLevel: 2 },
+  ].filter(t => accessLevel >= t.minLevel);
+
+  const [tab, setTab] = useState<StaffSubTab>(tabs[0]?.id ?? 'podania');
+
+  const roleBadge = accessLevel >= 4 ? { label: '👑 Owner', color: '#f59e0b' }
+                  : accessLevel >= 3 ? { label: '🔴 Admin', color: '#ef4444' }
+                  : accessLevel >= 2 ? { label: '🟠 Mod',   color: '#f97316' }
+                  :                    { label: '🟡 Staff',  color: '#eab308' };
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Sub-header */}
+      <div className="border-b border-[#1e2332] flex items-end px-3 pt-2 gap-1 bg-[#0a0c12] flex-shrink-0">
+        {tabs.map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`px-4 py-2 text-xs font-medium rounded-t-lg border-b-2 transition-all whitespace-nowrap
+              ${tab === t.id ? 'text-white border-b-[#5865F2] bg-[#5865F2]/10' : 'text-[#475569] border-b-transparent hover:text-[#94a3b8]'}`}>
+            {t.label}
+          </button>
+        ))}
+        <div className="ml-auto mb-1.5 flex-shrink-0">
+          <span className="text-xs px-2.5 py-1 rounded-md font-bold"
+            style={{ background: roleBadge.color + '20', color: roleBadge.color, border: `1px solid ${roleBadge.color}35` }}>
+            {roleBadge.label}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0">
+        {tab === 'podania' && <PodaniaPanel />}
+        {tab === 'sesje'   && <SesjePanel />}
+        {tab === 'gracze'  && <GraczePanel accessLevel={accessLevel} />}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // PLAYER PANEL (przeniesiony z /portal)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1498,6 +1775,7 @@ export default function CadPage() {
             {activeTab === 'incident'      && <PatrolLogPanel callsign={callsign} role={cadRole} />}
             {activeTab === 'rides'         && <RideLogPanel role={cadRole} />}
             {activeTab === 'emergency_call'&& <EmergencyCallPanel onSent={() => setActiveTab('calls_view')} />}
+            {activeTab === 'staff'         && <StaffPanel accessLevel={session?.user?.accessLevel ?? 0} />}
             {activeTab === 'panel'         && <PlayerPanel hasSession={!!session} />}
             {(activeTab === 'medical' || activeTab === 'fire' || activeTab === 'road' || activeTab === 'arrests' || activeTab === 'dispatch') && (
               <div className="h-full flex flex-col">
