@@ -25,7 +25,7 @@ function LoginContent() {
         )}
 
         <button
-          onClick={() => signIn('discord', { callbackUrl: '/portal' })}
+          onClick={() => signIn('discord', { callbackUrl: '/cad' })}
           className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-3"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">

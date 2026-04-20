@@ -80,7 +80,7 @@ export default function LandingClient({ stats, news, isLoggedIn, userName }: Pro
           {/* Auth */}
           {isLoggedIn ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Link href="/portal" style={{
+              <Link href="/cad" style={{
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '7px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700,
                 color: '#30d158', border: '1px solid rgba(48,209,88,0.35)',
@@ -172,7 +172,7 @@ export default function LandingClient({ stats, news, isLoggedIn, userName }: Pro
               <DiscordIcon size={17} /> Dołącz do Discord
             </a>
             {isLoggedIn ? (
-              <Link href="/portal" style={{
+              <Link href="/cad" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 padding: '13px 28px', borderRadius: 12, fontWeight: 800, fontSize: 14,
                 color: '#30d158', textDecoration: 'none',
@@ -441,7 +441,7 @@ export default function LandingClient({ stats, news, isLoggedIn, userName }: Pro
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#30d158', boxShadow: '0 0 10px #30d158', display: 'inline-block' }} />
                 Zalogowany jako {userName}
               </div>
-              <Link href="/portal" style={{
+              <Link href="/cad" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 padding: '14px 36px', borderRadius: 12, fontWeight: 800, fontSize: 15,
                 background: 'linear-gradient(90deg,#30d158,#00c8ff)', color: '#000', textDecoration: 'none',

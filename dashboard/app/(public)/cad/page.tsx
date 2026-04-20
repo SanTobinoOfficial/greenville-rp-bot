@@ -97,22 +97,22 @@ const CH_CFG: Record<RadioChannel, { color: string; roles: CadRole[] }> = {
 
 // Moduły (zakładki główne) dostępne per rola
 const ROLE_MODULES: Record<CadRole, string[]> = {
-  OWNER:        ['calls','units','warrants','plates','map','arrests','medical','fire','road','dispatch'],
-  ADMIN:        ['calls','units','warrants','plates','map','arrests','dispatch'],
-  MOD:          ['calls','units','warrants','plates','map'],
-  STAFF:        ['calls','units','map'],
-  POLICJA:      ['calls','units','warrants','plates','map','arrests'],
-  EMS:          ['calls','units','map','medical'],
-  STRAZ:        ['calls','units','map','fire'],
-  DOT:          ['calls','units','map','road'],
-  SM:           ['calls','units','warrants','map','patrol_log'],
-  DYSPOZYTORNIA:['calls','units','warrants','plates','map','dispatch'],
-  OCHRONA:      ['calls','map','patrol_log','incident'],
-  TAKSOWKARZ:   ['map','rides'],
-  KIEROWCA_BUS: ['map','rides'],
-  RATOWNIK:     ['calls','map','medical'],
-  PRACOWNIK:    ['map'],
-  CYWIL:        ['emergency_call','calls_view','map'],
+  OWNER:        ['panel','calls','units','warrants','plates','map','arrests','medical','fire','road','dispatch'],
+  ADMIN:        ['panel','calls','units','warrants','plates','map','arrests','dispatch'],
+  MOD:          ['panel','calls','units','warrants','plates','map'],
+  STAFF:        ['panel','calls','units','map'],
+  POLICJA:      ['panel','calls','units','warrants','plates','map','arrests'],
+  EMS:          ['panel','calls','units','map','medical'],
+  STRAZ:        ['panel','calls','units','map','fire'],
+  DOT:          ['panel','calls','units','map','road'],
+  SM:           ['panel','calls','units','warrants','map','patrol_log'],
+  DYSPOZYTORNIA:['panel','calls','units','warrants','plates','map','dispatch'],
+  OCHRONA:      ['panel','calls','map','patrol_log','incident'],
+  TAKSOWKARZ:   ['panel','map','rides'],
+  KIEROWCA_BUS: ['panel','map','rides'],
+  RATOWNIK:     ['panel','calls','map','medical'],
+  PRACOWNIK:    ['panel','map'],
+  CYWIL:        ['panel','emergency_call','calls_view','map'],
 };
 
 const MODULE_LABEL: Record<string, { label: string; icon: string }> = {
@@ -131,6 +131,7 @@ const MODULE_LABEL: Record<string, { label: string; icon: string }> = {
   incident:      { label: 'Incydenty',    icon: '⚠️' },
   rides:         { label: 'Kursy',        icon: '🚗' },
   emergency_call:{ label: 'Zgłoś 112',   icon: '🆘' },
+  panel:         { label: 'Mój Panel',   icon: '👤' },
 };
 
 const CALL_NATURES: Record<CadRole, string[]> = {
@@ -185,6 +186,25 @@ const LOCATIONS: Location[] = [
   { id: 'bank',          name: 'Bank / Credit Union',   emoji: '🏦' },
   { id: 'przedmiescia',  name: 'Przedmieścia',          emoji: '🏘️' },
 ];
+
+// Pozycje pinezek lokacji na mapie (% od lewej i góry)
+const LOCATION_COORDS: Record<string, { x: number; y: number }> = {
+  centrum:       { x: 50, y: 45 },
+  szpital:       { x: 65, y: 30 },
+  komisariat:    { x: 38, y: 42 },
+  straz_pozarna: { x: 28, y: 38 },
+  lotnisko:      { x: 78, y: 18 },
+  port:          { x: 72, y: 68 },
+  ratusz:        { x: 47, y: 52 },
+  targ:          { x: 33, y: 57 },
+  park:          { x: 18, y: 28 },
+  szkola:        { x: 55, y: 62 },
+  restauracja:   { x: 44, y: 57 },
+  warsztat:      { x: 23, y: 62 },
+  salon_aut:     { x: 61, y: 58 },
+  bank:          { x: 41, y: 47 },
+  przedmiescia:  { x: 18, y: 72 },
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UTILS
@@ -939,19 +959,303 @@ function EmergencyCallPanel({ onSent }: { onSent?: () => void }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// MAP PANEL
+// MAP PANEL (interaktywna mapa z pinezkami lokacji)
 // ─────────────────────────────────────────────────────────────────────────────
 
-function MapPanel() {
+function MapPanel({
+  locations,
+  selectedLocation,
+  onLocationSelect,
+  mapImageUrl,
+}: {
+  locations: Location[];
+  selectedLocation: Location;
+  onLocationSelect: (loc: Location) => void;
+  mapImageUrl?: string;
+}) {
+  const [hovered, setHovered] = useState<string | null>(null);
+
   return (
-    <div className="h-full flex flex-col items-center justify-center bg-[#080a0f] relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10"
-        style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #5865F2 0%, transparent 60%)', backgroundSize: '100% 100%' }} />
-      <div className="relative text-center z-10">
-        <div className="w-24 h-24 bg-[#0d0f17] border border-[#1e2332] rounded-full flex items-center justify-center text-5xl mx-auto mb-4">🗺️</div>
-        <p className="text-[#94a3b8] text-sm font-medium">Mapa Greenville RP</p>
-        <p className="text-[#475569] text-xs mt-1">Wgraj mapę w Ustawieniach → CAD → URL mapy</p>
+    <div className="h-full flex flex-col bg-[#080a0f] relative overflow-hidden">
+      {/* Map background */}
+      <div className="flex-1 relative">
+        {mapImageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={mapImageUrl} alt="Mapa Greenville" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+        ) : (
+          <>
+            <div className="absolute inset-0 opacity-5"
+              style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #5865F2 0%, transparent 60%)' }} />
+            {/* Grid lines placeholder */}
+            <div className="absolute inset-0 opacity-[0.04]"
+              style={{ backgroundImage: 'linear-gradient(#818cf8 1px, transparent 1px), linear-gradient(90deg, #818cf8 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+            {/* City label */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
+              <div className="text-6xl opacity-20">🗺️</div>
+              <p className="text-[#475569] text-xs text-center px-4">
+                Mapa Greenville RP<br />
+                <span className="text-[#2a3040]">Wgraj w Ustawieniach → CAD → URL mapy</span>
+              </p>
+            </div>
+          </>
+        )}
+
+        {/* Location pins */}
+        {locations.map(loc => {
+          const coords = LOCATION_COORDS[loc.id] ?? { x: 50, y: 50 };
+          const isSelected = selectedLocation.id === loc.id;
+          const isHovered  = hovered === loc.id;
+          return (
+            <button
+              key={loc.id}
+              onClick={() => onLocationSelect(loc)}
+              onMouseEnter={() => setHovered(loc.id)}
+              onMouseLeave={() => setHovered(null)}
+              className="absolute transform -translate-x-1/2 -translate-y-1/2 z-10 group"
+              style={{ left: `${coords.x}%`, top: `${coords.y}%` }}
+              title={loc.name}
+            >
+              {/* Tooltip */}
+              {(isHovered || isSelected) && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap
+                  bg-[#0d0f17] border border-[#1e2332] rounded-lg px-2.5 py-1 text-xs font-semibold text-white shadow-xl pointer-events-none"
+                  style={isSelected ? { borderColor: '#5865F2', color: '#818cf8' } : {}}>
+                  {loc.emoji} {loc.name}
+                </div>
+              )}
+              {/* Pin */}
+              <div className={`
+                flex items-center justify-center rounded-full border-2 text-base transition-all duration-150
+                ${isSelected
+                  ? 'w-10 h-10 bg-[#5865F2] border-[#818cf8] shadow-lg shadow-[#5865F2]/40'
+                  : 'w-8 h-8 bg-[#0d0f17]/90 border-[#1e2332] hover:border-[#5865F2]/60 hover:bg-[#0d0f17] hover:scale-110'}
+              `}>
+                {loc.emoji}
+              </div>
+              {/* Pulse ring for selected */}
+              {isSelected && (
+                <div className="absolute inset-0 rounded-full border-2 border-[#5865F2]/40 animate-ping pointer-events-none" />
+              )}
+            </button>
+          );
+        })}
+
+        {/* Bottom info bar */}
+        <div className="absolute bottom-3 left-3 bg-[#0a0c12]/90 border border-[#1e2332] rounded-xl px-3 py-2 backdrop-blur-sm z-20 max-w-xs">
+          <div className="text-xs text-[#475569] mb-0.5">Twoja lokacja (Proximity Chat)</div>
+          <div className="flex items-center gap-2 text-sm font-semibold text-white">
+            <span>{selectedLocation.emoji}</span>
+            <span>{selectedLocation.name}</span>
+          </div>
+        </div>
+
+        {/* Help hint */}
+        <div className="absolute bottom-3 right-3 bg-[#0a0c12]/80 border border-[#1e2332] rounded-lg px-2.5 py-1.5 text-xs text-[#475569] z-20">
+          Kliknij pinezką aby dołączyć do chatu lokacji
+        </div>
       </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PLAYER PANEL (przeniesiony z /portal)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface PortalUser {
+  robloxUsername?: string | null;
+  character?: { firstName: string; lastName: string; gender: string; documentId: string; peselRp: string } | null;
+  vehicles?: Array<{ id: string; marka: string; model: string; rok: number; tablica: string }>;
+  licenses?: Array<{ id: string; kategoria: string }>;
+  finesReceived?: Array<{ id: string }>;
+  casesAsTarget?: Array<{ type: string }>;
+  arrests?: Array<{ id: string }>;
+  dutyLogs?: Array<{ action: string; service: string; createdAt: string }>;
+}
+interface PortalSession {
+  status: string;
+  date: string;
+  description?: string | null;
+  signups: Array<{ userId: string }>;
+}
+
+function PlayerPanel({ hasSession }: { hasSession: boolean }) {
+  const [portalUser, setPortalUser] = useState<PortalUser | null>(null);
+  const [upcoming, setUpcoming] = useState<PortalSession | null>(null);
+  const [ongoing, setOngoing] = useState<PortalSession | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!hasSession) { setLoading(false); return; }
+    fetch('/api/portal/me')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d) { setPortalUser(d.user); setUpcoming(d.upcomingSession); setOngoing(d.ongoingSession); }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [hasSession]);
+
+  if (!hasSession) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full gap-4 p-6 text-center">
+        <div className="text-4xl">👤</div>
+        <p className="text-[#475569] text-sm">Zaloguj się, aby zobaczyć swój panel gracza</p>
+        <button onClick={() => signIn('discord')} className="text-xs bg-[#5865F2]/20 hover:bg-[#5865F2]/30 border border-[#5865F2]/40 text-[#818cf8] rounded-lg px-4 py-2 transition-colors font-medium">
+          Zaloguj przez Discord
+        </button>
+      </div>
+    );
+  }
+
+  if (loading) return <div className="flex justify-center items-center h-full"><Spinner /></div>;
+
+  const u = portalUser;
+  const isArrested    = (u?.arrests?.length ?? 0) > 0;
+  const activeWarns   = u?.casesAsTarget?.filter(c => c.type === 'WARN').length ?? 0;
+  const activeFines   = u?.finesReceived?.length ?? 0;
+  const isVerified    = !!u?.robloxUsername;
+  const activeSession = ongoing ?? upcoming;
+
+  return (
+    <div className="h-full overflow-y-auto p-4 space-y-3">
+
+      {/* ALERT: zatrzymany */}
+      {isArrested && (
+        <div className="bg-red-500/15 border border-red-500/40 rounded-xl p-4 flex items-center gap-3">
+          <span className="text-2xl">🚔</span>
+          <div>
+            <div className="font-bold text-red-400 text-sm">JESTEŚ ZATRZYMANY/A</div>
+            <div className="text-xs text-white/60">Poczekaj na zwolnienie przez Policję</div>
+          </div>
+        </div>
+      )}
+
+      {/* Niezweryfikowany */}
+      {!isVerified && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-center">
+          <div className="text-2xl mb-2">⚠️</div>
+          <p className="text-yellow-400 text-xs font-semibold mb-1">Konto niezweryfikowane</p>
+          <p className="text-[#475569] text-xs">Połącz konto Roblox na Discordzie (<span className="text-[#22c55e]">/weryfikacja</span>)</p>
+        </div>
+      )}
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { label: 'Pojazdy',     value: u?.vehicles?.length ?? 0,  color: '#22c55e' },
+          { label: 'Prawa jazdy', value: u?.licenses?.length ?? 0,  color: '#00c8ff' },
+          { label: 'Warny',       value: activeWarns,                color: activeWarns > 0 ? '#eab308' : '#475569' },
+          { label: 'Mandaty',     value: activeFines,                color: activeFines > 0 ? '#ef4444' : '#475569' },
+        ].map(s => (
+          <div key={s.label} className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-3 text-center">
+            <div className="text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
+            <div className="text-xs text-[#475569] mt-0.5">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Postać */}
+      <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <span>🪪</span>
+          <span className="text-xs font-semibold text-white">Moja postać</span>
+        </div>
+        {u?.character ? (
+          <div className="space-y-1.5 text-xs">
+            <div className="flex justify-between">
+              <span className="text-[#475569]">Imię i nazwisko</span>
+              <span className="text-white font-medium">{u.character.firstName} {u.character.lastName}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-[#475569]">Płeć</span>
+              <span className="text-[#94a3b8]">{u.character.gender}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-[#475569]">Nr dokumentu</span>
+              <span className="font-mono blur-sm hover:blur-none transition-all cursor-pointer text-[#94a3b8]">{u.character.documentId}</span>
+            </div>
+          </div>
+        ) : (
+          <p className="text-xs text-[#475569]">Brak postaci. Użyj <span className="text-[#22c55e]">#tworzenie-postaci</span> na Discordzie.</p>
+        )}
+      </div>
+
+      {/* Pojazdy */}
+      {(u?.vehicles?.length ?? 0) > 0 && (
+        <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span>🚗</span>
+            <span className="text-xs font-semibold text-white">Moje pojazdy</span>
+          </div>
+          <div className="space-y-1.5">
+            {u!.vehicles!.slice(0, 5).map(v => (
+              <div key={v.id} className="flex justify-between items-center text-xs">
+                <span className="text-[#94a3b8]">{v.marka} {v.model} ({v.rok})</span>
+                <span className="font-mono text-[#22c55e] font-semibold">{v.tablica}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Prawa jazdy */}
+      {(u?.licenses?.length ?? 0) > 0 && (
+        <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span>🪪</span>
+            <span className="text-xs font-semibold text-white">Prawa jazdy</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {u!.licenses!.map(l => (
+              <span key={l.id} className="text-xs px-2.5 py-1 rounded-full font-medium"
+                style={{ background: '#22c55e18', border: '1px solid #22c55e30', color: '#22c55e' }}>
+                ✅ Kat. {l.kategoria}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Sesja RP */}
+      {activeSession && (
+        <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span>🎪</span>
+            <span className="text-xs font-semibold text-white">Sesja RP</span>
+          </div>
+          <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium mb-2
+            ${activeSession.status === 'ONGOING' ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'}`}>
+            {activeSession.status === 'ONGOING' ? '🟢 Trwa teraz' : '🔵 Planowana'}
+          </div>
+          <div className="text-xs text-white/70">
+            {new Date(activeSession.date).toLocaleString('pl-PL', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+          </div>
+          {activeSession.description && <div className="text-xs text-[#475569] mt-1">{activeSession.description}</div>}
+          <div className="text-xs text-[#475569] mt-1">👥 {activeSession.signups.length} zapisanych</div>
+        </div>
+      )}
+
+      {/* Ostatnie służby */}
+      {(u?.dutyLogs?.length ?? 0) > 0 && (
+        <div className="bg-[#0d0f17] border border-[#00c8ff]/20 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span>🚔</span>
+            <span className="text-xs font-semibold text-[#00c8ff]">Ostatnie służby</span>
+          </div>
+          <div className="grid grid-cols-2 gap-1.5">
+            {u!.dutyLogs!.slice(0, 4).map((log, i) => (
+              <div key={i} className="bg-[#0a0c12] border border-[#1e2332] rounded-lg p-2 text-center">
+                <div className={`text-xs font-medium ${log.action === 'ON_DUTY' ? 'text-green-400' : 'text-red-400'}`}>
+                  {log.action === 'ON_DUTY' ? '🟢 ON' : '🔴 OFF'}
+                </div>
+                <div className="text-xs text-[#475569] mt-0.5 truncate">{log.service}</div>
+                <div className="text-xs text-[#475569]/60">{new Date(log.createdAt).toLocaleDateString('pl-PL')}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1189,11 +1493,12 @@ export default function CadPage() {
             {activeTab === 'units'         && <UnitsPanel />}
             {activeTab === 'warrants'      && <WarrantsPanel canAdd={canAddWarrants} />}
             {activeTab === 'plates'        && <PlatesPanel />}
-            {activeTab === 'map'           && <MapPanel />}
+            {activeTab === 'map'           && <MapPanel locations={LOCATIONS} selectedLocation={proxLocation} onLocationSelect={(loc) => { setProxLocation(loc); setChatTab('proximity'); }} />}
             {activeTab === 'patrol_log'    && <PatrolLogPanel callsign={callsign} role={cadRole} />}
             {activeTab === 'incident'      && <PatrolLogPanel callsign={callsign} role={cadRole} />}
             {activeTab === 'rides'         && <RideLogPanel role={cadRole} />}
             {activeTab === 'emergency_call'&& <EmergencyCallPanel onSent={() => setActiveTab('calls_view')} />}
+            {activeTab === 'panel'         && <PlayerPanel hasSession={!!session} />}
             {(activeTab === 'medical' || activeTab === 'fire' || activeTab === 'road' || activeTab === 'arrests' || activeTab === 'dispatch') && (
               <div className="h-full flex flex-col">
                 <CallsPanel role={cadRole} callsign={callsign} />
