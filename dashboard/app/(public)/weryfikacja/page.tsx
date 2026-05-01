@@ -1,13 +1,11 @@
 'use client';
 
-// ============================================================
 // Greenville RP — Formularz weryfikacyjny
-// Automatycznie sprawdza odpowiedzi i nadaje rolę Mieszkaniec
-// ============================================================
+// Design: spójny z landing page (#0c0c10 / #16161d / rgba(255,255,255,0.07))
 
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 
-// ── Pytania z presetowanymi poprawnymi odpowiedziami ─────────
+// ── Pytania ──────────────────────────────────────────────────────────────────
 const QUESTIONS = [
   {
     q: 'Co oznacza skrót FRP (Fail Role Play)?',
@@ -100,7 +98,7 @@ const QUESTIONS = [
     correct: 2,
   },
   {
-    q: 'Czy wolno używać informacji z kanałów Discord (np. OOC czatu) podczas aktywnej sesji RP jako wiedzę swojej postaci?',
+    q: 'Czy wolno używać informacji z kanałów Discord podczas aktywnej sesji RP jako wiedzę swojej postaci?',
     options: [
       'Tak, wszystkie kanały Discord są dostępne dla postaci',
       'Tak, ale tylko kanały kategorii Staff',
@@ -113,70 +111,107 @@ const QUESTIONS = [
 
 const MIN_SCORE = 8;
 
-interface FormState {
-  discordId: string;
-  robloxNick: string;
-  answers: (number | null)[];
-}
+// ── Style helpers ─────────────────────────────────────────────────────────────
+const page: CSSProperties  = { minHeight: '100vh', background: '#0c0c10', fontFamily: "'Inter', -apple-system, sans-serif", color: '#f4f4f8', padding: '60px 20px 80px' };
+const wrap: CSSProperties  = { maxWidth: 660, margin: '0 auto' };
+const card: CSSProperties  = { background: '#16161d', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '22px 24px', marginBottom: 8 };
+const inp: CSSProperties   = { width: '100%', background: '#0c0c10', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '10px 13px', fontSize: 13, color: '#f4f4f8', outline: 'none', boxSizing: 'border-box' };
+const label: CSSProperties = { fontSize: 11, fontWeight: 600, letterSpacing: '0.07em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)', marginBottom: 7, display: 'block' };
+const hint: CSSProperties  = { fontSize: 11, color: 'rgba(255,255,255,0.2)', marginTop: 5 };
 
+// ── Types ────────────────────────────────────────────────────────────────────
+interface FormState { discordId: string; robloxNick: string; answers: (number | null)[]; }
 type SubmitStatus = 'idle' | 'loading' | 'passed' | 'failed' | 'error';
+interface ResultData { score: number; total: number; results: { correct: boolean; correctAnswer: number; userAnswer: number }[]; message?: string; }
 
-interface ResultData {
-  score: number;
-  total: number;
-  results: { correct: boolean; correctAnswer: number; userAnswer: number }[];
-  message?: string;
+// ── Accordion question ────────────────────────────────────────────────────────
+function Question({
+  index, q, options, selected, open, onToggle, onSelect,
+}: {
+  index: number; q: string; options: string[]; selected: number | null;
+  open: boolean; onToggle: () => void; onSelect: (i: number) => void;
+}) {
+  const answered = selected !== null;
+  return (
+    <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
+      {/* Header */}
+      <button
+        type="button"
+        onClick={onToggle}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+      >
+        {/* Number badge */}
+        <span style={{ width: 24, height: 24, borderRadius: 6, background: answered ? 'rgba(88,101,242,0.18)' : 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: answered ? '#818cf8' : 'rgba(255,255,255,0.3)', flexShrink: 0 }}>
+          {index + 1}
+        </span>
+
+        <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: '#f4f4f8', lineHeight: 1.5 }}>{q}</span>
+
+        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', flexShrink: 0, marginLeft: 8 }}>
+          {answered ? <span style={{ color: '#5865F2' }}>✓</span> : open ? '−' : '+'}
+        </span>
+      </button>
+
+      {/* Options */}
+      {open && (
+        <div style={{ padding: '0 20px 16px', display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          {options.map((opt, oi) => {
+            const isSelected = selected === oi;
+            return (
+              <button
+                key={oi}
+                type="button"
+                onClick={() => onSelect(oi)}
+                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 7, border: isSelected ? '1px solid rgba(88,101,242,0.35)' : '1px solid rgba(255,255,255,0.06)', background: isSelected ? 'rgba(88,101,242,0.1)' : 'rgba(255,255,255,0.02)', cursor: 'pointer', textAlign: 'left', transition: 'all .12s', marginTop: oi === 0 ? 12 : 0 }}
+              >
+                <span style={{ width: 16, height: 16, borderRadius: '50%', border: isSelected ? '2px solid #5865F2' : '2px solid rgba(255,255,255,0.2)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {isSelected && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#5865F2', display: 'block' }} />}
+                </span>
+                <span style={{ fontSize: 13, color: isSelected ? '#f4f4f8' : 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{opt}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
+// ── Main ──────────────────────────────────────────────────────────────────────
 export default function WeryfikacjaPage() {
-  const [form, setForm] = useState<FormState>({
-    discordId: '',
-    robloxNick: '',
-    answers: Array(QUESTIONS.length).fill(null),
-  });
+  const [form, setForm] = useState<FormState>({ discordId: '', robloxNick: '', answers: Array(QUESTIONS.length).fill(null) });
+  // Wszystkie pytania domyślnie otwarte
+  const [openQuestions, setOpenQuestions] = useState<boolean[]>(Array(QUESTIONS.length).fill(true));
   const [status, setStatus] = useState<SubmitStatus>('idle');
   const [result, setResult] = useState<ResultData | null>(null);
   const [error, setError] = useState('');
 
   const setAnswer = (qi: number, ai: number) => {
-    setForm(prev => {
-      const answers = [...prev.answers];
-      answers[qi] = ai;
-      return { ...prev, answers };
-    });
+    setForm(prev => { const a = [...prev.answers]; a[qi] = ai; return { ...prev, answers: a }; });
   };
 
-  const allAnswered = form.answers.every(a => a !== null);
+  const toggleQuestion = (qi: number) => {
+    setOpenQuestions(prev => { const n = [...prev]; n[qi] = !n[qi]; return n; });
+  };
+
+  const answered       = form.answers.filter(a => a !== null).length;
   const discordIdValid = /^\d{17,20}$/.test(form.discordId.trim());
-  const robloxNickValid = form.robloxNick.trim().length >= 3;
-  const canSubmit = allAnswered && discordIdValid && robloxNickValid;
+  const robloxValid    = form.robloxNick.trim().length >= 3;
+  const canSubmit      = answered === QUESTIONS.length && discordIdValid && robloxValid;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
-
     setStatus('loading');
     setError('');
-
     try {
       const res = await fetch('/api/weryfikacja/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          discordId: form.discordId.trim(),
-          robloxNick: form.robloxNick.trim(),
-          answers: form.answers,
-        }),
+        body: JSON.stringify({ discordId: form.discordId.trim(), robloxNick: form.robloxNick.trim(), answers: form.answers }),
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Wystąpił błąd serwera.');
-        setStatus('error');
-        return;
-      }
-
+      if (!res.ok) { setError(data.error || 'Wystąpił błąd serwera.'); setStatus('error'); return; }
       setResult(data);
       setStatus(data.passed ? 'passed' : 'failed');
     } catch {
@@ -185,87 +220,69 @@ export default function WeryfikacjaPage() {
     }
   };
 
-  // ── WYNIK KOŃCOWY ────────────────────────────────────────────
+  // ── Sukces ─────────────────────────────────────────────────────────────────
   if (status === 'passed' && result) {
     return (
-      <div className="min-h-screen bg-[#1a1b1e] flex items-center justify-center p-4">
-        <div className="bg-[#2b2d31] rounded-2xl p-8 max-w-lg w-full shadow-2xl border border-green-500/30 text-center">
-          <div className="text-6xl mb-4">🎉</div>
-          <h1 className="text-3xl font-bold text-green-400 mb-2">Gratulacje!</h1>
-          <p className="text-white text-lg mb-4">
-            Uzyskałeś <strong>{result.score}/{result.total}</strong> punktów i pomyślnie przeszedłeś weryfikację!
+      <div style={page}>
+        <div style={{ ...wrap, maxWidth: 480, textAlign: 'center' }}>
+          <div style={{ width: 56, height: 56, borderRadius: 12, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: 26 }}>✓</div>
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: '#f4f4f8', margin: '0 0 10px', letterSpacing: '-0.02em' }}>Weryfikacja zaliczona</h1>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.45)', margin: '0 0 28px', lineHeight: 1.6 }}>
+            Uzyskałeś <strong style={{ color: '#22c55e' }}>{result.score}/{result.total}</strong> punktów. Rola <strong style={{ color: '#f4f4f8' }}>Mieszkaniec</strong> została nadana na serwerze Discord.
           </p>
-          <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-6">
-            <p className="text-green-300 text-sm">
-              🏠 Rola <strong>Mieszkaniec</strong> została nadana na serwerze Discord.<br />
-              Odśwież Discord jeśli nie widzisz zmiany.
-            </p>
+          <div style={{ background: 'rgba(34,197,94,0.07)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 8, padding: '12px 16px', marginBottom: 28 }}>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', margin: 0 }}>Odśwież Discord jeśli nie widzisz zmiany ról.</p>
           </div>
-          <p className="text-gray-400 text-sm">
-            Witaj w <strong className="text-white">Greenville RP</strong>!{' '}
-            <a href="https://discord.gg/BU8EBPsYXV" className="text-[#5865F2] hover:underline" target="_blank" rel="noopener noreferrer">
-              Wróć na serwer →
-            </a>
-          </p>
+          <a href="https://discord.gg/BU8EBPsYXV" target="_blank" rel="noopener noreferrer"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 22px', borderRadius: 8, fontWeight: 600, fontSize: 14, background: '#5865F2', color: '#fff', textDecoration: 'none' }}>
+            Wróć na serwer Discord →
+          </a>
         </div>
       </div>
     );
   }
 
+  // ── Porażka ────────────────────────────────────────────────────────────────
   if (status === 'failed' && result) {
     return (
-      <div className="min-h-screen bg-[#1a1b1e] flex items-center justify-center p-4">
-        <div className="bg-[#2b2d31] rounded-2xl p-8 max-w-2xl w-full shadow-2xl border border-red-500/30">
-          <div className="text-center mb-6">
-            <div className="text-5xl mb-3">❌</div>
-            <h1 className="text-2xl font-bold text-red-400 mb-1">Nie udało się</h1>
-            <p className="text-gray-300">
-              Uzyskałeś <strong>{result.score}/{result.total}</strong> punktów. Wymagane minimum: <strong>{MIN_SCORE}/{result.total}</strong>
+      <div style={page}>
+        <div style={wrap}>
+          <div style={{ textAlign: 'center', marginBottom: 36 }}>
+            <div style={{ width: 56, height: 56, borderRadius: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 22px', fontSize: 22, color: '#ef4444' }}>✕</div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: '#f4f4f8', margin: '0 0 8px', letterSpacing: '-0.02em' }}>Nie udało się</h1>
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', margin: 0 }}>
+              Wynik: <strong style={{ color: '#f4f4f8' }}>{result.score}/{result.total}</strong> — wymagane minimum: <strong style={{ color: '#f4f4f8' }}>{MIN_SCORE}/{result.total}</strong>
             </p>
           </div>
 
-          <div className="space-y-3 mb-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 28 }}>
             {QUESTIONS.map((q, i) => {
               const r = result.results[i];
               return (
-                <div
-                  key={i}
-                  className={`rounded-lg p-3 border text-sm ${
-                    r.correct
-                      ? 'bg-green-500/10 border-green-500/30'
-                      : 'bg-red-500/10 border-red-500/30'
-                  }`}
-                >
-                  <p className="font-medium text-white mb-1">
-                    {r.correct ? '✅' : '❌'} {i + 1}. {q.q}
+                <div key={i} style={{ background: r.correct ? 'rgba(34,197,94,0.07)' : 'rgba(239,68,68,0.07)', border: `1px solid ${r.correct ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)'}`, borderRadius: 8, padding: '12px 16px' }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: r.correct ? '#22c55e' : '#f87171', margin: '0 0 4px' }}>
+                    {r.correct ? '✓' : '✕'} {i + 1}. {q.q}
                   </p>
                   {!r.correct && (
-                    <p className="text-gray-300">
-                      Twoja odpowiedź: <span className="text-red-400">{q.options[r.userAnswer]}</span>
-                      <br />
-                      Poprawna odpowiedź: <span className="text-green-400">{q.options[r.correctAnswer]}</span>
-                    </p>
+                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6 }}>
+                      Twoja odpowiedź: <span style={{ color: '#f87171' }}>{q.options[r.userAnswer]}</span><br />
+                      Poprawna: <span style={{ color: '#22c55e' }}>{q.options[r.correctAnswer]}</span>
+                    </div>
                   )}
                 </div>
               );
             })}
           </div>
 
-          <div className="text-center">
-            <p className="text-gray-400 text-sm mb-4">
-              Przeczytaj dokładnie{' '}
-              <a href="https://discord.gg/BU8EBPsYXV" className="text-[#5865F2] hover:underline" target="_blank" rel="noopener noreferrer">
-                regulamin serwera
-              </a>{' '}
-              i spróbuj ponownie za 24 godziny.
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>
+              Przeczytaj{' '}
+              <a href="https://discord.gg/BU8EBPsYXV" target="_blank" rel="noopener noreferrer" style={{ color: '#5865F2', textDecoration: 'none' }}>regulamin serwera</a>
+              {' '}i spróbuj ponownie za 24 godziny.
             </p>
             <button
-              onClick={() => {
-                setStatus('idle');
-                setResult(null);
-                setForm({ discordId: '', robloxNick: '', answers: Array(QUESTIONS.length).fill(null) });
-              }}
-              className="bg-[#5865F2] hover:bg-[#4752c4] text-white px-6 py-2 rounded-xl font-semibold transition-colors"
+              onClick={() => { setStatus('idle'); setResult(null); setForm({ discordId: '', robloxNick: '', answers: Array(QUESTIONS.length).fill(null) }); setOpenQuestions(Array(QUESTIONS.length).fill(true)); }}
+              style={{ padding: '10px 28px', borderRadius: 8, fontWeight: 600, fontSize: 14, background: '#5865F2', color: '#fff', border: 'none', cursor: 'pointer' }}
             >
               Spróbuj ponownie
             </button>
@@ -275,155 +292,122 @@ export default function WeryfikacjaPage() {
     );
   }
 
-  // ── FORMULARZ ────────────────────────────────────────────────
+  // ── Formularz ──────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#1a1b1e] py-10 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div style={page}>
+      <div style={wrap}>
 
-        {/* Nagłówek */}
-        <div className="text-center mb-8">
-          <div className="text-5xl mb-3">🏙️</div>
-          <h1 className="text-3xl font-bold text-white mb-2">Greenville RP</h1>
-          <p className="text-gray-400">Formularz weryfikacyjny — wypełnij aby dołączyć do serwera</p>
-          <div className="mt-3 bg-[#5865F2]/20 border border-[#5865F2]/40 rounded-xl px-4 py-2 inline-block">
-            <p className="text-[#a5b0fb] text-sm">
-              📋 Odpowiedz poprawnie na minimum <strong>{MIN_SCORE}/{QUESTIONS.length}</strong> pytań z regulaminu
-            </p>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 44 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 10, background: '#5865F2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 20, margin: '0 auto 18px' }}>G</div>
+          <h1 style={{ fontSize: 28, fontWeight: 800, color: '#f4f4f8', margin: '0 0 8px', letterSpacing: '-0.03em' }}>Weryfikacja Greenville RP</h1>
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.38)', margin: '0 0 20px', lineHeight: 1.6 }}>
+            Wypełnij formularz i odpowiedz na pytania z regulaminu, aby dołączyć do serwera.
+          </p>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600, border: '1px solid rgba(88,101,242,0.25)', background: 'rgba(88,101,242,0.08)', color: '#818cf8' }}>
+            Minimum {MIN_SCORE} z {QUESTIONS.length} poprawnych odpowiedzi
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit}>
 
-          {/* Discord ID */}
-          <div className="bg-[#2b2d31] rounded-2xl p-6 border border-white/10">
-            <h2 className="text-lg font-semibold text-white mb-4">👤 Twoje konta</h2>
-
-            <div className="space-y-4">
+          {/* Konta */}
+          <div style={{ ...card, marginBottom: 24 }}>
+            <p style={{ ...label, marginBottom: 16, fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Twoje konta</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
-                <label className="block text-sm text-gray-300 mb-1.5">
-                  Discord ID <span className="text-red-400">*</span>
-                  <span className="text-gray-500 ml-2 font-normal text-xs">
-                    (Ustawienia → Zaawansowane → Tryb dewelopera → PPM na nick → Kopiuj ID)
-                  </span>
+                <label style={label}>
+                  Discord ID <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <input
                   type="text"
                   value={form.discordId}
-                  onChange={e => setForm(prev => ({ ...prev, discordId: e.target.value }))}
+                  onChange={e => setForm(p => ({ ...p, discordId: e.target.value }))}
                   placeholder="np. 123456789012345678"
-                  className={`w-full bg-[#1e2124] text-white rounded-xl px-4 py-3 border outline-none transition-colors placeholder:text-gray-600 ${
-                    form.discordId && !discordIdValid
-                      ? 'border-red-500/50 focus:border-red-400'
-                      : 'border-white/10 focus:border-[#5865F2]'
-                  }`}
+                  style={{ ...inp, borderColor: form.discordId && !discordIdValid ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.07)' }}
                 />
+                <p style={hint}>Ustawienia → Zaawansowane → Tryb dewelopera → PPM na swój nick → Kopiuj ID</p>
                 {form.discordId && !discordIdValid && (
-                  <p className="text-red-400 text-xs mt-1">ID musi mieć 17–20 cyfr. Sprawdź czy tryb dewelopera jest włączony.</p>
+                  <p style={{ ...hint, color: 'rgba(239,68,68,0.7)', marginTop: 5 }}>ID musi mieć 17–20 cyfr.</p>
                 )}
               </div>
-
               <div>
-                <label className="block text-sm text-gray-300 mb-1.5">
-                  Nick Roblox <span className="text-red-400">*</span>
-                </label>
+                <label style={label}>Nick Roblox <span style={{ color: '#ef4444' }}>*</span></label>
                 <input
                   type="text"
                   value={form.robloxNick}
-                  onChange={e => setForm(prev => ({ ...prev, robloxNick: e.target.value }))}
+                  onChange={e => setForm(p => ({ ...p, robloxNick: e.target.value }))}
                   placeholder="Twój dokładny nick na Roblox"
-                  className="w-full bg-[#1e2124] text-white rounded-xl px-4 py-3 border border-white/10 focus:border-[#5865F2] outline-none transition-colors placeholder:text-gray-600"
+                  style={inp}
                 />
               </div>
             </div>
           </div>
 
           {/* Pytania */}
-          <div className="bg-[#2b2d31] rounded-2xl p-6 border border-white/10">
-            <h2 className="text-lg font-semibold text-white mb-1">📋 Pytania z regulaminu</h2>
-            <p className="text-gray-500 text-sm mb-5">Wybierz jedną odpowiedź dla każdego pytania</p>
+          <div style={{ marginBottom: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <p style={{ ...label, margin: 0 }}>Pytania z regulaminu</p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button type="button" onClick={() => setOpenQuestions(Array(QUESTIONS.length).fill(true))}
+                  style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                  Rozwiń wszystkie
+                </button>
+                <span style={{ color: 'rgba(255,255,255,0.1)' }}>·</span>
+                <button type="button" onClick={() => setOpenQuestions(Array(QUESTIONS.length).fill(false))}
+                  style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                  Zwiń wszystkie
+                </button>
+              </div>
+            </div>
 
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {QUESTIONS.map((q, qi) => (
-                <div key={qi} className="border-b border-white/5 pb-5 last:border-0 last:pb-0">
-                  <p className="text-white font-medium mb-3">
-                    <span className="text-[#5865F2] font-bold mr-2">{qi + 1}.</span>
-                    {q.q}
-                  </p>
-                  <div className="space-y-2">
-                    {q.options.map((opt, oi) => (
-                      <label
-                        key={oi}
-                        className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-colors ${
-                          form.answers[qi] === oi
-                            ? 'bg-[#5865F2]/20 border-[#5865F2]/60 text-white'
-                            : 'bg-[#1e2124] border-white/5 text-gray-300 hover:border-white/20'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name={`q_${qi}`}
-                          value={oi}
-                          checked={form.answers[qi] === oi}
-                          onChange={() => setAnswer(qi, oi)}
-                          className="hidden"
-                        />
-                        <span className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
-                          form.answers[qi] === oi ? 'border-[#5865F2] bg-[#5865F2]' : 'border-gray-600'
-                        }`}>
-                          {form.answers[qi] === oi && (
-                            <span className="w-2 h-2 rounded-full bg-white" />
-                          )}
-                        </span>
-                        <span className="text-sm">{opt}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
+                <Question
+                  key={qi}
+                  index={qi}
+                  q={q.q}
+                  options={q.options}
+                  selected={form.answers[qi]}
+                  open={openQuestions[qi]}
+                  onToggle={() => toggleQuestion(qi)}
+                  onSelect={(ai) => setAnswer(qi, ai)}
+                />
               ))}
             </div>
           </div>
 
-          {/* Błąd */}
+          {/* Progress */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0 16px' }}>
+            <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2 }}>
+              <div style={{ height: '100%', borderRadius: 2, background: '#5865F2', width: `${(answered / QUESTIONS.length) * 100}%`, transition: 'width .3s' }} />
+            </div>
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', flexShrink: 0 }}>
+              {answered}/{QUESTIONS.length}
+            </span>
+          </div>
+
+          {/* Error */}
           {(status === 'error' || error) && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-300 text-sm">
-              ❌ {error}
+            <div style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.18)', borderRadius: 8, padding: '10px 14px', marginBottom: 14, fontSize: 13, color: '#f87171' }}>
+              {error}
             </div>
           )}
-
-          {/* Postęp */}
-          <div className="text-center text-gray-500 text-sm">
-            Udzielono odpowiedzi: <strong className="text-gray-300">{form.answers.filter(a => a !== null).length}/{QUESTIONS.length}</strong>
-          </div>
 
           {/* Submit */}
           <button
             type="submit"
             disabled={!canSubmit || status === 'loading'}
-            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all ${
-              canSubmit && status !== 'loading'
-                ? 'bg-[#57F287] hover:bg-[#42d770] text-black shadow-lg shadow-[#57F287]/20'
-                : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-            }`}
+            style={{ width: '100%', padding: '12px 0', borderRadius: 8, fontWeight: 700, fontSize: 14, background: canSubmit && status !== 'loading' ? '#5865F2' : 'rgba(255,255,255,0.06)', color: canSubmit && status !== 'loading' ? '#fff' : 'rgba(255,255,255,0.2)', border: 'none', cursor: canSubmit ? 'pointer' : 'not-allowed', transition: 'background .15s' }}
           >
-            {status === 'loading' ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Sprawdzam odpowiedzi...
-              </span>
-            ) : (
-              '✅ Wyślij formularz weryfikacyjny'
-            )}
+            {status === 'loading' ? 'Sprawdzam odpowiedzi…' : 'Wyślij formularz weryfikacyjny'}
           </button>
 
-          <p className="text-center text-gray-600 text-xs pb-4">
+          <p style={{ textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.2)', marginTop: 20 }}>
             Masz pytania?{' '}
-            <a href="https://discord.gg/BU8EBPsYXV" className="text-[#5865F2] hover:underline" target="_blank" rel="noopener noreferrer">
-              Dołącz na serwer Discord
-            </a>{' '}
-            i otwórz ticket.
+            <a href="https://discord.gg/BU8EBPsYXV" target="_blank" rel="noopener noreferrer" style={{ color: '#5865F2', textDecoration: 'none' }}>
+              Dołącz na Discord i otwórz ticket
+            </a>
           </p>
         </form>
       </div>
