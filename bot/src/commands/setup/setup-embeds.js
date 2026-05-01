@@ -52,14 +52,14 @@ module.exports = {
             '**Jak przebiega weryfikacja?**\n' +
             '> 📋 Wejdź na formularz pod linkiem poniżej\n' +
             '> 🔗 Podaj swój **Discord ID** oraz **nick Roblox**\n' +
-            '> ❓ Odpowiedz na **10 pytań** z regulaminu\n' +
+            '> ❓ Odpowiedz na **10 pytań** z regulaminu serwera\n' +
             '> ✅ Uzyskaj minimum **8/10 punktów**\n' +
-            '> 🏠 Rola **Mieszkaniec** nadana automatycznie!\n\n' +
-            '**Jak znaleźć Discord ID?**\n' +
-            '> Ustawienia → Zaawansowane → **Tryb dewelopera**\n' +
+            '> 🏠 Rola **Mieszkaniec** zostanie nadana automatycznie!\n\n' +
+            '**Jak znaleźć swoje Discord ID?**\n' +
+            '> Ustawienia → Zaawansowane → włącz **Tryb dewelopera**\n' +
             '> Kliknij prawym na swój nick → **Kopiuj ID użytkownika**\n\n' +
-            '**Przed weryfikacją:**\n' +
-            '• Przeczytaj regulamin na <#regulamin>\n' +
+            '**Zanim zaczniesz:**\n' +
+            '• Przeczytaj regulamin na kanale <#regulamin>\n' +
             '• Zapoznaj się z pojęciami RP (FRP, NLR, metagaming)\n\n' +
             '*Kliknij przycisk poniżej, aby otworzyć formularz!*'
           )
@@ -74,7 +74,7 @@ module.exports = {
         );
 
         await verifyChannel.send({ embeds: [embed], components: [row] });
-        sent.push(`✅ ${verifyChannel.name}`);
+        sent.push(`✅ #${verifyChannel.name}`);
       } catch (e) {
         failed.push(`❌ zacznij-tutaj: ${e.message}`);
       }
@@ -112,13 +112,45 @@ module.exports = {
           .setTimestamp();
 
         await regulaminChannel.send({ embeds: [embed] });
-        sent.push(`✅ ${regulaminChannel.name}`);
+        sent.push(`✅ #${regulaminChannel.name}`);
       } catch (e) {
         failed.push(`❌ regulamin: ${e.message}`);
       }
     }
 
-    // ── 3. #otwórz-ticket ────────────────────────────────────────
+    // ── 3. #słownik-rp ───────────────────────────────────────────
+    const slownikChannel = ch(guild, 'slownik') || ch(guild, 'słownik');
+    if (slownikChannel) {
+      try {
+        const embed = new EmbedBuilder()
+          .setColor(0x5865F2)
+          .setTitle('📖 Słownik pojęć RP')
+          .setDescription(
+            '**Podstawowe skróty i pojęcia:**\n\n' +
+            '🔴 **FRP** — Fail Role Play — zachowanie łamiące realizm RP\n' +
+            '🔴 **RDM** — Random Death Match — zabójstwo bez powodu RP\n' +
+            '🔴 **VDM** — Vehicle Death Match — potrącenie samochodem bez powodu\n' +
+            '🔴 **NLR** — New Life Rule — po śmierci nie pamiętasz nic z poprzedniego życia\n' +
+            '🔴 **Metagaming** — używanie wiedzy zdobytej poza postacią (np. z Discorda)\n\n' +
+            '🟡 **IC** — In Character — rozmawiasz jako postać (nie jako ty)\n' +
+            '🟡 **OOC** — Out of Character — rozmowa poza roleplay (np. przez /ooc)\n' +
+            '🟡 **Powertaming** — narzucanie działań innej postaci siłą\n' +
+            '🟡 **Godmodding** — granie niezniszczalną postacią\n\n' +
+            '🟢 **IC imię** — imię twojej postaci RP\n' +
+            '🟢 **PESEL** — numer identyfikacyjny postaci w RP\n' +
+            '🟢 **Służby** — Policja, EMS, Straż Pożarna, DOT, Straż Miejska, Taksówkarz\n' +
+            '🟢 **Sesja** — zorganizowany czas gry RP na serwerze Roblox'
+          )
+          .setFooter({ text: 'AURORA Greenville RP — Słownik RP' });
+
+        await slownikChannel.send({ embeds: [embed] });
+        sent.push(`✅ #${slownikChannel.name}`);
+      } catch (e) {
+        failed.push(`❌ słownik-rp: ${e.message}`);
+      }
+    }
+
+    // ── 4. #otwórz-ticket ────────────────────────────────────────
     const ticketChannel = ch(guild, 'ticket');
     if (ticketChannel) {
       try {
@@ -131,12 +163,14 @@ module.exports = {
             '> • Problem z weryfikacją lub kontem\n' +
             '> • Skarga na gracza lub staff\n' +
             '> • Błąd bota lub systemu\n' +
-            '> • Pytanie do administracji\n\n' +
+            '> • Pytanie do administracji\n' +
+            '> • Podanie o rolę specjalną\n\n' +
             '**Jak to działa:**\n' +
             '> 1️⃣ Kliknij przycisk poniżej\n' +
             '> 2️⃣ Wybierz kategorię ticketu\n' +
             '> 3️⃣ Opisz swój problem\n' +
-            '> 4️⃣ Poczekaj na odpowiedź staffu'
+            '> 4️⃣ Poczekaj na odpowiedź staffu\n\n' +
+            '*Nie nadużywaj ticketów — służą do poważnych spraw.*'
           )
           .setFooter({ text: 'AURORA Greenville RP — Support' })
           .setTimestamp();
@@ -149,9 +183,175 @@ module.exports = {
         );
 
         await ticketChannel.send({ embeds: [embed], components: [row] });
-        sent.push(`✅ ${ticketChannel.name}`);
+        sent.push(`✅ #${ticketChannel.name}`);
       } catch (e) {
         failed.push(`❌ ticket: ${e.message}`);
+      }
+    }
+
+    // ── 5. #stwórz-postać ────────────────────────────────────────
+    const postacChannel = ch(guild, 'postac') || ch(guild, 'postać');
+    if (postacChannel) {
+      try {
+        const embed = new EmbedBuilder()
+          .setColor(0x30d158)
+          .setTitle('🪪 Tworzenie postaci RP')
+          .setDescription(
+            'Zanim zaczniesz grać, stwórz swoją postać!\n\n' +
+            '**Co otrzymasz:**\n' +
+            '> 👤 Imię i nazwisko IC\n' +
+            '> 🆔 Numer PESEL\n' +
+            '> 📱 Unikalny numer telefonu RP\n' +
+            '> 🪪 Dowód osobisty\n\n' +
+            '**Wymagania:**\n' +
+            '> • Musisz mieć rolę **Mieszkaniec**\n' +
+            '> • Imię i nazwisko muszą brzmieć realistycznie\n\n' +
+            '**Komenda:** `/postac stworz`'
+          )
+          .setFooter({ text: 'AURORA Greenville RP — Postacie' });
+
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId('character_create')
+            .setLabel('👤 Stwórz postać')
+            .setStyle(ButtonStyle.Success)
+        );
+
+        await postacChannel.send({ embeds: [embed], components: [row] });
+        sent.push(`✅ #${postacChannel.name}`);
+      } catch (e) {
+        failed.push(`❌ stwórz-postać: ${e.message}`);
+      }
+    }
+
+    // ── 6. #prawo-jazdy ──────────────────────────────────────────
+    const prawoChannel = ch(guild, 'prawo-jazdy') || ch(guild, 'prawojazdy');
+    if (prawoChannel) {
+      try {
+        const embed = new EmbedBuilder()
+          .setColor(0xF59E0B)
+          .setTitle('🚗 Prawo jazdy — egzaminy')
+          .setDescription(
+            'Aby prowadzić pojazdy w RP, potrzebujesz prawa jazdy!\n\n' +
+            '**Dostępne kategorie:**\n' +
+            '> 🛵 **Kat. AM** — motorower (do 45 km/h)\n' +
+            '> 🏍️ **Kat. A1** — motocykl do 125 cm³\n' +
+            '> 🏍️ **Kat. A2** — motocykl do 35 kW\n' +
+            '> 🏍️ **Kat. A** — każdy motocykl\n' +
+            '> 🚗 **Kat. B** — samochód osobowy (wymagane do rejestracji auta)\n' +
+            '> 🚛 **Kat. C** — pojazd ciężarowy\n' +
+            '> 🚌 **Kat. D** — autobus\n' +
+            '> 🚜 **Kat. T** — ciągnik rolniczy\n\n' +
+            '**Komenda:** `/prawojazdy egzamin [kategoria]`\n\n' +
+            '*Egzamin składa się z 10 pytań — wymagane 8/10.*'
+          )
+          .setFooter({ text: 'AURORA Greenville RP — Prawo jazdy' });
+
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId('license_apply')
+            .setLabel('📋 Przystąp do egzaminu')
+            .setStyle(ButtonStyle.Primary)
+        );
+
+        await prawoChannel.send({ embeds: [embed], components: [row] });
+        sent.push(`✅ #${prawoChannel.name}`);
+      } catch (e) {
+        failed.push(`❌ prawo-jazdy: ${e.message}`);
+      }
+    }
+
+    // ── 7. #rejestracja-auta ─────────────────────────────────────
+    const autoChannel = ch(guild, 'rejestracja');
+    if (autoChannel) {
+      try {
+        const embed = new EmbedBuilder()
+          .setColor(0x94A3B8)
+          .setTitle('🚗 Rejestracja pojazdu')
+          .setDescription(
+            'Zarejestruj swój pojazd RP!\n\n' +
+            '**Wymagania:**\n' +
+            '> • Rola **Mieszkaniec**\n' +
+            '> • Prawo jazdy kategorii odpowiedniej do pojazdu\n' +
+            '> • Stworzony dowód osobisty\n\n' +
+            '**Limity pojazdów:**\n' +
+            '> 👤 Mieszkaniec — do **5** pojazdów\n' +
+            '> 💜 Wspierający — do **9** pojazdów\n' +
+            '> 💎 Nitro Booster — do **10** pojazdów\n\n' +
+            '**Komenda:** `/pojazd rejestruj`'
+          )
+          .setFooter({ text: 'AURORA Greenville RP — Pojazdy' });
+
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId('vehicle_register')
+            .setLabel('🚗 Zarejestruj pojazd')
+            .setStyle(ButtonStyle.Secondary)
+        );
+
+        await autoChannel.send({ embeds: [embed], components: [row] });
+        sent.push(`✅ #${autoChannel.name}`);
+      } catch (e) {
+        failed.push(`❌ rejestracja-auta: ${e.message}`);
+      }
+    }
+
+    // ── 8. #rola-powiadomień ─────────────────────────────────────
+    const notifChannel = ch(guild, 'powiadomien') || ch(guild, 'powiadomień');
+    if (notifChannel) {
+      try {
+        const embed = new EmbedBuilder()
+          .setColor(0xFFFFFF)
+          .setTitle('🔔 Powiadomienia o sesjach')
+          .setDescription(
+            'Chcesz być informowany o nadchodzących sesjach RP?\n\n' +
+            'Kliknij przycisk poniżej aby przypisać/zdjąć sobie rolę ' +
+            '**🔔 Powiadomienia** — będziesz oznaczany przy ogłoszeniach sesji!\n\n' +
+            '*Możesz w każdej chwili usunąć rolę klikając ponownie.*'
+          )
+          .setFooter({ text: 'AURORA Greenville RP — Powiadomienia' });
+
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId('toggle_notifications')
+            .setLabel('🔔 Włącz / Wyłącz powiadomienia')
+            .setStyle(ButtonStyle.Secondary)
+        );
+
+        await notifChannel.send({ embeds: [embed], components: [row] });
+        sent.push(`✅ #${notifChannel.name}`);
+      } catch (e) {
+        failed.push(`❌ rola-powiadomień: ${e.message}`);
+      }
+    }
+
+    // ── 9. #faq ──────────────────────────────────────────────────
+    const faqChannel = ch(guild, 'faq');
+    if (faqChannel) {
+      try {
+        const embed = new EmbedBuilder()
+          .setColor(0x5865F2)
+          .setTitle('❓ Najczęściej zadawane pytania')
+          .setDescription(
+            '**Jak dołączyć do serwera RP?**\n' +
+            '> Wejdź na kanał z weryfikacją i kliknij **Wypełnij formularz weryfikacyjny**.\n\n' +
+            '**Ile mam czasu na formularz?**\n' +
+            '> Nie ma limitu czasu. Po nieudanej próbie odczekaj 24 godziny.\n\n' +
+            '**Jak zmienić nick Roblox?**\n' +
+            '> Otwórz ticket — staff pomoże zmienić powiązanie.\n\n' +
+            '**Kiedy są sesje?**\n' +
+            '> Sprawdź kanał z planem sesji lub włącz powiadomienia.\n\n' +
+            '**Jak dołączyć do służb?**\n' +
+            '> Złóż podanie na kanale podań o służbę.\n\n' +
+            '**Mam problem z botem — co robić?**\n' +
+            '> Otwórz ticket w dedykowanym kanale.'
+          )
+          .setFooter({ text: 'AURORA Greenville RP — FAQ' });
+
+        await faqChannel.send({ embeds: [embed] });
+        sent.push(`✅ #${faqChannel.name}`);
+      } catch (e) {
+        failed.push(`❌ faq: ${e.message}`);
       }
     }
 
@@ -167,12 +367,16 @@ module.exports = {
       embeds: [
         new EmbedBuilder()
           .setColor(failed.length === 0 ? 0x57F287 : 0xFEE75C)
-          .setTitle(failed.length === 0 ? '✅ Embedy wysłane!' : '⚠️ Wysłano z błędami')
+          .setTitle(
+            failed.length === 0
+              ? `✅ Wysłano ${sent.length}/9 embedów!`
+              : `⚠️ Wysłano ${sent.length}/9 embedów (z błędami)`
+          )
           .setDescription(lines.join('\n\n'))
           .setTimestamp(),
       ],
     });
 
-    logger.info(`/setup-embeds użyte przez ${interaction.user.tag} — ${sent.length} kanałów`);
+    logger.info(`/setup-embeds użyte przez ${interaction.user.tag} — ${sent.length}/9 kanałów`);
   },
 };
