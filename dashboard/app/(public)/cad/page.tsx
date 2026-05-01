@@ -115,24 +115,24 @@ const ROLE_MODULES: Record<CadRole, string[]> = {
   CYWIL:        ['panel','emergency_call','calls_view','map'],
 };
 
-const MODULE_LABEL: Record<string, { label: string; icon: string }> = {
-  calls:         { label: 'Zgłoszenia',   icon: '📞' },
-  calls_view:    { label: 'Zdarzenia',    icon: '📋' },
-  units:         { label: 'Jednostki',    icon: '🚓' },
-  warrants:      { label: 'Nakazy',       icon: '📜' },
-  plates:        { label: 'Tablice',      icon: '🔎' },
-  map:           { label: 'Mapa',         icon: '🗺️' },
-  arrests:       { label: 'Areszty',      icon: '⛓️' },
-  medical:       { label: 'Medyczny',     icon: '🏥' },
-  fire:          { label: 'Pożarniczy',   icon: '🔥' },
-  road:          { label: 'Drogowy',      icon: '🚧' },
-  dispatch:      { label: 'Dyspozytura',  icon: '📡' },
-  patrol_log:    { label: 'Patrol',       icon: '📋' },
-  incident:      { label: 'Incydenty',    icon: '⚠️' },
-  rides:         { label: 'Kursy',        icon: '🚗' },
-  emergency_call:{ label: 'Zgłoś 112',   icon: '🆘' },
-  panel:         { label: 'Mój Panel',   icon: '👤' },
-  staff:         { label: 'Staff',       icon: '🛡️' },
+const MODULE_LABEL: Record<string, { label: string }> = {
+  calls:         { label: 'Zgłoszenia'  },
+  calls_view:    { label: 'Zdarzenia'   },
+  units:         { label: 'Jednostki'   },
+  warrants:      { label: 'Nakazy'      },
+  plates:        { label: 'Tablice'     },
+  map:           { label: 'Mapa'        },
+  arrests:       { label: 'Areszty'     },
+  medical:       { label: 'Medyczny'    },
+  fire:          { label: 'Pożarniczy'  },
+  road:          { label: 'Drogowy'     },
+  dispatch:      { label: 'Dyspozytura' },
+  patrol_log:    { label: 'Patrol'      },
+  incident:      { label: 'Incydenty'   },
+  rides:         { label: 'Kursy'       },
+  emergency_call:{ label: 'Zgłoś 112'  },
+  panel:         { label: 'Panel'       },
+  staff:         { label: 'Staff'       },
 };
 
 const CALL_NATURES: Record<CadRole, string[]> = {
@@ -225,17 +225,20 @@ function getRadioChannels(role: CadRole): RadioChannel[] {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function Dot({ color }: { color: string }) {
-  return <span className="w-2 h-2 rounded-full inline-block flex-shrink-0" style={{ background: color }} />;
+  return <span className="w-1.5 h-1.5 rounded-full inline-block flex-shrink-0" style={{ background: color }} />;
 }
 
 function SLabel({ children }: { children: React.ReactNode }) {
-  return <div className="text-xs text-[#475569] uppercase tracking-widest font-semibold mb-2">{children}</div>;
+  return (
+    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.25)', marginBottom: 6 }}>
+      {children}
+    </div>
+  );
 }
 
 function Pill({ children, color }: { children: React.ReactNode; color: string }) {
   return (
-    <span className="text-xs px-2 py-0.5 rounded-md font-bold uppercase"
-      style={{ background: color + '28', color, border: `1px solid ${color}44` }}>
+    <span style={{ fontSize: 11, padding: '2px 7px', borderRadius: 4, fontWeight: 700, textTransform: 'uppercase' as const, background: color + '1e', color, border: `1px solid ${color}30` }}>
       {children}
     </span>
   );
@@ -244,15 +247,15 @@ function Pill({ children, color }: { children: React.ReactNode; color: string })
 function PrioBar({ priority }: { priority: CallPriority }) {
   const cfg = PRIO_CFG[priority];
   return (
-    <span className={`text-xs px-2 py-0.5 rounded-md font-bold uppercase ${cfg.dot.includes('animate') ? 'animate-pulse' : ''}`}
-      style={{ background: cfg.color + '28', color: cfg.color, border: `1px solid ${cfg.color}44` }}>
+    <span className={priority === 'CRITICAL' ? 'animate-pulse' : ''}
+      style={{ fontSize: 11, padding: '2px 7px', borderRadius: 4, fontWeight: 700, textTransform: 'uppercase' as const, background: cfg.color + '1e', color: cfg.color, border: `1px solid ${cfg.color}30` }}>
       {cfg.label}
     </span>
   );
 }
 
 function Spinner() {
-  return <div className="w-4 h-4 border border-[#5865F2]/30 border-t-[#5865F2] rounded-full animate-spin" />;
+  return <div className="w-4 h-4 border border-white/10 border-t-[#5865F2] rounded-full animate-spin" />;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -305,18 +308,18 @@ function ProximityChat({ location, username }: { location: Location; username: s
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-[#1e2332] flex-shrink-0 bg-[#0a0c12]">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-white/[0.07] flex-shrink-0 bg-[#0c0c10]">
         <span className="text-sm">{location.emoji}</span>
         <span className="text-xs font-semibold text-white truncate">{location.name}</span>
         {unread > 0 && <span className="ml-auto text-xs bg-[#5865F2] text-white px-2 py-0.5 rounded-full font-bold">{unread}</span>}
       </div>
       <div onScroll={onScroll} className="flex-1 overflow-y-auto px-3 py-2 space-y-1 min-h-0">
-        {msgs.length === 0 && <div className="text-center text-[#475569] text-xs pt-8">Brak wiadomości w tej lokacji</div>}
+        {msgs.length === 0 && <div className="text-center text-white/25 text-xs pt-8">Brak wiadomości w tej lokacji</div>}
         {msgs.map(m => (
           <div key={m.id} className="flex gap-2 hover:bg-white/[0.03] rounded px-1 py-0.5">
-            <span className="text-[#475569] flex-shrink-0 font-mono text-xs pt-0.5">{fmtTime(m.timestamp)}</span>
+            <span className="text-white/25 flex-shrink-0 font-mono text-xs pt-0.5">{fmtTime(m.timestamp)}</span>
             <span className="font-semibold text-[#818cf8] flex-shrink-0 text-xs">{m.username}:</span>
-            <span className="text-[#94a3b8] break-words text-xs">{m.content}</span>
+            <span className="text-white/40 break-words text-xs">{m.content}</span>
           </div>
         ))}
         <div ref={endRef} />
@@ -327,10 +330,10 @@ function ProximityChat({ location, username }: { location: Location; username: s
           ↓ {unread} nowych wiadomości
         </button>
       )}
-      <div className="px-3 pb-3 pt-2 border-t border-[#1e2332] flex gap-2 flex-shrink-0">
+      <div className="px-3 pb-3 pt-2 border-t border-white/[0.07] flex gap-2 flex-shrink-0">
         <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
           placeholder={`Jako ${username}…`}
-          className="flex-1 bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+          className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
         <button onClick={send} disabled={sending || !input.trim()}
           className="bg-[#5865F2] hover:bg-[#4752c4] disabled:opacity-40 text-white rounded-lg px-3 py-2 text-xs font-medium transition-colors">
           {sending ? <Spinner /> : 'Wyślij'}
@@ -382,7 +385,7 @@ function RadioChat({ role, callsign }: { role: CadRole; callsign: string }) {
   }
 
   if (channels.length === 0) {
-    return <div className="flex-1 flex items-center justify-center text-xs text-[#475569] px-4 text-center">Twoja rola nie ma dostępu do radia.</div>;
+    return <div className="flex-1 flex items-center justify-center text-xs text-white/25 px-4 text-center">Twoja rola nie ma dostępu do radia.</div>;
   }
 
   const chColor = CH_CFG[ch]?.color ?? '#818cf8';
@@ -390,10 +393,10 @@ function RadioChat({ role, callsign }: { role: CadRole; callsign: string }) {
   return (
     <div className="flex flex-col h-full">
       {/* Channel selector */}
-      <div className="px-2 py-2 border-b border-[#1e2332] flex flex-wrap gap-1 flex-shrink-0 bg-[#0a0c12]">
+      <div className="px-2 py-2 border-b border-white/[0.07] flex flex-wrap gap-1 flex-shrink-0 bg-[#0c0c10]">
         {channels.map(c => (
           <button key={c} onClick={() => setCh(c)}
-            className={`text-xs px-2 py-1 rounded-md font-bold transition-all ${c === ch ? 'text-white' : 'text-[#475569] hover:text-[#94a3b8]'}`}
+            className={`text-xs px-2 py-1 rounded-md font-bold transition-all ${c === ch ? 'text-white' : 'text-white/25 hover:text-white/40'}`}
             style={c === ch ? { background: CH_CFG[c].color + '33', border: `1px solid ${CH_CFG[c].color}66` } : { border: '1px solid transparent' }}>
             {c}
           </button>
@@ -402,34 +405,34 @@ function RadioChat({ role, callsign }: { role: CadRole; callsign: string }) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1 min-h-0">
-        {msgs.length === 0 && <div className="text-center text-[#475569] text-xs pt-8">Brak transmisji na {ch}</div>}
+        {msgs.length === 0 && <div className="text-center text-white/25 text-xs pt-8">Brak transmisji na {ch}</div>}
         {msgs.map(m => (
           <div key={m.id} className="flex gap-2 hover:bg-white/[0.03] rounded px-1 py-0.5">
-            <span className="text-[#475569] font-mono text-xs flex-shrink-0 pt-0.5">{fmtTime(m.timestamp)}</span>
+            <span className="text-white/25 font-mono text-xs flex-shrink-0 pt-0.5">{fmtTime(m.timestamp)}</span>
             <span className="font-bold text-xs flex-shrink-0" style={{ color: CH_CFG[m.channel]?.color ?? chColor }}>[{m.channel}]</span>
-            <span className="text-[#94a3b8] text-xs flex-shrink-0">{m.callsign}:</span>
+            <span className="text-white/40 text-xs flex-shrink-0">{m.callsign}:</span>
             <span className="text-white/80 text-xs break-words">{m.content}</span>
           </div>
         ))}
         {unread > 0 && !atBottom.current && (
-          <div className="text-center text-xs text-[#475569]">↓ {unread} nowych</div>
+          <div className="text-center text-xs text-white/25">↓ {unread} nowych</div>
         )}
         <div ref={endRef} />
       </div>
 
       {/* Input */}
-      <div className="px-3 pb-3 pt-2 border-t border-[#1e2332] flex-shrink-0">
+      <div className="px-3 pb-3 pt-2 border-t border-white/[0.07] flex-shrink-0">
         {!callsign ? (
-          <p className="text-xs text-[#475569] text-center py-1">Ustaw callsign aby nadawać</p>
+          <p className="text-xs text-white/25 text-center py-1">Ustaw callsign aby nadawać</p>
         ) : (
           <div className="flex gap-2">
             <div className="flex items-center gap-1 flex-shrink-0">
               <span className="text-xs font-mono font-bold" style={{ color: chColor }}>{callsign}</span>
-              <span className="text-[#475569] text-xs">→</span>
+              <span className="text-white/25 text-xs">→</span>
             </div>
             <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()}
               placeholder={`Nadaj na ${ch}…`}
-              className="flex-1 bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
             <button onClick={send} disabled={sending || !input.trim()}
               className="disabled:opacity-40 text-white rounded-lg px-3 py-2 text-xs font-medium transition-colors"
               style={{ background: chColor + '33', border: `1px solid ${chColor}55` }}>
@@ -483,22 +486,22 @@ function CallsPanel({ role, callsign, readonly = false }: { role: CadRole; calls
     <div className="flex flex-col h-full gap-3 p-4">
       {/* Nowe zgłoszenie (nie dla readonly) */}
       {!readonly && natures.length > 0 && (
-        <div className="bg-[#0d0f17] rounded-xl p-4 border border-[#1e2332] flex-shrink-0">
+        <div className="bg-[#16161d] rounded-xl p-4 border border-white/[0.07] flex-shrink-0">
           <SLabel>Nowe zgłoszenie</SLabel>
           <div className="grid grid-cols-2 gap-2 mb-2">
             <select value={form.nature} onChange={e => setForm(p => ({ ...p, nature: e.target.value }))}
-              className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#5865F2] transition-colors">
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#5865F2] transition-colors">
               <option value="">Rodzaj zdarzenia…</option>
               {natures.map(n => <option key={n} value={n}>{n}</option>)}
             </select>
             <select value={form.priority} onChange={e => setForm(p => ({ ...p, priority: e.target.value }))}
-              className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#5865F2] transition-colors">
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#5865F2] transition-colors">
               {(['LOW','MEDIUM','HIGH','CRITICAL'] as CallPriority[]).map(p => <option key={p} value={p}>{PRIO_CFG[p].label}</option>)}
             </select>
           </div>
           <div className="flex gap-2">
             <input value={form.location} onChange={e => setForm(p => ({ ...p, location: e.target.value }))} placeholder="Lokacja / adres…"
-              className="flex-1 bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
             <button onClick={createCall} disabled={creating || !form.nature || !form.location}
               className="bg-[#5865F2] hover:bg-[#4752c4] disabled:opacity-40 text-white rounded-lg px-4 py-2 text-xs font-semibold transition-colors flex items-center gap-1">
               {creating ? <Spinner /> : '+ Utwórz'}
@@ -506,7 +509,7 @@ function CallsPanel({ role, callsign, readonly = false }: { role: CadRole; calls
           </div>
           {form.nature && (
             <input value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Opis (opcjonalnie)…"
-              className="mt-2 w-full bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="mt-2 w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
           )}
         </div>
       )}
@@ -514,34 +517,34 @@ function CallsPanel({ role, callsign, readonly = false }: { role: CadRole; calls
       {/* Lista zgłoszeń */}
       <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {loading && <div className="flex justify-center pt-8"><Spinner /></div>}
-        {!loading && calls.length === 0 && <div className="text-center text-[#475569] text-sm pt-8">Brak aktywnych zgłoszeń</div>}
+        {!loading && calls.length === 0 && <div className="text-center text-white/25 text-sm pt-8">Brak aktywnych zgłoszeń</div>}
         {calls.map(c => {
           const prio = PRIO_CFG[c.priority];
           const isDispatched = callsign && c.dispatchedTo.includes(callsign);
           return (
-            <div key={c.id} className={`bg-[#0d0f17] rounded-xl border-l-4 border border-[#1e2332] p-4 transition-all ${prio.border} ${isDispatched ? 'ring-1 ring-[#5865F2]/40' : ''}`}>
+            <div key={c.id} className={`bg-[#16161d] rounded-xl border-l-4 border border-white/[0.07] p-4 transition-all ${prio.border} ${isDispatched ? 'ring-1 ring-[#5865F2]/40' : ''}`}>
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono text-xs text-[#475569]">#{c.number}</span>
+                  <span className="font-mono text-xs text-white/25">#{c.number}</span>
                   <PrioBar priority={c.priority} />
                   <span className="text-sm font-semibold text-white">{c.nature}</span>
                 </div>
-                <span className="text-xs text-[#475569] flex-shrink-0 font-mono">{fmtAgo(c.createdAt)}</span>
+                <span className="text-xs text-white/25 flex-shrink-0 font-mono">{fmtAgo(c.createdAt)}</span>
               </div>
-              <div className="text-xs text-[#94a3b8] mb-1.5 flex items-center gap-1">
-                <span className="text-[#475569]">📍</span> {c.location}
+              <div className="text-xs text-white/40 mb-1.5 flex items-center gap-1">
+                <span className="text-white/25">📍</span> {c.location}
               </div>
-              {c.description && <div className="text-xs text-[#475569] mb-2">{c.description}</div>}
+              {c.description && <div className="text-xs text-white/25 mb-2">{c.description}</div>}
               {c.dispatchedTo.length > 0 && (
                 <div className="flex gap-1 flex-wrap mb-2">
                   {c.dispatchedTo.map(cs => <Pill key={cs} color="#5865F2">{cs}</Pill>)}
                 </div>
               )}
               {!readonly && (
-                <div className="flex gap-2 mt-3 pt-2 border-t border-[#1e2332]">
+                <div className="flex gap-2 mt-3 pt-2 border-t border-white/[0.07]">
                   {callsign && (
                     <button onClick={() => dispatch(c.id)}
-                      className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${isDispatched ? 'bg-[#5865F2]/20 text-[#818cf8] hover:bg-[#5865F2]/30 border border-[#5865F2]/40' : 'bg-white/5 text-[#94a3b8] hover:bg-white/10 border border-[#1e2332]'}`}>
+                      className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${isDispatched ? 'bg-[#5865F2]/20 text-[#818cf8] hover:bg-[#5865F2]/30 border border-[#5865F2]/40' : 'bg-white/5 text-white/40 hover:bg-white/10 border border-white/[0.07]'}`}>
                       {isDispatched ? '✓ W drodze' : '→ Dysponuj mnie'}
                     </button>
                   )}
@@ -579,7 +582,7 @@ function UnitsPanel() {
   return (
     <div className="p-4 overflow-y-auto h-full space-y-4">
       {loading && <div className="flex justify-center pt-8"><Spinner /></div>}
-      {!loading && units.length === 0 && <div className="text-center text-[#475569] text-sm pt-8">Brak aktywnych jednostek</div>}
+      {!loading && units.length === 0 && <div className="text-center text-white/25 text-sm pt-8">Brak aktywnych jednostek</div>}
       {Object.entries(grouped).map(([service, serviceUnits]) => (
         <div key={service}>
           <SLabel>{service} ({serviceUnits.length})</SLabel>
@@ -590,9 +593,9 @@ function UnitsPanel() {
                 <div key={u.id} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 border text-sm ${st.bg}`}>
                   <Dot color={st.color} />
                   <span className="font-mono font-bold text-white text-xs">{u.callsign}</span>
-                  <span className="text-[#94a3b8] truncate flex-1 text-xs">{u.name}</span>
+                  <span className="text-white/40 truncate flex-1 text-xs">{u.name}</span>
                   <span className="text-xs font-medium" style={{ color: st.color }}>{st.label}</span>
-                  <span className="text-xs text-[#475569] font-mono">{fmtAgo(u.onDutySince)}</span>
+                  <span className="text-xs text-white/25 font-mono">{fmtAgo(u.onDutySince)}</span>
                 </div>
               );
             })}
@@ -648,20 +651,20 @@ function WarrantsPanel({ canAdd }: { canAdd: boolean }) {
   return (
     <div className="flex flex-col h-full gap-3 p-4">
       <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Szukaj po nazwie gracza lub nicku Roblox…"
-        className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors flex-shrink-0" />
+        className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors flex-shrink-0" />
 
       {canAdd && (
-        <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4 flex-shrink-0">
+        <div className="bg-[#16161d] border border-white/[0.07] rounded-xl p-4 flex-shrink-0">
           <SLabel>Nowy nakaz</SLabel>
           <div className="grid grid-cols-2 gap-2 mb-2">
             <input value={form.targetName} onChange={e => setForm(p => ({ ...p, targetName: e.target.value }))} placeholder="Imię i nazwisko RP…"
-              className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
             <input value={form.robloxName} onChange={e => setForm(p => ({ ...p, robloxName: e.target.value }))} placeholder="Nick Roblox (opcja)…"
-              className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
           </div>
           <div className="flex gap-2">
             <input value={form.reason} onChange={e => setForm(p => ({ ...p, reason: e.target.value }))} placeholder="Powód…"
-              className="flex-1 bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
             <button onClick={addWarrant} disabled={adding || !form.targetName || !form.reason}
               className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 disabled:opacity-40 text-red-400 rounded-lg px-4 py-2 text-xs font-semibold transition-colors">
               {adding ? <Spinner /> : '+ Nakaz'}
@@ -672,16 +675,16 @@ function WarrantsPanel({ canAdd }: { canAdd: boolean }) {
 
       <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {loading && <div className="flex justify-center pt-4"><Spinner /></div>}
-        {!loading && results.length === 0 && <div className="text-center text-[#475569] text-sm pt-8">Brak aktywnych nakazów</div>}
+        {!loading && results.length === 0 && <div className="text-center text-white/25 text-sm pt-8">Brak aktywnych nakazów</div>}
         {results.map(w => (
-          <div key={w.id} className="bg-[#0d0f17] border border-red-500/30 border-l-4 border-l-red-500 rounded-xl p-4">
+          <div key={w.id} className="bg-[#16161d] border border-red-500/30 border-l-4 border-l-red-500 rounded-xl p-4">
             <div className="flex justify-between items-start mb-1.5">
               <span className="font-semibold text-sm text-red-400">{w.targetName}</span>
-              {canAdd && <button onClick={() => removeWarrant(w.id)} className="text-xs text-[#475569] hover:text-red-400 transition-colors">Unieważnij</button>}
+              {canAdd && <button onClick={() => removeWarrant(w.id)} className="text-xs text-white/25 hover:text-red-400 transition-colors">Unieważnij</button>}
             </div>
-            {w.robloxName && <div className="text-xs text-[#475569] mb-1">Roblox: {w.robloxName}</div>}
-            <div className="text-xs text-[#94a3b8]">{w.reason}</div>
-            <div className="text-xs text-[#475569] mt-2 font-mono">wystawił: {w.issuedByName} · {fmtDate(w.createdAt)}</div>
+            {w.robloxName && <div className="text-xs text-white/25 mb-1">Roblox: {w.robloxName}</div>}
+            <div className="text-xs text-white/40">{w.reason}</div>
+            <div className="text-xs text-white/25 mt-2 font-mono">wystawił: {w.issuedByName} · {fmtDate(w.createdAt)}</div>
           </div>
         ))}
       </div>
@@ -715,11 +718,11 @@ function PlatesPanel() {
   return (
     <div className="p-4 flex flex-col gap-4">
       <input value={query} onChange={e => setQuery(e.target.value.toUpperCase())} placeholder="Wpisz numer tablicy… (min 3 znaki)"
-        className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-sm text-white font-mono uppercase placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+        className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white font-mono uppercase placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
       {loading && <div className="flex justify-center"><Spinner /></div>}
-      {notFound && <div className="text-center text-[#475569] text-sm">Nie znaleziono pojazdu</div>}
+      {notFound && <div className="text-center text-white/25 text-sm">Nie znaleziono pojazdu</div>}
       {result && (
-        <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4 space-y-4">
+        <div className="bg-[#16161d] border border-white/[0.07] rounded-xl p-4 space-y-4">
           <div className="flex justify-between items-center">
             <span className="font-mono font-black text-xl text-white tracking-widest">{result.tablica}</span>
             <div className="flex gap-2">
@@ -729,20 +732,20 @@ function PlatesPanel() {
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             {[['Marka', result.marka],['Model', result.model],['Rok', result.rok],['Kolor', result.kolor]].map(([l,v]) => (
-              <div key={l as string} className="bg-[#0a0c12] rounded-lg px-3 py-2 border border-[#1e2332]">
-                <div className="text-[#475569] mb-0.5">{l}</div>
+              <div key={l as string} className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                <div className="text-white/25 mb-0.5">{l}</div>
                 <div className="text-white font-medium">{v}</div>
               </div>
             ))}
           </div>
-          <div className="border-t border-[#1e2332] pt-3 text-xs space-y-1.5">
+          <div className="border-t border-white/[0.07] pt-3 text-xs space-y-1.5">
             <div className="flex justify-between">
-              <span className="text-[#475569]">Właściciel</span>
+              <span className="text-white/25">Właściciel</span>
               <span className="text-white font-medium">{result.owner.robloxName}</span>
             </div>
             {result.owner.phone && (
               <div className="flex justify-between">
-                <span className="text-[#475569]">Telefon</span>
+                <span className="text-white/25">Telefon</span>
                 <span className="text-white font-mono">{result.owner.phone}</span>
               </div>
             )}
@@ -786,19 +789,19 @@ function PatrolLogPanel({ callsign, role }: { callsign: string; role: CadRole })
       {onDuty && (
         <div className="flex gap-2 flex-shrink-0">
           <input value={note} onChange={e => setNote(e.target.value)} onKeyDown={e => e.key === 'Enter' && addNote()} placeholder="Dodaj notatkę do dziennika…"
-            className="flex-1 bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
-          <button onClick={addNote} disabled={!note.trim()} className="bg-white/5 hover:bg-white/10 disabled:opacity-40 border border-[#1e2332] text-[#94a3b8] rounded-lg px-3 text-xs transition-colors">Dodaj</button>
+            className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
+          <button onClick={addNote} disabled={!note.trim()} className="bg-white/5 hover:bg-white/10 disabled:opacity-40 border border-white/[0.07] text-white/40 rounded-lg px-3 text-xs transition-colors">Dodaj</button>
           <button onClick={() => add('INCIDENT', `Incydent ${new Date().toLocaleTimeString('pl-PL')}`)}
             className="bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-400 rounded-lg px-3 text-xs transition-colors">⚠️</button>
         </div>
       )}
       <div className="flex-1 overflow-y-auto space-y-1.5 min-h-0">
-        {log.length === 0 && <div className="text-center text-[#475569] text-sm pt-8">Dziennik patrolu pusty</div>}
+        {log.length === 0 && <div className="text-center text-white/25 text-sm pt-8">Dziennik patrolu pusty</div>}
         {[...log].reverse().map(e => (
-          <div key={e.id} className="flex gap-2 text-xs bg-[#0d0f17] border border-[#1e2332] rounded-xl px-3 py-2.5">
-            <span className="text-[#475569] font-mono text-xs flex-shrink-0">{fmtTime(e.time)}</span>
+          <div key={e.id} className="flex gap-2 text-xs bg-[#16161d] border border-white/[0.07] rounded-xl px-3 py-2.5">
+            <span className="text-white/25 font-mono text-xs flex-shrink-0">{fmtTime(e.time)}</span>
             <span className="flex-shrink-0 font-medium text-xs" style={{ color: typeColor[e.type] }}>{typeLabel[e.type]}</span>
-            <span className="text-[#94a3b8] text-xs">{e.content}</span>
+            <span className="text-white/40 text-xs">{e.content}</span>
           </div>
         ))}
       </div>
@@ -835,21 +838,21 @@ function RideLogPanel({ role }: { role: CadRole }) {
         <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 flex-shrink-0">
           <div className="text-sm font-semibold text-[#22c55e] mb-3 flex items-center gap-2">🚗 Kurs w toku</div>
           <div className="grid grid-cols-2 gap-2 text-xs mb-3">
-            <div className="bg-[#0a0c12] rounded-lg px-3 py-2 border border-[#1e2332]">
-              <div className="text-[#475569] mb-0.5">Z</div>
+            <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+              <div className="text-white/25 mb-0.5">Z</div>
               <div className="text-white">{active.from}</div>
             </div>
-            <div className="bg-[#0a0c12] rounded-lg px-3 py-2 border border-[#1e2332]">
-              <div className="text-[#475569] mb-0.5">Do</div>
+            <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+              <div className="text-white/25 mb-0.5">Do</div>
               <div className="text-white">{active.to}</div>
             </div>
-            <div className="bg-[#0a0c12] rounded-lg px-3 py-2 border border-[#1e2332]">
-              <div className="text-[#475569] mb-0.5">Pasażer</div>
+            <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+              <div className="text-white/25 mb-0.5">Pasażer</div>
               <div className="text-white">{active.passenger}</div>
             </div>
             {active.fare && (
-              <div className="bg-[#0a0c12] rounded-lg px-3 py-2 border border-[#1e2332]">
-                <div className="text-[#475569] mb-0.5">Opłata</div>
+              <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                <div className="text-white/25 mb-0.5">Opłata</div>
                 <div className="text-white">{active.fare} $</div>
               </div>
             )}
@@ -857,17 +860,17 @@ function RideLogPanel({ role }: { role: CadRole }) {
           <button onClick={endRide} className="w-full bg-green-500/20 hover:bg-green-500/30 border border-green-500/40 text-[#22c55e] rounded-lg py-2 text-xs font-semibold transition-colors">✓ Zakończ kurs</button>
         </div>
       ) : (
-        <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4 flex-shrink-0">
+        <div className="bg-[#16161d] border border-white/[0.07] rounded-xl p-4 flex-shrink-0">
           <SLabel>Nowy kurs</SLabel>
           <div className="grid grid-cols-2 gap-2 mb-2">
             <input value={form.from} onChange={e => setForm(p => ({ ...p, from: e.target.value }))} placeholder="Odbiór…"
-              className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
             <input value={form.to} onChange={e => setForm(p => ({ ...p, to: e.target.value }))} placeholder="Cel…"
-              className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
             <input value={form.passenger} onChange={e => setForm(p => ({ ...p, passenger: e.target.value }))} placeholder="Pasażer (opcja)…"
-              className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
             <input value={form.fare} onChange={e => setForm(p => ({ ...p, fare: e.target.value }))} placeholder="Opłata $" type="number"
-              className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
           </div>
           <button onClick={startRide} disabled={!form.from || !form.to}
             className="w-full bg-yellow-500/10 hover:bg-yellow-500/20 disabled:opacity-40 border border-yellow-500/30 text-yellow-400 rounded-lg py-2 text-xs font-semibold transition-colors">
@@ -877,14 +880,14 @@ function RideLogPanel({ role }: { role: CadRole }) {
       )}
       <div className="flex-1 overflow-y-auto space-y-1.5 min-h-0">
         <SLabel>Historia kursów ({rides.length})</SLabel>
-        {rides.length === 0 && <div className="text-center text-[#475569] text-sm pt-4">Brak zakończonych kursów</div>}
+        {rides.length === 0 && <div className="text-center text-white/25 text-sm pt-4">Brak zakończonych kursów</div>}
         {rides.map(r => (
-          <div key={r.id} className="bg-[#0d0f17] border border-[#1e2332] rounded-xl px-3 py-2.5 text-xs">
+          <div key={r.id} className="bg-[#16161d] border border-white/[0.07] rounded-xl px-3 py-2.5 text-xs">
             <div className="flex justify-between mb-1">
-              <span className="text-[#94a3b8]">{r.from} → {r.to}</span>
+              <span className="text-white/40">{r.from} → {r.to}</span>
               {r.fare && <span className="text-yellow-400 font-mono font-semibold">{r.fare}$</span>}
             </div>
-            <div className="text-xs text-[#475569] font-mono">{r.passenger} · {fmtDate(r.startTime)}</div>
+            <div className="text-xs text-white/25 font-mono">{r.passenger} · {fmtDate(r.startTime)}</div>
           </div>
         ))}
       </div>
@@ -918,7 +921,7 @@ function EmergencyCallPanel({ onSent }: { onSent?: () => void }) {
       <div className="flex flex-col items-center justify-center h-full gap-4 p-6 text-center">
         <div className="w-16 h-16 bg-green-500/20 border border-green-500/40 rounded-full flex items-center justify-center text-3xl">✅</div>
         <div className="text-[#22c55e] font-bold text-lg">Zgłoszenie wysłane!</div>
-        <div className="text-[#94a3b8] text-sm">Służby zostały powiadomione. Pozostań na miejscu i czekaj na pomoc.</div>
+        <div className="text-white/40 text-sm">Służby zostały powiadomione. Pozostań na miejscu i czekaj na pomoc.</div>
       </div>
     );
   }
@@ -928,14 +931,14 @@ function EmergencyCallPanel({ onSent }: { onSent?: () => void }) {
       <div className="text-center py-2">
         <div className="w-16 h-16 bg-red-500/20 border border-red-500/40 rounded-full flex items-center justify-center text-3xl mx-auto mb-3">🆘</div>
         <h2 className="text-lg font-bold text-white">Zgłoszenie awaryjne 112</h2>
-        <p className="text-[#475569] text-xs mt-1">Zgłoś zdarzenie służbom ratunkowym</p>
+        <p className="text-white/25 text-xs mt-1">Zgłoś zdarzenie służbom ratunkowym</p>
       </div>
       <div>
         <SLabel>Rodzaj zdarzenia *</SLabel>
         <div className="grid grid-cols-2 gap-2">
           {natures.map(n => (
             <button key={n} onClick={() => setForm(p => ({ ...p, nature: n }))}
-              className={`text-xs px-3 py-2.5 rounded-xl border transition-all text-left ${form.nature === n ? 'border-red-500/60 bg-red-500/20 text-red-300' : 'border-[#1e2332] bg-[#0d0f17] text-[#94a3b8] hover:border-red-500/30 hover:text-white'}`}>
+              className={`text-xs px-3 py-2.5 rounded-xl border transition-all text-left ${form.nature === n ? 'border-red-500/60 bg-red-500/20 text-red-300' : 'border-white/[0.07] bg-[#16161d] text-white/40 hover:border-red-500/30 hover:text-white'}`}>
               {n}
             </button>
           ))}
@@ -944,12 +947,12 @@ function EmergencyCallPanel({ onSent }: { onSent?: () => void }) {
       <div>
         <SLabel>Dokładna lokalizacja *</SLabel>
         <input value={form.location} onChange={e => setForm(p => ({ ...p, location: e.target.value }))} placeholder="Ulica, skrzyżowanie, budynek…"
-          className="w-full bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-sm text-white placeholder-[#475569] focus:outline-none focus:border-red-500/50 transition-colors" />
+          className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-red-500/50 transition-colors" />
       </div>
       <div>
         <SLabel>Opis sytuacji</SLabel>
         <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={3} placeholder="Opisz co się stało…"
-          className="w-full bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-sm text-white placeholder-[#475569] focus:outline-none focus:border-red-500/50 resize-none transition-colors" />
+          className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-red-500/50 resize-none transition-colors" />
       </div>
       <button onClick={submit} disabled={sending || !form.nature || !form.location}
         className="w-full bg-red-500 hover:bg-red-600 disabled:opacity-40 text-white rounded-xl py-3 font-bold text-sm transition-colors">
@@ -977,7 +980,7 @@ function MapPanel({
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <div className="h-full flex flex-col bg-[#080a0f] relative overflow-hidden">
+    <div className="h-full flex flex-col bg-[#0c0c10] relative overflow-hidden">
       {/* Map background */}
       <div className="flex-1 relative">
         {mapImageUrl ? (
@@ -993,9 +996,9 @@ function MapPanel({
             {/* City label */}
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
               <div className="text-6xl opacity-20">🗺️</div>
-              <p className="text-[#475569] text-xs text-center px-4">
+              <p className="text-white/25 text-xs text-center px-4">
                 Mapa Greenville RP<br />
-                <span className="text-[#2a3040]">Wgraj w Ustawieniach → CAD → URL mapy</span>
+                <span className="text-white/10">Wgraj w Ustawieniach → CAD → URL mapy</span>
               </p>
             </div>
           </>
@@ -1019,7 +1022,7 @@ function MapPanel({
               {/* Tooltip */}
               {(isHovered || isSelected) && (
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 whitespace-nowrap
-                  bg-[#0d0f17] border border-[#1e2332] rounded-lg px-2.5 py-1 text-xs font-semibold text-white shadow-xl pointer-events-none"
+                  bg-[#16161d] border border-white/[0.07] rounded-lg px-2.5 py-1 text-xs font-semibold text-white shadow-xl pointer-events-none"
                   style={isSelected ? { borderColor: '#5865F2', color: '#818cf8' } : {}}>
                   {loc.emoji} {loc.name}
                 </div>
@@ -1029,7 +1032,7 @@ function MapPanel({
                 flex items-center justify-center rounded-full border-2 text-base transition-all duration-150
                 ${isSelected
                   ? 'w-10 h-10 bg-[#5865F2] border-[#818cf8] shadow-lg shadow-[#5865F2]/40'
-                  : 'w-8 h-8 bg-[#0d0f17]/90 border-[#1e2332] hover:border-[#5865F2]/60 hover:bg-[#0d0f17] hover:scale-110'}
+                  : 'w-8 h-8 bg-[#16161d]/90 border-white/[0.07] hover:border-[#5865F2]/60 hover:bg-[#16161d] hover:scale-110'}
               `}>
                 {loc.emoji}
               </div>
@@ -1042,8 +1045,8 @@ function MapPanel({
         })}
 
         {/* Bottom info bar */}
-        <div className="absolute bottom-3 left-3 bg-[#0a0c12]/90 border border-[#1e2332] rounded-xl px-3 py-2 backdrop-blur-sm z-20 max-w-xs">
-          <div className="text-xs text-[#475569] mb-0.5">Twoja lokacja (Proximity Chat)</div>
+        <div className="absolute bottom-3 left-3 bg-[#0c0c10]/90 border border-white/[0.07] rounded-xl px-3 py-2 backdrop-blur-sm z-20 max-w-xs">
+          <div className="text-xs text-white/25 mb-0.5">Twoja lokacja (Proximity Chat)</div>
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
             <span>{selectedLocation.emoji}</span>
             <span>{selectedLocation.name}</span>
@@ -1051,7 +1054,7 @@ function MapPanel({
         </div>
 
         {/* Help hint */}
-        <div className="absolute bottom-3 right-3 bg-[#0a0c12]/80 border border-[#1e2332] rounded-lg px-2.5 py-1.5 text-xs text-[#475569] z-20">
+        <div className="absolute bottom-3 right-3 bg-[#0c0c10]/80 border border-white/[0.07] rounded-lg px-2.5 py-1.5 text-xs text-white/25 z-20">
           Kliknij pinezką aby dołączyć do chatu lokacji
         </div>
       </div>
@@ -1123,27 +1126,27 @@ function PodaniaPanel() {
     <div className="flex flex-col h-full p-4 gap-3">
       <div className="flex items-center justify-between flex-shrink-0">
         <SLabel>Oczekujące podania ({apps.length})</SLabel>
-        <button onClick={load} className="text-xs text-[#475569] hover:text-[#94a3b8] transition-colors">↻ Odśwież</button>
+        <button onClick={load} className="text-xs text-white/25 hover:text-white/40 transition-colors">↻ Odśwież</button>
       </div>
       <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {loading && <div className="flex justify-center pt-8"><Spinner /></div>}
         {!loading && apps.length === 0 && (
           <div className="text-center py-12">
             <div className="text-3xl mb-2">🎉</div>
-            <p className="text-[#475569] text-sm">Brak oczekujących podań</p>
+            <p className="text-white/25 text-sm">Brak oczekujących podań</p>
           </div>
         )}
         {apps.map(app => (
-          <div key={app.id} className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+          <div key={app.id} className="bg-[#16161d] border border-white/[0.07] rounded-xl p-4">
             <div className="flex items-start justify-between gap-2 mb-2">
               <div>
                 <div className="text-xs font-semibold text-white">{app.user?.discordUsername ?? '?'}</div>
-                {app.user?.robloxUsername && <div className="text-xs text-[#475569]">@{app.user.robloxUsername}</div>}
+                {app.user?.robloxUsername && <div className="text-xs text-white/25">@{app.user.robloxUsername}</div>}
               </div>
-              <span className="text-xs text-[#475569] font-mono flex-shrink-0">{fmtAgo(app.createdAt)}</span>
+              <span className="text-xs text-white/25 font-mono flex-shrink-0">{fmtAgo(app.createdAt)}</span>
             </div>
-            <div className="text-xs text-[#94a3b8] mb-3 line-clamp-4 leading-relaxed">{app.content}</div>
-            <div className="flex gap-2 pt-2 border-t border-[#1e2332]">
+            <div className="text-xs text-white/40 mb-3 line-clamp-4 leading-relaxed">{app.content}</div>
+            <div className="flex gap-2 pt-2 border-t border-white/[0.07]">
               <button onClick={() => review(app.id, 'ACCEPTED')} disabled={acting === app.id}
                 className="flex-1 bg-green-500/10 hover:bg-green-500/20 border border-green-500/25 text-[#22c55e] rounded-lg py-1.5 text-xs font-semibold transition-colors disabled:opacity-40">
                 {acting === app.id ? '…' : '✓ Akceptuj'}
@@ -1197,7 +1200,7 @@ function GraczePanel({ accessLevel }: { accessLevel: number }) {
     <div className="flex flex-col h-full p-4 gap-3">
       <input value={query} onChange={e => setQuery(e.target.value)}
         placeholder="Szukaj gracza (nick Discord lub Roblox)…"
-        className="bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors flex-shrink-0" />
+        className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors flex-shrink-0" />
 
       {/* Warn form */}
       {warnTarget && (
@@ -1210,13 +1213,13 @@ function GraczePanel({ accessLevel }: { accessLevel: number }) {
               <input value={warnReason} onChange={e => setWarnReason(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && issueWarn()}
                 placeholder="Powód ostrzeżenia…"
-                className="w-full bg-[#0a0c12] border border-[#1e2332] rounded-lg px-3 py-2 text-xs text-white placeholder-[#475569] focus:outline-none focus:border-yellow-500/50 mb-2 transition-colors" />
+                className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-yellow-500/50 mb-2 transition-colors" />
               <div className="flex gap-2">
                 <button onClick={issueWarn} disabled={acting || !warnReason.trim()}
                   className="flex-1 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/30 disabled:opacity-40 text-yellow-400 rounded-lg py-1.5 text-xs font-semibold transition-colors">
                   {acting ? '…' : '⚠️ Wyślij warn'}
                 </button>
-                <button onClick={() => setWarnTarget(null)} className="px-3 text-xs text-[#475569] hover:text-[#94a3b8] transition-colors">Anuluj</button>
+                <button onClick={() => setWarnTarget(null)} className="px-3 text-xs text-white/25 hover:text-white/40 transition-colors">Anuluj</button>
               </div>
             </>
           )}
@@ -1226,18 +1229,18 @@ function GraczePanel({ accessLevel }: { accessLevel: number }) {
       <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {searching && <div className="flex justify-center pt-4"><Spinner /></div>}
         {!searching && query.length >= 2 && results.length === 0 && (
-          <div className="text-center text-[#475569] text-xs pt-6">Nie znaleziono gracza</div>
+          <div className="text-center text-white/25 text-xs pt-6">Nie znaleziono gracza</div>
         )}
         {query.length < 2 && !searching && (
-          <div className="text-center text-[#475569] text-xs pt-6">Wpisz min. 2 znaki aby szukać</div>
+          <div className="text-center text-white/25 text-xs pt-6">Wpisz min. 2 znaki aby szukać</div>
         )}
         {results.map(p => (
-          <div key={p.id} className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-3">
+          <div key={p.id} className="bg-[#16161d] border border-white/[0.07] rounded-xl p-3">
             <div className="flex items-start justify-between gap-2 mb-1.5">
               <div>
                 <div className="text-xs font-semibold text-white">{p.discordUsername}</div>
-                {p.robloxUsername && <div className="text-xs text-[#475569]">Roblox: @{p.robloxUsername}</div>}
-                <div className="text-xs text-[#2a3040] font-mono mt-0.5">{p.discordId}</div>
+                {p.robloxUsername && <div className="text-xs text-white/25">Roblox: @{p.robloxUsername}</div>}
+                <div className="text-xs text-white/10 font-mono mt-0.5">{p.discordId}</div>
               </div>
               {p.verifiedAt
                 ? <span className="text-xs text-[#22c55e] flex-shrink-0">✓ Zweryfik.</span>
@@ -1270,7 +1273,7 @@ function SesjePanel() {
       <SLabel>Sesje RP</SLabel>
       <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {loading && <div className="flex justify-center pt-8"><Spinner /></div>}
-        {!loading && sessions.length === 0 && <div className="text-center text-[#475569] text-sm pt-8">Brak sesji</div>}
+        {!loading && sessions.length === 0 && <div className="text-center text-white/25 text-sm pt-8">Brak sesji</div>}
         {sessions.map(s => {
           const cfg = SESSION_STATUS_CFG[s.status] ?? SESSION_STATUS_CFG.ENDED;
           return (
@@ -1281,8 +1284,8 @@ function SesjePanel() {
                 </span>
                 <span className="text-xs font-bold flex-shrink-0" style={{ color: cfg.color }}>{cfg.label}</span>
               </div>
-              {s.description && <div className="text-xs text-[#94a3b8] mb-1">{s.description}</div>}
-              <div className="text-xs text-[#475569]">👥 {s._count.signups} zapisanych</div>
+              {s.description && <div className="text-xs text-white/40 mb-1">{s.description}</div>}
+              <div className="text-xs text-white/25">👥 {s._count.signups} zapisanych</div>
             </div>
           );
         })}
@@ -1310,11 +1313,11 @@ function StaffPanel({ accessLevel }: { accessLevel: number }) {
   return (
     <div className="flex flex-col h-full">
       {/* Sub-header */}
-      <div className="border-b border-[#1e2332] flex items-end px-3 pt-2 gap-1 bg-[#0a0c12] flex-shrink-0">
+      <div className="border-b border-white/[0.07] flex items-end px-3 pt-2 gap-1 bg-[#0c0c10] flex-shrink-0">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`px-4 py-2 text-xs font-medium rounded-t-lg border-b-2 transition-all whitespace-nowrap
-              ${tab === t.id ? 'text-white border-b-[#5865F2] bg-[#5865F2]/10' : 'text-[#475569] border-b-transparent hover:text-[#94a3b8]'}`}>
+              ${tab === t.id ? 'text-white border-b-[#5865F2] bg-[#5865F2]/10' : 'text-white/25 border-b-transparent hover:text-white/40'}`}>
             {t.label}
           </button>
         ))}
@@ -1377,7 +1380,7 @@ function PlayerPanel({ hasSession }: { hasSession: boolean }) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 p-6 text-center">
         <div className="text-4xl">👤</div>
-        <p className="text-[#475569] text-sm">Zaloguj się, aby zobaczyć swój panel gracza</p>
+        <p className="text-white/25 text-sm">Zaloguj się, aby zobaczyć swój panel gracza</p>
         <button onClick={() => signIn('discord')} className="text-xs bg-[#5865F2]/20 hover:bg-[#5865F2]/30 border border-[#5865F2]/40 text-[#818cf8] rounded-lg px-4 py-2 transition-colors font-medium">
           Zaloguj przez Discord
         </button>
@@ -1413,7 +1416,7 @@ function PlayerPanel({ hasSession }: { hasSession: boolean }) {
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-center">
           <div className="text-2xl mb-2">⚠️</div>
           <p className="text-yellow-400 text-xs font-semibold mb-1">Konto niezweryfikowane</p>
-          <p className="text-[#475569] text-xs">Połącz konto Roblox na Discordzie (<span className="text-[#22c55e]">/weryfikacja</span>)</p>
+          <p className="text-white/25 text-xs">Połącz konto Roblox na Discordzie (<span className="text-[#22c55e]">/weryfikacja</span>)</p>
         </div>
       )}
 
@@ -1425,15 +1428,15 @@ function PlayerPanel({ hasSession }: { hasSession: boolean }) {
           { label: 'Warny',       value: activeWarns,                color: activeWarns > 0 ? '#eab308' : '#475569' },
           { label: 'Mandaty',     value: activeFines,                color: activeFines > 0 ? '#ef4444' : '#475569' },
         ].map(s => (
-          <div key={s.label} className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-3 text-center">
+          <div key={s.label} className="bg-[#16161d] border border-white/[0.07] rounded-xl p-3 text-center">
             <div className="text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
-            <div className="text-xs text-[#475569] mt-0.5">{s.label}</div>
+            <div className="text-xs text-white/25 mt-0.5">{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* Postać */}
-      <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+      <div className="bg-[#16161d] border border-white/[0.07] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
           <span>🪪</span>
           <span className="text-xs font-semibold text-white">Moja postać</span>
@@ -1441,26 +1444,26 @@ function PlayerPanel({ hasSession }: { hasSession: boolean }) {
         {u?.character ? (
           <div className="space-y-1.5 text-xs">
             <div className="flex justify-between">
-              <span className="text-[#475569]">Imię i nazwisko</span>
+              <span className="text-white/25">Imię i nazwisko</span>
               <span className="text-white font-medium">{u.character.firstName} {u.character.lastName}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#475569]">Płeć</span>
-              <span className="text-[#94a3b8]">{u.character.gender}</span>
+              <span className="text-white/25">Płeć</span>
+              <span className="text-white/40">{u.character.gender}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#475569]">Nr dokumentu</span>
-              <span className="font-mono blur-sm hover:blur-none transition-all cursor-pointer text-[#94a3b8]">{u.character.documentId}</span>
+              <span className="text-white/25">Nr dokumentu</span>
+              <span className="font-mono blur-sm hover:blur-none transition-all cursor-pointer text-white/40">{u.character.documentId}</span>
             </div>
           </div>
         ) : (
-          <p className="text-xs text-[#475569]">Brak postaci. Użyj <span className="text-[#22c55e]">#tworzenie-postaci</span> na Discordzie.</p>
+          <p className="text-xs text-white/25">Brak postaci. Użyj <span className="text-[#22c55e]">#tworzenie-postaci</span> na Discordzie.</p>
         )}
       </div>
 
       {/* Pojazdy */}
       {(u?.vehicles?.length ?? 0) > 0 && (
-        <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+        <div className="bg-[#16161d] border border-white/[0.07] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <span>🚗</span>
             <span className="text-xs font-semibold text-white">Moje pojazdy</span>
@@ -1468,7 +1471,7 @@ function PlayerPanel({ hasSession }: { hasSession: boolean }) {
           <div className="space-y-1.5">
             {u!.vehicles!.slice(0, 5).map(v => (
               <div key={v.id} className="flex justify-between items-center text-xs">
-                <span className="text-[#94a3b8]">{v.marka} {v.model} ({v.rok})</span>
+                <span className="text-white/40">{v.marka} {v.model} ({v.rok})</span>
                 <span className="font-mono text-[#22c55e] font-semibold">{v.tablica}</span>
               </div>
             ))}
@@ -1478,7 +1481,7 @@ function PlayerPanel({ hasSession }: { hasSession: boolean }) {
 
       {/* Prawa jazdy */}
       {(u?.licenses?.length ?? 0) > 0 && (
-        <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+        <div className="bg-[#16161d] border border-white/[0.07] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <span>🪪</span>
             <span className="text-xs font-semibold text-white">Prawa jazdy</span>
@@ -1496,7 +1499,7 @@ function PlayerPanel({ hasSession }: { hasSession: boolean }) {
 
       {/* Sesja RP */}
       {activeSession && (
-        <div className="bg-[#0d0f17] border border-[#1e2332] rounded-xl p-4">
+        <div className="bg-[#16161d] border border-white/[0.07] rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <span>🎪</span>
             <span className="text-xs font-semibold text-white">Sesja RP</span>
@@ -1508,26 +1511,26 @@ function PlayerPanel({ hasSession }: { hasSession: boolean }) {
           <div className="text-xs text-white/70">
             {new Date(activeSession.date).toLocaleString('pl-PL', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
           </div>
-          {activeSession.description && <div className="text-xs text-[#475569] mt-1">{activeSession.description}</div>}
-          <div className="text-xs text-[#475569] mt-1">👥 {activeSession.signups.length} zapisanych</div>
+          {activeSession.description && <div className="text-xs text-white/25 mt-1">{activeSession.description}</div>}
+          <div className="text-xs text-white/25 mt-1">👥 {activeSession.signups.length} zapisanych</div>
         </div>
       )}
 
       {/* Ostatnie służby */}
       {(u?.dutyLogs?.length ?? 0) > 0 && (
-        <div className="bg-[#0d0f17] border border-[#00c8ff]/20 rounded-xl p-4">
+        <div className="bg-[#16161d] border border-[#00c8ff]/20 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <span>🚔</span>
             <span className="text-xs font-semibold text-[#00c8ff]">Ostatnie służby</span>
           </div>
           <div className="grid grid-cols-2 gap-1.5">
             {u!.dutyLogs!.slice(0, 4).map((log, i) => (
-              <div key={i} className="bg-[#0a0c12] border border-[#1e2332] rounded-lg p-2 text-center">
+              <div key={i} className="bg-[#0c0c10] border border-white/[0.07] rounded-lg p-2 text-center">
                 <div className={`text-xs font-medium ${log.action === 'ON_DUTY' ? 'text-green-400' : 'text-red-400'}`}>
                   {log.action === 'ON_DUTY' ? '🟢 ON' : '🔴 OFF'}
                 </div>
-                <div className="text-xs text-[#475569] mt-0.5 truncate">{log.service}</div>
-                <div className="text-xs text-[#475569]/60">{new Date(log.createdAt).toLocaleDateString('pl-PL')}</div>
+                <div className="text-xs text-white/25 mt-0.5 truncate">{log.service}</div>
+                <div className="text-xs text-white/25/60">{new Date(log.createdAt).toLocaleDateString('pl-PL')}</div>
               </div>
             ))}
           </div>
@@ -1608,34 +1611,33 @@ export default function CadPage() {
   // ─── Loading ──────────────────────────────────────────────────────────────
   if (loadingUser) {
     return (
-      <div className="h-screen bg-[#080a0f] flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-2 border-[#5865F2]/30 border-t-[#5865F2] rounded-full animate-spin" />
-        <p className="text-[#475569] text-sm">Ładowanie CAD…</p>
+      <div style={{ height: '100vh', background: '#0c0c10', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
+        <div className="w-8 h-8 border-2 border-white/10 border-t-[#5865F2] rounded-full animate-spin" />
+        <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 13, fontFamily: "'Inter', sans-serif" }}>Ładowanie CAD…</p>
       </div>
     );
   }
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="h-screen bg-[#080a0f] text-white flex flex-col overflow-hidden font-sans">
+    <div style={{ height: '100vh', background: '#0c0c10', color: '#f4f4f8', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: "'Inter', -apple-system, sans-serif" }}>
 
       {/* ── TOP BAR ────────────────────────────────────────────────────────── */}
-      <header className="h-11 border-b border-[#1e2332] flex items-center px-4 gap-4 flex-shrink-0 bg-[#0a0c12]">
+      <header style={{ height: 46, borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', padding: '0 16px', gap: 14, flexShrink: 0, background: 'rgba(12,12,16,0.97)', backdropFilter: 'blur(12px)' }}>
         {/* Logo */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-6 h-6 bg-[#5865F2] rounded-md flex items-center justify-center text-white font-black text-xs">G</div>
-          <span className="text-xs font-bold tracking-widest text-white uppercase">CAD</span>
-          <span className="text-[#1e2332] text-xs">|</span>
-          <span className="text-xs text-[#475569] font-mono">AURORA GRP</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <div style={{ width: 24, height: 24, background: '#5865F2', borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#fff', fontSize: 12 }}>G</div>
+          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#f4f4f8', textTransform: 'uppercase' }}>CAD</span>
+          <span style={{ color: 'rgba(255,255,255,0.1)' }}>·</span>
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.22)', fontFamily: 'monospace' }}>AURORA GRP</span>
         </div>
 
         {/* Server priority selector (admin+) */}
         {(['OWNER','ADMIN','MOD'].includes(cadRole)) && (
-          <div className="flex gap-1 ml-2">
+          <div style={{ display: 'flex', gap: 4 }}>
             {(Object.keys(SERVER_PRIO) as ServerPriority[]).map(sp => (
               <button key={sp} onClick={() => setServerPrio(sp)}
-                className={`text-xs px-2.5 py-1 rounded-md border font-bold transition-all ${serverPrio === sp ? SERVER_PRIO[sp].bg : 'border-[#1e2332] text-[#475569] hover:text-[#94a3b8] hover:border-[#2a3040]'}`}
-                style={serverPrio === sp ? { color: SERVER_PRIO[sp].color } : {}}>
+                style={{ fontSize: 11, padding: '3px 10px', borderRadius: 5, fontWeight: 700, cursor: 'pointer', transition: 'all .15s', border: serverPrio === sp ? `1px solid ${SERVER_PRIO[sp].color}40` : '1px solid rgba(255,255,255,0.07)', background: serverPrio === sp ? SERVER_PRIO[sp].color + '18' : 'transparent', color: serverPrio === sp ? SERVER_PRIO[sp].color : 'rgba(255,255,255,0.28)' }}>
                 {SERVER_PRIO[sp].label}
               </button>
             ))}
@@ -1644,25 +1646,21 @@ export default function CadPage() {
 
         {/* Current server priority badge (everyone else) */}
         {!(['OWNER','ADMIN','MOD'].includes(cadRole)) && (
-          <span className={`text-xs px-3 py-1 rounded-md border font-bold ${SERVER_PRIO[serverPrio].bg}`} style={{ color: SERVER_PRIO[serverPrio].color }}>
-            ⚡ {SERVER_PRIO[serverPrio].label} — {SERVER_PRIO[serverPrio].desc}
+          <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 5, fontWeight: 700, background: SERVER_PRIO[serverPrio].color + '18', color: SERVER_PRIO[serverPrio].color, border: `1px solid ${SERVER_PRIO[serverPrio].color}35` }}>
+            {SERVER_PRIO[serverPrio].label} — {SERVER_PRIO[serverPrio].desc}
           </span>
         )}
 
-        <div className="ml-auto flex items-center gap-3">
-          {/* Role badge */}
-          <span className="text-xs font-bold px-2.5 py-1 rounded-md" style={{ background: roleCfg.color + '20', color: roleCfg.color, border: `1px solid ${roleCfg.color}35` }}>
-            {roleCfg.icon} {roleCfg.label}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 5, background: 'rgba(88,101,242,0.12)', color: '#818cf8', border: '1px solid rgba(88,101,242,0.2)' }}>
+            {roleCfg.label}
           </span>
-          {/* User name */}
-          {cadUser?.robloxName && <span className="text-xs text-[#94a3b8] font-mono">{cadUser.robloxName}</span>}
-          {/* Login prompt */}
+          {cadUser?.robloxName && <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }}>{cadUser.robloxName}</span>}
           {!session && (
-            <button onClick={() => signIn('discord')} className="text-xs bg-[#5865F2]/20 hover:bg-[#5865F2]/30 border border-[#5865F2]/40 text-[#818cf8] rounded-md px-3 py-1 transition-colors font-medium">
-              Zaloguj przez Discord
+            <button onClick={() => signIn('discord')} style={{ fontSize: 12, background: 'rgba(88,101,242,0.12)', border: '1px solid rgba(88,101,242,0.2)', color: '#818cf8', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontWeight: 600 }}>
+              Zaloguj Discord
             </button>
           )}
-          {/* Pop-out button — opens CAD in a separate window */}
           <button
             title="Otwórz CAD w osobnym oknie"
             onClick={() => {
@@ -1671,7 +1669,7 @@ export default function CadPage() {
               const top  = Math.round(window.screenY + (window.outerHeight - h) / 2);
               window.open('/cad', 'GreenvilleCAD', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=no,toolbar=no,menubar=no,location=no,status=no`);
             }}
-            className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-[#1e2332] text-[#475569] hover:text-[#00c8ff] hover:border-[#00c8ff]/40 hover:bg-[#00c8ff]/5 transition-all"
+            style={{ fontSize: 11, padding: '3px 10px', borderRadius: 5, border: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.28)', background: 'transparent', cursor: 'pointer' }}
           >
             ⧉ Okno
           </button>
@@ -1679,47 +1677,44 @@ export default function CadPage() {
       </header>
 
       {/* ── BODY ───────────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 min-h-0">
+      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
 
         {/* ── LEFT SIDEBAR ─────────────────────────────────────────────────── */}
-        <aside className="w-52 border-r border-[#1e2332] flex flex-col bg-[#0d0f17] flex-shrink-0 overflow-y-auto">
+        <aside style={{ width: 196, borderRight: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', background: '#16161d', flexShrink: 0, overflowY: 'auto' }}>
 
-          {/* Callsign / Status — dla ról ze statusem */}
+          {/* Callsign / Status */}
           {statusOptions.length > 0 && session && (
-            <div className="p-3 border-b border-[#1e2332]">
+            <div style={{ padding: '10px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
               <SLabel>Callsign</SLabel>
               {callsign && !editCallsign ? (
-                <div className="bg-[#0a0c12] border border-[#1e2332] rounded-xl px-3 py-2.5 mb-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono font-black text-sm text-white tracking-wider">{callsign}</span>
-                    <div className="flex gap-2">
-                      <button onClick={() => { setEditCallsign(true); setCallsignInput(callsign); }} className="text-xs text-[#475569] hover:text-[#94a3b8] transition-colors">✎</button>
-                      <button onClick={goOffDuty} className="text-xs text-red-500/60 hover:text-red-400 transition-colors font-bold">■</button>
-                    </div>
+                <div style={{ background: '#0c0c10', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 7, padding: '7px 10px', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 800, fontSize: 13, color: '#f4f4f8', letterSpacing: '0.05em' }}>{callsign}</span>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => { setEditCallsign(true); setCallsignInput(callsign); }} style={{ fontSize: 11, color: 'rgba(255,255,255,0.22)', background: 'none', border: 'none', cursor: 'pointer' }}>✎</button>
+                    <button onClick={goOffDuty} style={{ fontSize: 11, color: 'rgba(239,68,68,0.45)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700 }}>■</button>
                   </div>
                 </div>
               ) : (
-                <div className="flex gap-1 mb-2">
+                <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
                   <input value={callsignInput} onChange={e => setCallsignInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && setCallsignAndGoOnDuty()}
-                    placeholder={`np. ${roleCfg.short}-01`}
-                    className="flex-1 bg-[#0a0c12] border border-[#1e2332] rounded-lg px-2 py-1.5 text-xs text-white font-mono uppercase placeholder-[#475569] focus:outline-none focus:border-[#5865F2] transition-colors" />
-                  <button onClick={setCallsignAndGoOnDuty} className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 text-[#22c55e] rounded-lg px-2 text-xs font-bold transition-colors">✓</button>
+                    placeholder={`${roleCfg.short}-01`}
+                    style={{ flex: 1, background: '#0c0c10', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 6, padding: '5px 8px', fontSize: 11, color: '#f4f4f8', fontFamily: 'monospace', textTransform: 'uppercase', outline: 'none' }} />
+                  <button onClick={setCallsignAndGoOnDuty} style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.18)', color: '#22c55e', borderRadius: 6, padding: '5px 8px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>✓</button>
                 </div>
               )}
 
               {callsign && (
                 <>
                   <SLabel>Status</SLabel>
-                  <div className="space-y-1">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     {statusOptions.map(s => {
                       const st = UNIT_STATUS[s];
                       const isActive = myStatus === s;
                       return (
                         <button key={s} onClick={() => changeStatus(s)}
-                          className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs border transition-all ${isActive ? `${st.bg} border-l-2` : 'border-transparent text-[#475569] hover:text-[#94a3b8] hover:bg-white/[0.03]'}`}
-                          style={isActive ? { borderLeftColor: st.color } : {}}>
-                          <Dot color={isActive ? st.color : '#475569'} />
-                          <span style={isActive ? { color: st.color } : {}}>{st.label}</span>
+                          style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 7, borderRadius: 6, padding: '5px 8px', fontSize: 11, border: isActive ? `1px solid ${st.color}28` : '1px solid transparent', background: isActive ? st.color + '12' : 'transparent', color: isActive ? st.color : 'rgba(255,255,255,0.28)', cursor: 'pointer', textAlign: 'left', transition: 'all .12s' }}>
+                          <Dot color={isActive ? st.color : 'rgba(255,255,255,0.15)'} />
+                          {st.label}
                         </button>
                       );
                     })}
@@ -1729,15 +1724,15 @@ export default function CadPage() {
             </div>
           )}
 
-          {/* Proximity location picker — everyone */}
-          <div className="p-3 flex-1">
-            <SLabel>Twoja lokacja</SLabel>
-            <div className="space-y-0.5">
+          {/* Proximity location picker */}
+          <div style={{ padding: '10px 12px', flex: 1 }}>
+            <SLabel>Lokacja</SLabel>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {LOCATIONS.map(loc => (
                 <button key={loc.id} onClick={() => setProxLocation(loc)}
-                  className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs transition-all text-left ${proxLocation.id === loc.id ? 'bg-[#5865F2]/15 border border-[#5865F2]/40 text-white border-l-2 border-l-[#5865F2]' : 'text-[#475569] hover:text-[#94a3b8] hover:bg-white/[0.03] border border-transparent'}`}>
-                  <span className="text-sm">{loc.emoji}</span>
-                  <span className="truncate">{loc.name}</span>
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 7, borderRadius: 6, padding: '5px 8px', fontSize: 11, border: proxLocation.id === loc.id ? '1px solid rgba(88,101,242,0.25)' : '1px solid transparent', background: proxLocation.id === loc.id ? 'rgba(88,101,242,0.1)' : 'transparent', color: proxLocation.id === loc.id ? '#818cf8' : 'rgba(255,255,255,0.28)', cursor: 'pointer', textAlign: 'left', transition: 'all .12s', overflow: 'hidden' }}>
+                  <span style={{ fontSize: 12, flexShrink: 0 }}>{loc.emoji}</span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{loc.name}</span>
                 </button>
               ))}
             </div>
@@ -1745,18 +1740,18 @@ export default function CadPage() {
         </aside>
 
         {/* ── MAIN CONTENT ─────────────────────────────────────────────────── */}
-        <main className="flex-1 flex flex-col min-w-0 bg-[#080a0f]">
+        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, background: '#0c0c10' }}>
 
           {/* Module tabs */}
           {modules.length > 1 && (
-            <div className="border-b border-[#1e2332] flex gap-1 px-3 pt-2 flex-shrink-0 bg-[#0a0c12] overflow-x-auto">
+            <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', gap: 2, padding: '0 12px', paddingTop: 6, flexShrink: 0, overflowX: 'auto' }}>
               {modules.map(mod => {
-                const mc = MODULE_LABEL[mod] ?? { label: mod, icon: '◆' };
+                const mc = MODULE_LABEL[mod] ?? { label: mod };
                 const isActive = activeTab === mod;
                 return (
                   <button key={mod} onClick={() => setActiveTab(mod)}
-                    className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-t-lg transition-all border-b-2 whitespace-nowrap ${isActive ? 'text-white border-b-[#5865F2] bg-[#5865F2]/10' : 'text-[#475569] border-b-transparent hover:text-[#94a3b8] hover:bg-white/[0.03]'}`}>
-                    <span>{mc.icon}</span>{mc.label}
+                    style={{ padding: '6px 14px', fontSize: 12, fontWeight: isActive ? 600 : 400, borderBottom: isActive ? '2px solid #5865F2' : '2px solid transparent', color: isActive ? '#f4f4f8' : 'rgba(255,255,255,0.3)', background: isActive ? 'rgba(88,101,242,0.08)' : 'transparent', border: 'none', borderBottom: isActive ? '2px solid #5865F2' : '2px solid transparent', borderRadius: '6px 6px 0 0', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all .15s' }}>
+                    {mc.label}
                   </button>
                 );
               })}
@@ -1786,17 +1781,17 @@ export default function CadPage() {
         </main>
 
         {/* ── RIGHT SIDEBAR ────────────────────────────────────────────────── */}
-        <aside className="w-72 border-l border-[#1e2332] flex flex-col bg-[#0d0f17] flex-shrink-0">
+        <aside style={{ width: 264, borderLeft: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', background: '#16161d', flexShrink: 0 }}>
 
           {/* Chat tabs */}
-          <div className="border-b border-[#1e2332] flex flex-shrink-0 bg-[#0a0c12]">
+          <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexShrink: 0 }}>
             {([
-              { id: 'radio' as ChatTabId, label: '📡 Radio', show: getRadioChannels(cadRole).length > 0 },
-              { id: 'proximity' as ChatTabId, label: '💬 Prox', show: true },
-              { id: 'system' as ChatTabId, label: '⚙️ System', show: ['OWNER','ADMIN','MOD'].includes(cadRole) },
+              { id: 'radio' as ChatTabId, label: 'Radio', show: getRadioChannels(cadRole).length > 0 },
+              { id: 'proximity' as ChatTabId, label: 'Proximity', show: true },
+              { id: 'system' as ChatTabId, label: 'System', show: ['OWNER','ADMIN','MOD'].includes(cadRole) },
             ].filter(t => t.show)).map(t => (
               <button key={t.id} onClick={() => setChatTab(t.id)}
-                className={`flex-1 py-2.5 text-xs font-medium border-b-2 transition-all ${chatTab === t.id ? 'text-white border-b-[#5865F2] bg-[#5865F2]/10' : 'text-[#475569] border-b-transparent hover:text-[#94a3b8]'}`}>
+                style={{ flex: 1, padding: '9px 0', fontSize: 11, fontWeight: chatTab === t.id ? 600 : 400, color: chatTab === t.id ? '#f4f4f8' : 'rgba(255,255,255,0.28)', background: chatTab === t.id ? 'rgba(88,101,242,0.07)' : 'transparent', border: 'none', borderBottom: chatTab === t.id ? '2px solid #5865F2' : '2px solid transparent', cursor: 'pointer', transition: 'all .15s' }}>
                 {t.label}
               </button>
             ))}
@@ -1808,7 +1803,7 @@ export default function CadPage() {
               session ? <RadioChat role={cadRole} callsign={callsign} /> :
               <div className="flex flex-col items-center justify-center h-full gap-3 p-4 text-center">
                 <div className="text-3xl">📡</div>
-                <p className="text-[#475569] text-xs">Zaloguj się, aby korzystać z radia</p>
+                <p className="text-white/25 text-xs">Zaloguj się, aby korzystać z radia</p>
                 <button onClick={() => signIn('discord')} className="text-xs bg-[#5865F2]/20 hover:bg-[#5865F2]/30 border border-[#5865F2]/40 text-[#818cf8] rounded-lg px-4 py-2 transition-colors">Zaloguj Discord</button>
               </div>
             )}
@@ -1816,7 +1811,7 @@ export default function CadPage() {
               session ? <ProximityChat location={proxLocation} username={cadUser?.robloxName ?? cadUser?.name ?? 'Gracz'} /> :
               <div className="flex flex-col items-center justify-center h-full gap-3 p-4 text-center">
                 <div className="text-3xl">💬</div>
-                <p className="text-[#475569] text-xs">Zaloguj się, aby korzystać z proximity chatu</p>
+                <p className="text-white/25 text-xs">Zaloguj się, aby korzystać z proximity chatu</p>
                 <button onClick={() => signIn('discord')} className="text-xs bg-[#5865F2]/20 hover:bg-[#5865F2]/30 border border-[#5865F2]/40 text-[#818cf8] rounded-lg px-4 py-2 transition-colors">Zaloguj Discord</button>
               </div>
             )}
@@ -1832,8 +1827,8 @@ export default function CadPage() {
                       ['Callsign', callsign || '—'],
                       ['Discord ID', cadUser?.discordId ?? '—'],
                     ].map(([l, v]) => (
-                      <div key={l} className="flex justify-between items-center py-1 border-b border-[#1e2332]">
-                        <span className="text-[#475569]">{l}</span>
+                      <div key={l} className="flex justify-between items-center py-1 border-b border-white/[0.07]">
+                        <span className="text-white/25">{l}</span>
                         <span className="text-white font-mono">{v}</span>
                       </div>
                     ))}
@@ -1842,8 +1837,8 @@ export default function CadPage() {
                 <div>
                   <SLabel>Szybkie akcje</SLabel>
                   <div className="space-y-1">
-                    <button onClick={() => window.location.reload()} className="w-full text-left text-[#475569] hover:text-[#94a3b8] py-1.5 px-2 rounded-lg hover:bg-white/[0.03] transition-colors text-xs">↻ Odśwież CAD</button>
-                    <button onClick={() => window.open('/cad','GreenvilleCAD','width=1440,height=900,resizable=yes')} className="w-full text-left text-[#475569] hover:text-[#94a3b8] py-1.5 px-2 rounded-lg hover:bg-white/[0.03] transition-colors text-xs">⧉ Otwórz w oknie</button>
+                    <button onClick={() => window.location.reload()} className="w-full text-left text-white/25 hover:text-white/40 py-1.5 px-2 rounded-lg hover:bg-white/[0.03] transition-colors text-xs">↻ Odśwież CAD</button>
+                    <button onClick={() => window.open('/cad','GreenvilleCAD','width=1440,height=900,resizable=yes')} className="w-full text-left text-white/25 hover:text-white/40 py-1.5 px-2 rounded-lg hover:bg-white/[0.03] transition-colors text-xs">⧉ Otwórz w oknie</button>
                   </div>
                 </div>
               </div>

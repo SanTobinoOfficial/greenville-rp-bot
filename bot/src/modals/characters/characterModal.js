@@ -1,5 +1,6 @@
 // Modal tworzenia postaci RP — generuje dowód osobisty
-// Tworzy/aktualizuje postać w bazie i wysyła embed na kanał
+// Pola od gracza: imię, nazwisko, wiek, historia
+// Reszta (płeć, data urodzenia, wygląd, PESEL, dokumentId) — autogeneracja
 
 const { EmbedBuilder } = require('discord.js');
 const {
@@ -8,42 +9,44 @@ const {
 } = require('../../utils/tableRejestracyjna');
 const logger = require('../../utils/logger');
 
+// ─── Losowe dane wyglądu ─────────────────────────────────────────────────────
+
+const EYE_COLORS  = ['niebieskie', 'zielone', 'brązowe', 'szare', 'piwne', 'orzechowe', 'czarne'];
+const HAIR_COLORS = ['czarne', 'brązowe', 'blond', 'ciemnoblond', 'kasztanowe', 'rude', 'szare', 'ciemnobrązowe'];
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function randomGender() { return Math.random() < 0.5 ? 'M' : 'K'; }
+
+/**
+ * Generuje datę urodzenia na podstawie wieku.
+ * Losuje dzień i miesiąc, rok = bieżący − wiek.
+ */
+function birthDateFromAge(age) {
+  const year  = new Date().getFullYear() - age;
+  const month = Math.floor(Math.random() * 12);       // 0–11
+  const day   = Math.floor(Math.random() * 28) + 1;   // 1–28 (bezpiecznie dla każdego miesiąca)
+  return new Date(year, month, day);
+}
+
+// ─── Handler ─────────────────────────────────────────────────────────────────
+
 module.exports = {
   async execute(interaction, client, prisma) {
     await interaction.deferReply({ ephemeral: true });
 
     const firstName = interaction.fields.getTextInputValue('first_name').trim();
     const lastName  = interaction.fields.getTextInputValue('last_name').trim();
-    const birthDateStr = interaction.fields.getTextInputValue('birth_date').trim();
-    const genderRaw = interaction.fields.getTextInputValue('gender').trim().toUpperCase();
-    const appearance = interaction.fields.getTextInputValue('appearance')?.trim() || null;
+    const ageRaw    = interaction.fields.getTextInputValue('age').trim();
+    const historia  = interaction.fields.getTextInputValue('historia').trim();
 
-    // Walidacja płci
-    const gender = genderRaw === 'M' ? 'M' : genderRaw === 'K' ? 'K' : null;
-    if (!gender) {
-      return interaction.editReply({ content: '❌ Płeć musi być "M" (mężczyzna) lub "K" (kobieta).' });
-    }
-
-    // Walidacja daty urodzenia
-    const dateParts = birthDateStr.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-    if (!dateParts) {
-      return interaction.editReply({ content: '❌ Nieprawidłowy format daty. Użyj formatu DD.MM.RRRR (np. 15.06.1995).' });
-    }
-
-    const [, day, month, year] = dateParts;
-    const birthDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-
-    if (isNaN(birthDate.getTime())) {
-      return interaction.editReply({ content: '❌ Nieprawidłowa data urodzenia.' });
-    }
-
-    const age = Math.floor((Date.now() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-    if (age < 0 || age > 120) {
-      return interaction.editReply({ content: '❌ Data urodzenia jest nieprawidłowa.' });
+    // Walidacja wieku
+    const age = parseInt(ageRaw, 10);
+    if (isNaN(age) || age < 18 || age > 80) {
+      return interaction.editReply({ content: '❌ Wiek musi być liczbą od 18 do 80.' });
     }
 
     try {
-      // Znajdź użytkownika w bazie
       const user = await prisma.user.findUnique({
         where: { discordId: interaction.user.id },
         include: { character: true },
@@ -53,76 +56,64 @@ module.exports = {
         return interaction.editReply({ content: '❌ Nie jesteś zarejestrowany. Zweryfikuj się w kanale **#weryfikacja**.' });
       }
 
-      // Parsuj opcjonalne dane wyglądu
-      let eyeColor = null, hairColor = null, photoUrl = null;
-      if (appearance) {
-        const eyeMatch = appearance.match(/oczy?:\s*([^,]+)/i);
-        const hairMatch = appearance.match(/w[łl]osy?:\s*([^,]+)/i);
-        if (eyeMatch) eyeColor = eyeMatch[1].trim();
-        if (hairMatch) hairColor = hairMatch[1].trim();
-      }
+      // Autogeneracja
+      const gender    = randomGender();
+      const birthDate = birthDateFromAge(age);
+      const eyeColor  = pick(EYE_COLORS);
+      const hairColor = pick(HAIR_COLORS);
+      const peselRp   = generatePeselRp(birthDate, gender);
 
-      // Generuj PESEL RP i ID dokumentu
-      const peselRp = generatePeselRp(birthDate, gender);
+      const birthDateStr = birthDate.toLocaleDateString('pl-PL', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+      }); // "DD.MM.YYYY"
 
       let documentId;
-      let isNew = !user.character;
+      const isNew = !user.character;
 
       if (user.character) {
-        // Aktualizacja postaci — zachowaj stare ID dokumentu
+        // Aktualizacja — zachowaj stary nr dokumentu
         documentId = user.character.documentId;
         await prisma.character.update({
           where: { userId: user.id },
-          data: {
-            firstName, lastName, birthDate, gender,
-            eyeColor, hairColor, photoUrl, peselRp,
-          },
+          data: { firstName, lastName, birthDate, gender, eyeColor, hairColor, photoUrl: null, peselRp },
         });
       } else {
-        // Nowa postać — wygeneruj nowe ID
+        // Nowa postać — wygeneruj unikalny nr dokumentu
         documentId = generateDocumentId();
-        // Upewnij się, że ID jest unikalne
-        let idExists = true;
-        let docId = documentId;
-        while (idExists) {
-          const existing = await prisma.character.findUnique({ where: { documentId: docId } });
-          if (!existing) { idExists = false; documentId = docId; }
-          else docId = generateDocumentId();
+        let attempts = 0;
+        while (await prisma.character.findUnique({ where: { documentId } })) {
+          documentId = generateDocumentId();
+          if (++attempts > 20) throw new Error('Nie udało się wygenerować unikalnego ID dokumentu.');
         }
-
         await prisma.character.create({
           data: {
             userId: user.id,
             firstName, lastName, birthDate, gender,
-            eyeColor, hairColor, photoUrl,
+            eyeColor, hairColor, photoUrl: null,
             peselRp, documentId,
           },
         });
       }
 
-      // Embed dowodu osobistego
+      // ── Embed dowodu ────────────────────────────────────────────────────────
       const dowodEmbed = new EmbedBuilder()
         .setColor(0x1E3A5F)
         .setTitle('🪪 DOWÓD OSOBISTY — AURORA Greenville RP')
-        .setThumbnail(`https://flagcdn.com/w40/pl.png`)
+        .setThumbnail('https://flagcdn.com/w40/pl.png')
         .addFields(
-          { name: '👤 Imię i Nazwisko', value: `${firstName} ${lastName}`, inline: true },
-          { name: '🎂 Data urodzenia', value: birthDateStr, inline: true },
-          { name: '⚤ Płeć', value: gender === 'M' ? 'Mężczyzna' : 'Kobieta', inline: true },
-          { name: '🔢 PESEL RP', value: `\`${peselRp}\``, inline: true },
-          { name: '🪪 Nr dokumentu', value: `\`${documentId}\``, inline: true },
-          { name: '📱 Nr telefonu', value: user.phoneNumber ? `\`${user.phoneNumber}\`` : 'Brak', inline: true },
+          { name: '👤 Imię i Nazwisko',  value: `${firstName} ${lastName}`,               inline: true },
+          { name: '🎂 Data urodzenia',    value: birthDateStr,                              inline: true },
+          { name: '⚤ Płeć',              value: gender === 'M' ? 'Mężczyzna' : 'Kobieta', inline: true },
+          { name: '🔢 PESEL RP',          value: `\`${peselRp}\``,                          inline: true },
+          { name: '🪪 Nr dokumentu',      value: `\`${documentId}\``,                       inline: true },
+          { name: '📱 Nr telefonu',       value: user.phoneNumber ? `\`${user.phoneNumber}\`` : 'Brak', inline: true },
+          { name: '👁️ Wygląd',           value: `Oczy: ${eyeColor} | Włosy: ${hairColor}`, inline: false },
+          { name: '📖 Historia',          value: historia,                                  inline: false },
         )
         .setFooter({ text: `AURORA Greenville RP | Discord: ${interaction.user.tag}` })
         .setTimestamp();
 
-      if (eyeColor || hairColor) {
-        const appearance = [eyeColor && `Oczy: ${eyeColor}`, hairColor && `Włosy: ${hairColor}`]
-          .filter(Boolean).join(' | ');
-        dowodEmbed.addFields({ name: '👁️ Wygląd', value: appearance, inline: false });
-      }
-
-      // Wyślij embed na kanał #dowód-osobisty
+      // Wyślij na kanał #dowód-osobisty
       const dowodChannel = interaction.guild.channels.cache.find(
         c => c.name === '🪪│dowód-osobisty' && c.isTextBased()
       );
@@ -133,15 +124,12 @@ module.exports = {
         });
       }
 
-      // Wyślij kopię w DM
+      // Kopia w DM
       try {
-        await interaction.user.send({
-          content: '📋 Oto kopia Twojego dowodu osobistego RP:',
-          embeds: [dowodEmbed],
-        });
+        await interaction.user.send({ content: '📋 Oto kopia Twojego dowodu osobistego RP:', embeds: [dowodEmbed] });
       } catch {}
 
-      // Wynik
+      // Odpowiedź
       await interaction.editReply({
         embeds: [
           new EmbedBuilder()
@@ -149,7 +137,12 @@ module.exports = {
             .setTitle(`✅ Postać ${isNew ? 'stworzona' : 'zaktualizowana'}!`)
             .setDescription(
               `Twój dowód osobisty RP został ${isNew ? 'wystawiony' : 'zaktualizowany'}.\n\n` +
+              `👤 **${firstName} ${lastName}**, ${age} lat\n` +
+              `⚤ **Płeć:** ${gender === 'M' ? 'Mężczyzna' : 'Kobieta'}\n` +
+              `🎂 **Urodzony/a:** ${birthDateStr}\n` +
+              `👁️ **Wygląd:** Oczy ${eyeColor}, Włosy ${hairColor}\n\n` +
               `🪪 **Nr dokumentu:** \`${documentId}\`\n` +
+              `🔢 **PESEL RP:** \`${peselRp}\`\n` +
               `📱 **Nr telefonu:** \`${user.phoneNumber || 'Brak'}\``
             )
         ],
@@ -166,9 +159,10 @@ module.exports = {
               .setColor(0x3B82F6)
               .setTitle(`🪪 ${isNew ? 'Nowa' : 'Zaktualizowana'} postać`)
               .addFields(
-                { name: 'Discord', value: `${interaction.user.tag} (<@${interaction.user.id}>)`, inline: true },
-                { name: 'Postać', value: `${firstName} ${lastName}`, inline: true },
-                { name: 'Nr dokumentu', value: documentId, inline: true },
+                { name: 'Discord',     value: `${interaction.user.tag} (<@${interaction.user.id}>)`, inline: true },
+                { name: 'Postać',      value: `${firstName} ${lastName}`,                            inline: true },
+                { name: 'Nr dokumentu', value: documentId,                                           inline: true },
+                { name: 'Płeć / Wiek', value: `${gender === 'M' ? 'M' : 'K'} / ${age} lat`,        inline: true },
               )
               .setTimestamp()
           ],
@@ -179,9 +173,7 @@ module.exports = {
 
     } catch (error) {
       logger.error('Błąd tworzenia postaci:', error);
-      await interaction.editReply({
-        content: `❌ Błąd podczas tworzenia postaci: \`${error.message}\``,
-      });
+      await interaction.editReply({ content: `❌ Błąd podczas tworzenia postaci: \`${error.message}\`` });
     }
   },
 };

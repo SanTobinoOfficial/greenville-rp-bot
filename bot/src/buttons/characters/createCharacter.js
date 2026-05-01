@@ -62,32 +62,23 @@ module.exports = {
       ),
       new ActionRowBuilder().addComponents(
         new TextInputBuilder()
-          .setCustomId('birth_date')
-          .setLabel('Data urodzenia (DD.MM.RRRR)')
+          .setCustomId('age')
+          .setLabel('Wiek postaci (18–80)')
           .setStyle(TextInputStyle.Short)
-          .setPlaceholder('np. 15.06.1995')
-          .setMinLength(10)
-          .setMaxLength(10)
+          .setPlaceholder('np. 28')
+          .setMinLength(2)
+          .setMaxLength(2)
           .setRequired(true)
       ),
       new ActionRowBuilder().addComponents(
         new TextInputBuilder()
-          .setCustomId('gender')
-          .setLabel('Płeć (M / K)')
-          .setStyle(TextInputStyle.Short)
-          .setPlaceholder('M lub K')
-          .setMinLength(1)
-          .setMaxLength(1)
+          .setCustomId('historia')
+          .setLabel('Historia postaci')
+          .setStyle(TextInputStyle.Paragraph)
+          .setPlaceholder('Kim jest Twoja postać? Skąd pochodzi, co robi w Greenville?')
+          .setMinLength(30)
+          .setMaxLength(500)
           .setRequired(true)
-      ),
-      new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('appearance')
-          .setLabel('Kolor oczu / włosów (opcjonalne)')
-          .setStyle(TextInputStyle.Short)
-          .setPlaceholder('np. Oczy: niebieskie, Włosy: brązowe')
-          .setRequired(false)
-          .setMaxLength(100)
       )
     );
 
