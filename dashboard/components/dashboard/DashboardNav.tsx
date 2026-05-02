@@ -30,6 +30,7 @@ import {
   Zap,
   Bot,
   Building2,
+  MailOpen,
 } from 'lucide-react';
 
 interface NavItem {
@@ -58,6 +59,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/dashboard/regulamin',       label: 'Regulamin',    icon: BookOpen,      minLevel: ACCESS_LEVELS.ADMIN  },
   { href: '/dashboard/prace',            label: 'Prace RP',        icon: Building2,  minLevel: ACCESS_LEVELS.HELPER },
   { href: '/dashboard/podania-pracy',   label: 'Podania o pracę', icon: Briefcase,  minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/embedy',         label: 'Embedy',          icon: MailOpen,      minLevel: ACCESS_LEVELS.ADMIN  },
   { href: '/dashboard/czat-proximity', label: 'Czat Proximity', icon: MessageSquare, minLevel: ACCESS_LEVELS.OWNER },
   { href: '/dashboard/komendy',         label: 'Komendy Bota', icon: Zap,           minLevel: ACCESS_LEVELS.HELPER },
   { href: '/dashboard/boty',            label: 'Boty Zewnętrzne', icon: Bot,         minLevel: ACCESS_LEVELS.HELPER },

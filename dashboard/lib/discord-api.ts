@@ -89,6 +89,15 @@ export function deleteRole(guildId: string, roleId: string) {
   return discordFetch(`/guilds/${guildId}/roles/${roleId}`, { method: 'DELETE' });
 }
 
+// ─── Messages ─────────────────────────────────────────────────────────────────
+
+export function sendMessage(channelId: string, body: Record<string, unknown>) {
+  return discordFetch(`/channels/${channelId}/messages`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+}
+
 // ─── Channel type constants ───────────────────────────────────────────────────
 
 export const CHANNEL_TYPES: Record<number, string> = {
