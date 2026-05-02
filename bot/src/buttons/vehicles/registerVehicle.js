@@ -1,12 +1,24 @@
 // Przycisk "Zarejestruj pojazd"
-// Otwiera modal rejestracji
+// Otwiera select menu z kategoriami pojazdów
 
 const {
-  ModalBuilder,
-  TextInputBuilder,
-  TextInputStyle,
+  StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
   ActionRowBuilder,
+  EmbedBuilder,
 } = require('discord.js');
+const { getCategories, KONESER_LIMIT } = require('../../data/greenvilleVehicles');
+
+const CATEGORY_EMOJIS = {
+  'Ekonomiczne': '🚙',
+  'Sedany':      '🚗',
+  'SUV':         '🚐',
+  'Pickupy':     '🛻',
+  'Sportowe':    '🏎️',
+  'Luksusowe':   '💎',
+  'Vany':        '🚌',
+  'Elektryczne': '⚡',
+};
 
 module.exports = {
   async execute(interaction, client, prisma) {
@@ -21,52 +33,36 @@ module.exports = {
       });
     }
 
-    const modal = new ModalBuilder()
-      .setCustomId('modal_vehicle')
-      .setTitle('🚗 Rejestracja Pojazdu RP');
+    const categories = getCategories();
 
-    modal.addComponents(
-      new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('marka_model')
-          .setLabel('Marka i model (np. Ford Mustang GT)')
-          .setStyle(TextInputStyle.Short)
-          .setPlaceholder('Marka Model...')
-          .setMinLength(3)
-          .setMaxLength(60)
-          .setRequired(true)
-      ),
-      new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('rok')
-          .setLabel('Rok produkcji')
-          .setStyle(TextInputStyle.Short)
-          .setPlaceholder('np. 2020')
-          .setMinLength(4)
-          .setMaxLength(4)
-          .setRequired(true)
-      ),
-      new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('kolor')
-          .setLabel('Kolor pojazdu')
-          .setStyle(TextInputStyle.Short)
-          .setPlaceholder('np. Czerwony / #FF0000')
-          .setMinLength(2)
-          .setMaxLength(40)
-          .setRequired(true)
-      ),
-      new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('opis')
-          .setLabel('Opis / uwagi (opcjonalne)')
-          .setStyle(TextInputStyle.Paragraph)
-          .setPlaceholder('Dodatkowe informacje o pojeździe...')
-          .setRequired(false)
-          .setMaxLength(300)
-      )
-    );
+    const select = new StringSelectMenuBuilder()
+      .setCustomId('vehicle_category')
+      .setPlaceholder('Wybierz kategorię pojazdu...')
+      .addOptions(
+        categories.map(cat =>
+          new StringSelectMenuOptionBuilder()
+            .setLabel(cat)
+            .setValue(cat)
+            .setEmoji(CATEGORY_EMOJIS[cat] || '🚗')
+            .setDescription(cat === 'Luksusowe' ? `Wymaga roli "Koneser Aut" (wartość > ${(KONESER_LIMIT/1000).toFixed(0)}k $)` : `Pojazdy kategorii ${cat}`)
+        )
+      );
 
-    await interaction.showModal(modal);
+    await interaction.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(0xF59E0B)
+          .setTitle('🚗 Rejestracja Pojazdu — Wybór Kategorii')
+          .setDescription('Wybierz kategorię pojazdu z listy poniżej, aby zobaczyć dostępne modele.')
+          .addFields({
+            name: '💎 Pojazdy luksusowe',
+            value: `Pojazdy o wartości powyżej **${(KONESER_LIMIT/1000).toFixed(0)} 000 $** wymagają roli **Koneser Aut**.`,
+            inline: false,
+          })
+          .setFooter({ text: 'AURORA Greenville RP — Rejestracja pojazdów' }),
+      ],
+      components: [new ActionRowBuilder().addComponents(select)],
+      ephemeral: true,
+    });
   },
 };

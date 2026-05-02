@@ -71,22 +71,31 @@ module.exports = {
 
       // ==================== MODALS ====================
       if (interaction.isModalSubmit()) {
-        const [prefix, ...args] = interaction.customId.split('_');
-        const handlerFile = MODAL_HANDLERS[interaction.customId] || MODAL_PREFIX_HANDLERS[prefix];
+        const customId = interaction.customId;
+        const [prefix, ...args] = customId.split('_');
+
+        // Specjalne dopasowanie dla modal_vehicle_* (vehicleId może zawierać '_')
+        let handlerFile = MODAL_HANDLERS[customId];
+        if (!handlerFile && customId.startsWith('modal_vehicle_')) {
+          handlerFile = 'vehicles/vehicleModal';
+        }
+        if (!handlerFile) {
+          handlerFile = MODAL_PREFIX_HANDLERS[prefix];
+        }
 
         if (handlerFile) {
           try {
             const handler = require(`../modals/${handlerFile}`);
             await handler.execute(interaction, client, prisma, args);
           } catch (error) {
-            logger.error(`Błąd modala ${interaction.customId}:`, error);
+            logger.error(`Błąd modala ${customId}:`, error);
             await interaction.reply({
               content: '❌ Wystąpił błąd podczas przetwarzania formularza.',
               ephemeral: true,
             }).catch(() => {});
           }
         } else {
-          logger.warn(`Brak handlera dla modala: ${interaction.customId}`);
+          logger.warn(`Brak handlera dla modala: ${customId}`);
         }
         return;
       }
@@ -148,11 +157,11 @@ const MODAL_HANDLERS = {
   'modal_verification':    'verification/verificationModal',  // nowy system
   'modal_verify_roblox':   'verification/robloxModal',        // stary (fallback)
   'modal_character':       'characters/characterModal',
-  'modal_vehicle':         'vehicles/vehicleModal',
 };
 
 const MODAL_PREFIX_HANDLERS = {
-  'job': 'jobs/jobModal',  // job_modal_[jobId]
+  'job':   'jobs/jobModal',     // job_modal_[jobId]
+  'modal': 'vehicles/vehicleModal', // modal_vehicle_[vehicleId]
 };
 
 const SELECT_HANDLERS = {
@@ -162,6 +171,8 @@ const SELECT_HANDLERS = {
   'job_select_kategoria':     'jobs/jobSelectKategoria',
   'job_select_praca':         'jobs/jobSelectPraca',
   'listprac_select_kategoria':'jobs/listpracSelectKategoria',
+  'vehicle_category':         'vehicles/vehicleCategory',
+  'vehicle_select':           'vehicles/vehicleSelect',
 };
 
 const SELECT_PREFIX_HANDLERS = {};
