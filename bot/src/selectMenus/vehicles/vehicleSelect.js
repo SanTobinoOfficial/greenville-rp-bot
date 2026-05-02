@@ -7,7 +7,17 @@ const {
   TextInputStyle,
   ActionRowBuilder,
 } = require('discord.js');
-const { getVehicleById, KONESER_LIMIT, formatPrice } = require('../../data/greenvilleVehicles');
+const { getVehicleById, getRequiredRole, formatPrice } = require('../../data/greenvilleVehicles');
+
+// Emoji per typ roli
+const ROLE_EMOJI = {
+  KONESER: '💎',
+  KLASYK:  '🏛️',
+  POLICJA: '🚔',
+  STRAZ:   '🚒',
+  EMS:     '🚑',
+  DOT:     '🚧',
+};
 
 module.exports = {
   async execute(interaction, client, prisma) {
@@ -18,17 +28,19 @@ module.exports = {
       return interaction.update({ content: '❌ Nieznany pojazd.', components: [], embeds: [] });
     }
 
-    // Sprawdź rolę Koneser Aut jeśli wymagana
-    if (vehicle.wartosc > KONESER_LIMIT) {
+    // Sprawdź wymaganą rolę
+    const requiredRole = getRequiredRole(vehicle);
+    if (requiredRole) {
       const member = await interaction.guild.members.fetch(interaction.user.id);
-      const hasRole = member.roles.cache.some(r => r.name === 'Koneser Aut');
+      const hasRole = member.roles.cache.some(r => r.name === requiredRole);
       if (!hasRole) {
+        const emoji = ROLE_EMOJI[vehicle.typ] || '🔒';
         return interaction.update({
           embeds: [],
           components: [],
           content:
-            `❌ **${vehicle.marka} ${vehicle.model}** kosztuje **${formatPrice(vehicle.wartosc)}** i wymaga roli 💎 **Koneser Aut**.\n\n` +
-            `Pojazdy o wartości powyżej **${formatPrice(KONESER_LIMIT)}** są dostępne wyłącznie dla posiadaczy tej roli.`,
+            `❌ **${vehicle.nazwa}** (${formatPrice(vehicle.cena)}) wymaga roli ${emoji} **${requiredRole}**.\n\n` +
+            `Nie posiadasz wymaganej roli, aby zarejestrować ten pojazd.`,
         });
       }
     }
@@ -36,7 +48,7 @@ module.exports = {
     // Otwórz modal — customId zawiera vehicleId
     const modal = new ModalBuilder()
       .setCustomId(`modal_vehicle_${vehicleId}`)
-      .setTitle(`🚗 Rejestracja: ${vehicle.marka} ${vehicle.model}`);
+      .setTitle(`🚗 ${vehicle.nazwa}`.slice(0, 45));
 
     modal.addComponents(
       new ActionRowBuilder().addComponents(

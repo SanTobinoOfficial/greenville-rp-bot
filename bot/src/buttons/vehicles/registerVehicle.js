@@ -7,17 +7,16 @@ const {
   ActionRowBuilder,
   EmbedBuilder,
 } = require('discord.js');
-const { getCategories, KONESER_LIMIT } = require('../../data/greenvilleVehicles');
+const { getCategories, CATEGORY_EMOJIS } = require('../../data/greenvilleVehicles');
 
-const CATEGORY_EMOJIS = {
-  'Ekonomiczne': '🚙',
-  'Sedany':      '🚗',
-  'SUV':         '🚐',
-  'Pickupy':     '🛻',
-  'Sportowe':    '🏎️',
-  'Luksusowe':   '💎',
-  'Vany':        '🚌',
-  'Elektryczne': '⚡',
+// Opisy kategorii specjalnych
+const CATEGORY_DESCRIPTIONS = {
+  'Luksusowe': 'Wymaga roli "Koneser Aut"',
+  'Klasyki':   'Wymaga roli "Kolekcjoner Aut"',
+  'Policja':   'Wymaga roli "Policja"',
+  'Straż':     'Wymaga roli "Straż"',
+  'EMS':       'Wymaga roli "EMS"',
+  'DOT':       'Wymaga roli "DOT"',
 };
 
 module.exports = {
@@ -44,7 +43,7 @@ module.exports = {
             .setLabel(cat)
             .setValue(cat)
             .setEmoji(CATEGORY_EMOJIS[cat] || '🚗')
-            .setDescription(cat === 'Luksusowe' ? `Wymaga roli "Koneser Aut" (wartość > ${(KONESER_LIMIT/1000).toFixed(0)}k $)` : `Pojazdy kategorii ${cat}`)
+            .setDescription(CATEGORY_DESCRIPTIONS[cat] || `Pojazdy kategorii ${cat}`)
         )
       );
 
@@ -54,11 +53,11 @@ module.exports = {
           .setColor(0xF59E0B)
           .setTitle('🚗 Rejestracja Pojazdu — Wybór Kategorii')
           .setDescription('Wybierz kategorię pojazdu z listy poniżej, aby zobaczyć dostępne modele.')
-          .addFields({
-            name: '💎 Pojazdy luksusowe',
-            value: `Pojazdy o wartości powyżej **${(KONESER_LIMIT/1000).toFixed(0)} 000 $** wymagają roli **Koneser Aut**.`,
-            inline: false,
-          })
+          .addFields(
+            { name: '💎 Koneser Aut',     value: 'Luksusowe pojazdy (powyżej 100 000 $)',          inline: true },
+            { name: '🏛️ Kolekcjoner Aut', value: 'Klasyczne / vintage pojazdy',                    inline: true },
+            { name: '🔒 Służby',           value: 'Policja / Straż / EMS / DOT — tylko dla służb', inline: true },
+          )
           .setFooter({ text: 'AURORA Greenville RP — Rejestracja pojazdów' }),
       ],
       components: [new ActionRowBuilder().addComponents(select)],

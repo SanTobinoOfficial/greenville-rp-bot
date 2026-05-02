@@ -3,7 +3,7 @@
 // Tablica wpisywana ręcznie przez gracza — sprawdza unikalność i format
 
 const { EmbedBuilder } = require('discord.js');
-const { getVehicleById, KONESER_LIMIT, formatPrice } = require('../../data/greenvilleVehicles');
+const { getVehicleById, getRequiredRole, formatPrice } = require('../../data/greenvilleVehicles');
 const logger = require('../../utils/logger');
 
 // Format tablicy: litery/cyfry/spacje, 3–12 znaków, bez znaków specjalnych
@@ -68,12 +68,13 @@ module.exports = {
         });
       }
 
-      // Podwójna walidacja roli Koneser Aut (zabezpieczenie po stronie modala)
-      if (vehicle.wartosc > KONESER_LIMIT) {
-        const hasRole = member.roles.cache.some(r => r.name === 'Koneser Aut');
+      // Podwójna walidacja roli (zabezpieczenie po stronie modala)
+      const requiredRole = getRequiredRole(vehicle);
+      if (requiredRole) {
+        const hasRole = member.roles.cache.some(r => r.name === requiredRole);
         if (!hasRole) {
           return interaction.editReply({
-            content: `❌ Pojazd **${vehicle.marka} ${vehicle.model}** (${formatPrice(vehicle.wartosc)}) wymaga roli 💎 **Koneser Aut**.`,
+            content: `❌ Pojazd **${vehicle.nazwa}** (${formatPrice(vehicle.cena)}) wymaga roli 🔒 **${requiredRole}**.`,
           });
         }
       }
@@ -81,10 +82,10 @@ module.exports = {
       // Zapisz pojazd
       const saved = await prisma.vehicle.create({
         data: {
-          userId: user.id,
-          marka:  vehicle.marka,
-          model:  vehicle.model,
-          rok:    vehicle.rok,
+          userId:  user.id,
+          marka:   vehicle.nazwa,   // całe "2023 Falcon Prime LX" jako marka
+          model:   vehicle.kategoria,
+          rok:     new Date().getFullYear(),
           kolor,
           tablica: tablicaRaw,
           opis,
@@ -93,24 +94,27 @@ module.exports = {
 
       const currentCount = user.vehicles.length + 1;
 
+      // Etykieta statusu
+      const statusLabel = requiredRole ? `🔒 ${requiredRole}` : null;
+
       // Embed dowodu rejestracyjnego
       const dowodEmbed = new EmbedBuilder()
         .setColor(0xF59E0B)
         .setTitle('🚗 Dowód Rejestracyjny — AURORA Greenville RP')
         .addFields(
-          { name: '🚗 Pojazd',        value: `${vehicle.marka} ${vehicle.model} (${vehicle.rok})`, inline: true },
-          { name: '💰 Wartość RP',    value: formatPrice(vehicle.wartosc),                          inline: true },
-          { name: '🎨 Kolor',          value: kolor,                                                 inline: true },
-          { name: '🪪 Tablica RP',     value: `\`${tablicaRaw}\``,                                  inline: true },
-          { name: '👤 Właściciel',     value: `${interaction.user.tag}`,                             inline: true },
-          { name: '📊 Pojazd nr',      value: `${currentCount}/${maxVehicles}`,                      inline: true },
+          { name: '🚗 Pojazd',      value: vehicle.nazwa,              inline: true },
+          { name: '💰 Wartość RP',  value: formatPrice(vehicle.cena),  inline: true },
+          { name: '🎨 Kolor',       value: kolor,                      inline: true },
+          { name: '🪪 Tablica RP',  value: `\`${tablicaRaw}\``,        inline: true },
+          { name: '👤 Właściciel',  value: `${interaction.user.tag}`,  inline: true },
+          { name: '📊 Pojazd nr',   value: `${currentCount}/${maxVehicles}`, inline: true },
         )
         .setFooter({ text: `ID pojazdu: ${saved.id}` })
         .setTimestamp();
 
       if (opis) dowodEmbed.addFields({ name: '📝 Opis', value: opis, inline: false });
-      if (vehicle.wartosc > KONESER_LIMIT) {
-        dowodEmbed.addFields({ name: '💎 Status', value: 'Pojazd luksusowy — Koneser Aut', inline: true });
+      if (statusLabel) {
+        dowodEmbed.addFields({ name: '🔒 Status', value: statusLabel, inline: true });
       }
 
       // Wyślij na kanał #rejestracja-pojazdów
@@ -139,17 +143,17 @@ module.exports = {
             .setColor(0x57F287)
             .setTitle('✅ Pojazd zarejestrowany!')
             .setDescription(
-              `**${vehicle.marka} ${vehicle.model} (${vehicle.rok})** został pomyślnie zarejestrowany.\n\n` +
+              `**${vehicle.nazwa}** został pomyślnie zarejestrowany.\n\n` +
               `🪪 **Tablica:** \`${tablicaRaw}\`\n` +
-              `💰 **Wartość:** ${formatPrice(vehicle.wartosc)}\n` +
+              `💰 **Wartość:** ${formatPrice(vehicle.cena)}\n` +
               `🎨 **Kolor:** ${kolor}\n` +
               `📊 **Pojazdy:** ${currentCount}/${maxVehicles}` +
-              (vehicle.wartosc > KONESER_LIMIT ? '\n\n💎 *Pojazd luksusowy*' : '')
+              (statusLabel ? `\n\n🔒 *${statusLabel}*` : '')
             )
         ],
       });
 
-      logger.info(`Pojazd zarejestrowany: ${tablicaRaw} — ${vehicle.marka} ${vehicle.model} dla ${interaction.user.tag}`);
+      logger.info(`Pojazd zarejestrowany: ${tablicaRaw} — ${vehicle.nazwa} dla ${interaction.user.tag}`);
 
     } catch (error) {
       logger.error('Błąd rejestracji pojazdu:', error);
