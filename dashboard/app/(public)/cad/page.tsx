@@ -1541,6 +1541,914 @@ function PlayerPanel({ hasSession }: { hasSession: boolean }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// ARRESTS PANEL (POLICJA / ADMIN)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface ArrestRecord { id: string; targetName: string; robloxName?: string; officerName: string; reason: string; charges: string[]; active: boolean; createdAt: string; }
+
+function ArrestsPanel({ canAdd, callsign }: { canAdd: boolean; callsign: string }) {
+  const [records, setRecords] = useState<ArrestRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
+  const [form, setForm] = useState({ targetName: '', robloxName: '', reason: '', charges: '' });
+  const [adding, setAdding] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    try { setRecords(await fetch('/api/cad/arrests').then(r => r.ok ? r.json() : [])); }
+    catch { setRecords([]); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  async function arrest() {
+    if (!form.targetName || !form.reason) return;
+    setAdding(true);
+    try {
+      await fetch('/api/cad/arrests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, charges: form.charges.split(',').map(s => s.trim()).filter(Boolean), officerCallsign: callsign }),
+      });
+      setForm({ targetName: '', robloxName: '', reason: '', charges: '' });
+      setShowForm(false);
+      await load();
+    } finally { setAdding(false); }
+  }
+
+  async function release(id: string) {
+    await fetch(`/api/cad/arrests?id=${id}`, { method: 'PATCH' });
+    await load();
+  }
+
+  const filtered = records.filter(r => !query || r.targetName.toLowerCase().includes(query.toLowerCase()) || r.robloxName?.toLowerCase().includes(query.toLowerCase()));
+  const active = filtered.filter(r => r.active);
+  const released = filtered.filter(r => !r.active);
+
+  return (
+    <div className="flex flex-col h-full gap-3 p-4">
+      {/* Toolbar */}
+      <div className="flex gap-2 flex-shrink-0">
+        <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Szukaj zatrzymanego…"
+          className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
+        {canAdd && (
+          <button onClick={() => setShowForm(p => !p)}
+            className="bg-red-500/15 hover:bg-red-500/25 border border-red-500/35 text-red-400 rounded-lg px-4 py-2 text-xs font-semibold transition-colors whitespace-nowrap">
+            {showForm ? '✕ Anuluj' : '+ Zatrzymaj'}
+          </button>
+        )}
+        <button onClick={load} className="bg-white/5 hover:bg-white/10 border border-white/[0.07] text-white/30 rounded-lg px-3 py-2 text-xs transition-colors">↻</button>
+      </div>
+
+      {/* Form */}
+      {showForm && canAdd && (
+        <div className="bg-[#16161d] border border-red-500/20 rounded-xl p-4 flex-shrink-0 space-y-2">
+          <SLabel>Nowe zatrzymanie</SLabel>
+          <div className="grid grid-cols-2 gap-2">
+            <input value={form.targetName} onChange={e => setForm(p => ({...p, targetName: e.target.value}))} placeholder="Imię i nazwisko RP *"
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-red-500/50 transition-colors" />
+            <input value={form.robloxName} onChange={e => setForm(p => ({...p, robloxName: e.target.value}))} placeholder="Nick Roblox"
+              className="bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-red-500/50 transition-colors" />
+          </div>
+          <input value={form.charges} onChange={e => setForm(p => ({...p, charges: e.target.value}))} placeholder="Zarzuty (oddziel przecinkami) np. Rozbój, Nielegalna broń"
+            className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-red-500/50 transition-colors" />
+          <input value={form.reason} onChange={e => setForm(p => ({...p, reason: e.target.value}))} placeholder="Opis zdarzenia / podstawa prawna *"
+            className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-red-500/50 transition-colors" />
+          <button onClick={arrest} disabled={adding || !form.targetName || !form.reason}
+            className="w-full bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 disabled:opacity-40 text-red-400 rounded-lg py-2 text-xs font-bold transition-colors">
+            {adding ? 'Zatrzymywanie…' : '🚔 Potwierdź zatrzymanie'}
+          </button>
+        </div>
+      )}
+
+      {/* Lists */}
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-4">
+        {loading && <div className="flex justify-center pt-8"><Spinner /></div>}
+        {!loading && (
+          <>
+            {/* Active */}
+            <div>
+              <SLabel>Aktywne zatrzymania ({active.length})</SLabel>
+              {active.length === 0 && <div className="text-center text-white/25 text-xs py-4">Brak aktywnych zatrzymań</div>}
+              <div className="space-y-2">
+                {active.map(r => (
+                  <div key={r.id} className="bg-[#16161d] border border-red-500/30 border-l-4 border-l-red-500 rounded-xl p-3">
+                    <div className="flex justify-between items-start mb-1.5">
+                      <div>
+                        <span className="font-semibold text-sm text-red-300">{r.targetName}</span>
+                        {r.robloxName && <span className="text-xs text-white/30 ml-2 font-mono">{r.robloxName}</span>}
+                      </div>
+                      {canAdd && (
+                        <button onClick={() => release(r.id)} className="text-xs text-white/25 hover:text-green-400 border border-white/[0.07] hover:border-green-500/30 rounded px-2 py-0.5 transition-colors">
+                          Zwolnij
+                        </button>
+                      )}
+                    </div>
+                    {r.charges.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-1.5">
+                        {r.charges.map((c, i) => <span key={i} className="text-xs px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-300">{c}</span>)}
+                      </div>
+                    )}
+                    <div className="text-xs text-white/30">{r.reason}</div>
+                    <div className="text-xs text-white/20 mt-1.5 font-mono">zatrzymał: {r.officerName} · {fmtDate(r.createdAt)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Released */}
+            {released.length > 0 && (
+              <div>
+                <SLabel>Zwolnieni ({released.length})</SLabel>
+                <div className="space-y-1.5">
+                  {released.slice(0, 10).map(r => (
+                    <div key={r.id} className="bg-[#16161d] border border-white/[0.07] rounded-xl px-3 py-2.5 opacity-50">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-white/40">{r.targetName} {r.robloxName && <span className="text-white/20">· {r.robloxName}</span>}</span>
+                        <span className="text-white/20 font-mono">{fmtDate(r.createdAt)}</span>
+                      </div>
+                      {r.charges.length > 0 && <div className="text-xs text-white/20 mt-0.5">{r.charges.join(', ')}</div>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MEDICAL PANEL (EMS / RATOWNIK)
+// ─────────────────────────────────────────────────────────────────────────────
+
+type PatientStatus = 'STABLE' | 'CRITICAL' | 'DECEASED' | 'TREATED';
+
+interface Patient {
+  id: string;
+  name: string;
+  robloxName?: string;
+  condition: string;
+  location: string;
+  status: PatientStatus;
+  notes: string;
+  assignedTo: string;
+  createdAt: string;
+}
+
+const PATIENT_STATUS_CFG: Record<PatientStatus, { label: string; color: string }> = {
+  STABLE:   { label: 'Stabilny',    color: '#22c55e' },
+  CRITICAL: { label: 'Krytyczny',   color: '#ef4444' },
+  DECEASED: { label: 'Zgon',        color: '#6b7280' },
+  TREATED:  { label: 'Wyleczony',   color: '#3b82f6' },
+};
+
+const MEDICAL_CONDITIONS = ['Wypadek drogowy','Zawał serca','Udar','Rana postrzałowa','Rana kłuta','Złamanie','Utonięcie','Przedawkowanie','Poparzenie','Utrata przytomności','Inne'];
+
+function MedicalPanel({ cadRole, callsign }: { cadRole: CadRole; callsign: string }) {
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [form, setForm] = useState({ name: '', robloxName: '', condition: '', location: '', notes: '' });
+  const [showForm, setShowForm] = useState(false);
+  const [selected, setSelected] = useState<Patient | null>(null);
+  const [noteInput, setNoteInput] = useState('');
+
+  function addPatient() {
+    if (!form.name || !form.condition) return;
+    const p: Patient = {
+      id: Date.now().toString(),
+      ...form,
+      status: 'CRITICAL',
+      assignedTo: callsign || cadRole,
+      createdAt: new Date().toISOString(),
+    };
+    setPatients(prev => [p, ...prev]);
+    setForm({ name: '', robloxName: '', condition: '', location: '', notes: '' });
+    setShowForm(false);
+    setSelected(p);
+  }
+
+  function updateStatus(id: string, status: PatientStatus) {
+    setPatients(prev => prev.map(p => p.id === id ? { ...p, status } : p));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : prev);
+  }
+
+  function addNote(id: string) {
+    if (!noteInput.trim()) return;
+    const note = `[${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}] ${noteInput}`;
+    setPatients(prev => prev.map(p => p.id === id ? { ...p, notes: p.notes ? p.notes + '\n' + note : note } : p));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, notes: prev.notes ? prev.notes + '\n' + note : note } : prev);
+    setNoteInput('');
+  }
+
+  const active = patients.filter(p => p.status !== 'TREATED' && p.status !== 'DECEASED');
+  const closed = patients.filter(p => p.status === 'TREATED' || p.status === 'DECEASED');
+
+  return (
+    <div className="flex h-full min-h-0">
+      {/* Left: patient list */}
+      <div className="w-72 flex-shrink-0 border-r border-white/[0.06] flex flex-col">
+        <div className="p-3 border-b border-white/[0.06] flex-shrink-0 flex gap-2">
+          <button onClick={() => { setShowForm(p => !p); setSelected(null); }}
+            className="flex-1 bg-pink-500/15 hover:bg-pink-500/25 border border-pink-500/30 text-pink-400 rounded-lg py-2 text-xs font-semibold transition-colors">
+            {showForm ? '✕ Anuluj' : '+ Nowy pacjent'}
+          </button>
+        </div>
+
+        {showForm && (
+          <div className="p-3 border-b border-white/[0.06] space-y-2 flex-shrink-0 bg-pink-500/5">
+            <input value={form.name} onChange={e => setForm(p => ({...p, name: e.target.value}))} placeholder="Imię i nazwisko RP *"
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white placeholder-white/20 focus:outline-none focus:border-pink-500/50 transition-colors" />
+            <input value={form.robloxName} onChange={e => setForm(p => ({...p, robloxName: e.target.value}))} placeholder="Nick Roblox"
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white placeholder-white/20 focus:outline-none focus:border-pink-500/50 transition-colors" />
+            <select value={form.condition} onChange={e => setForm(p => ({...p, condition: e.target.value}))}
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-pink-500/50 transition-colors">
+              <option value="">Rodzaj urazu *</option>
+              {MEDICAL_CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <input value={form.location} onChange={e => setForm(p => ({...p, location: e.target.value}))} placeholder="Lokalizacja"
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white placeholder-white/20 focus:outline-none focus:border-pink-500/50 transition-colors" />
+            <button onClick={addPatient} disabled={!form.name || !form.condition}
+              className="w-full bg-pink-500/20 hover:bg-pink-500/30 border border-pink-500/40 disabled:opacity-40 text-pink-400 rounded-lg py-1.5 text-xs font-bold transition-colors">
+              Przyjmij pacjenta
+            </button>
+          </div>
+        )}
+
+        <div className="flex-1 overflow-y-auto">
+          {active.length === 0 && closed.length === 0 && (
+            <div className="text-center text-white/25 text-xs pt-8">Brak pacjentów</div>
+          )}
+          {[...active, ...closed].map(p => {
+            const sc = PATIENT_STATUS_CFG[p.status];
+            return (
+              <button key={p.id} onClick={() => { setSelected(p); setShowForm(false); }}
+                className="w-full text-left px-3 py-2.5 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                style={{ background: selected?.id === p.id ? 'rgba(88,101,242,0.06)' : undefined }}>
+                <div className="flex justify-between items-center mb-0.5">
+                  <span className="text-xs font-semibold text-white/80 truncate">{p.name}</span>
+                  <span className="text-xs ml-2 flex-shrink-0 font-bold" style={{ color: sc.color }}>{sc.label}</span>
+                </div>
+                <div className="text-xs text-white/30 truncate">{p.condition} · {p.location || '—'}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Right: patient details */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {!selected ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-4xl mb-3 opacity-30">🚑</div>
+              <p className="text-white/25 text-sm">Wybierz pacjenta lub dodaj nowego</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Patient header */}
+            <div className="p-4 border-b border-white/[0.06] flex-shrink-0">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className="font-bold text-white">{selected.name}</h3>
+                  {selected.robloxName && <div className="text-xs text-white/30 font-mono">{selected.robloxName}</div>}
+                </div>
+                <div className="flex gap-2 items-center">
+                  <span className="text-xs font-bold px-2 py-1 rounded" style={{ background: PATIENT_STATUS_CFG[selected.status].color + '20', color: PATIENT_STATUS_CFG[selected.status].color }}>
+                    {PATIENT_STATUS_CFG[selected.status].label}
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                  <div className="text-white/25 mb-0.5">Uraz</div>
+                  <div className="text-white">{selected.condition}</div>
+                </div>
+                <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                  <div className="text-white/25 mb-0.5">Lokalizacja</div>
+                  <div className="text-white">{selected.location || '—'}</div>
+                </div>
+                <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                  <div className="text-white/25 mb-0.5">Przydzielony</div>
+                  <div className="text-white font-mono">{selected.assignedTo}</div>
+                </div>
+                <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                  <div className="text-white/25 mb-0.5">Czas</div>
+                  <div className="text-white font-mono">{fmtAgo(selected.createdAt)} temu</div>
+                </div>
+              </div>
+              {/* Status change */}
+              <div className="flex gap-1.5 flex-wrap">
+                {(Object.keys(PATIENT_STATUS_CFG) as PatientStatus[]).map(s => (
+                  <button key={s} onClick={() => updateStatus(selected.id, s)}
+                    className="text-xs px-3 py-1.5 rounded-lg border transition-all font-medium"
+                    style={{
+                      background: selected.status === s ? PATIENT_STATUS_CFG[s].color + '20' : 'transparent',
+                      border: `1px solid ${selected.status === s ? PATIENT_STATUS_CFG[s].color + '40' : 'rgba(255,255,255,0.07)'}`,
+                      color: selected.status === s ? PATIENT_STATUS_CFG[s].color : 'rgba(255,255,255,0.3)',
+                    }}>
+                    {PATIENT_STATUS_CFG[s].label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div className="flex-1 flex flex-col min-h-0 p-4 gap-3">
+              <SLabel>Notatki medyczne</SLabel>
+              <div className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-xl p-3 overflow-y-auto text-xs text-white/40 font-mono whitespace-pre-wrap min-h-0">
+                {selected.notes || <span className="text-white/20">Brak notatek…</span>}
+              </div>
+              <div className="flex gap-2 flex-shrink-0">
+                <input value={noteInput} onChange={e => setNoteInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addNote(selected.id)}
+                  placeholder="Dodaj notatkę medyczną…"
+                  className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-pink-500/50 transition-colors" />
+                <button onClick={() => addNote(selected.id)} disabled={!noteInput.trim()}
+                  className="bg-pink-500/15 hover:bg-pink-500/25 border border-pink-500/30 disabled:opacity-40 text-pink-400 rounded-lg px-3 text-xs transition-colors">Dodaj</button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FIRE PANEL (STRAŻ POŻARNA)
+// ─────────────────────────────────────────────────────────────────────────────
+
+type FireType = 'BUILDING' | 'VEHICLE' | 'FOREST' | 'INDUSTRIAL' | 'EXPLOSION' | 'GAS_LEAK' | 'RESCUE' | 'OTHER';
+type FireStatus = 'ACTIVE' | 'CONTAINED' | 'EXTINGUISHED';
+
+interface FireIncident {
+  id: string;
+  type: FireType;
+  location: string;
+  status: FireStatus;
+  hazards: string[];
+  casualties: number;
+  notes: string;
+  assignedTo: string;
+  createdAt: string;
+}
+
+const FIRE_TYPE_CFG: Record<FireType, { label: string; icon: string }> = {
+  BUILDING:    { label: 'Pożar budynku',   icon: '🏠' },
+  VEHICLE:     { label: 'Pożar pojazdu',   icon: '🚗' },
+  FOREST:      { label: 'Pożar lasu',      icon: '🌲' },
+  INDUSTRIAL:  { label: 'Pożar przemysłowy', icon: '🏭' },
+  EXPLOSION:   { label: 'Wybuch',          icon: '💥' },
+  GAS_LEAK:    { label: 'Wyciek gazu',     icon: '⚠️' },
+  RESCUE:      { label: 'Ratownictwo',     icon: '🪢' },
+  OTHER:       { label: 'Inne',            icon: '🔥' },
+};
+
+const FIRE_STATUS_CFG: Record<FireStatus, { label: string; color: string }> = {
+  ACTIVE:      { label: 'Aktywny',         color: '#ef4444' },
+  CONTAINED:   { label: 'Opanowany',       color: '#f97316' },
+  EXTINGUISHED:{ label: 'Ugaszony',        color: '#22c55e' },
+};
+
+const FIRE_HAZARDS = ['Ludzie wewnątrz','Gaz','Materiały wybuchowe','Kolaps struktury','Substancje chemiczne','Brak dostępu','Pojazdy w pobliżu'];
+
+function FirePanel({ callsign }: { callsign: string }) {
+  const [incidents, setIncidents] = useState<FireIncident[]>([]);
+  const [form, setForm] = useState<{ type: FireType; location: string; hazards: string[]; casualties: string }>({ type: 'BUILDING', location: '', hazards: [], casualties: '0' });
+  const [showForm, setShowForm] = useState(false);
+  const [selected, setSelected] = useState<FireIncident | null>(null);
+  const [noteInput, setNoteInput] = useState('');
+
+  function addIncident() {
+    if (!form.location) return;
+    const inc: FireIncident = {
+      id: Date.now().toString(),
+      ...form,
+      casualties: parseInt(form.casualties) || 0,
+      status: 'ACTIVE',
+      notes: '',
+      assignedTo: callsign || 'STRAZ',
+      createdAt: new Date().toISOString(),
+    };
+    setIncidents(prev => [inc, ...prev]);
+    setShowForm(false);
+    setSelected(inc);
+  }
+
+  function updateStatus(id: string, status: FireStatus) {
+    setIncidents(prev => prev.map(i => i.id === id ? { ...i, status } : i));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : prev);
+  }
+
+  function addNote(id: string) {
+    if (!noteInput.trim()) return;
+    const note = `[${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}] ${noteInput}`;
+    setIncidents(prev => prev.map(i => i.id === id ? { ...i, notes: i.notes ? i.notes + '\n' + note : note } : i));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, notes: prev.notes ? prev.notes + '\n' + note : note } : prev);
+    setNoteInput('');
+  }
+
+  function toggleHazard(h: string) {
+    setForm(p => ({ ...p, hazards: p.hazards.includes(h) ? p.hazards.filter(x => x !== h) : [...p.hazards, h] }));
+  }
+
+  const active = incidents.filter(i => i.status === 'ACTIVE');
+  const others = incidents.filter(i => i.status !== 'ACTIVE');
+
+  return (
+    <div className="flex h-full min-h-0">
+      {/* Left list */}
+      <div className="w-72 flex-shrink-0 border-r border-white/[0.06] flex flex-col">
+        <div className="p-3 border-b border-white/[0.06] flex-shrink-0">
+          <button onClick={() => { setShowForm(p => !p); setSelected(null); }}
+            className="w-full bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/30 text-orange-400 rounded-lg py-2 text-xs font-semibold transition-colors">
+            {showForm ? '✕ Anuluj' : '+ Nowy incydent'}
+          </button>
+        </div>
+
+        {showForm && (
+          <div className="p-3 border-b border-white/[0.06] space-y-2 flex-shrink-0 bg-orange-500/5">
+            <select value={form.type} onChange={e => setForm(p => ({...p, type: e.target.value as FireType}))}
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500/50">
+              {(Object.keys(FIRE_TYPE_CFG) as FireType[]).map(t => (
+                <option key={t} value={t}>{FIRE_TYPE_CFG[t].icon} {FIRE_TYPE_CFG[t].label}</option>
+              ))}
+            </select>
+            <input value={form.location} onChange={e => setForm(p => ({...p, location: e.target.value}))} placeholder="Lokalizacja *"
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white placeholder-white/20 focus:outline-none focus:border-orange-500/50" />
+            <div>
+              <div className="text-xs text-white/25 mb-1">Zagrożenia:</div>
+              <div className="flex flex-wrap gap-1">
+                {FIRE_HAZARDS.map(h => (
+                  <button key={h} onClick={() => toggleHazard(h)}
+                    className="text-xs px-2 py-0.5 rounded border transition-colors"
+                    style={{ background: form.hazards.includes(h) ? 'rgba(249,115,22,0.2)' : 'transparent', border: `1px solid ${form.hazards.includes(h) ? 'rgba(249,115,22,0.4)' : 'rgba(255,255,255,0.07)'}`, color: form.hazards.includes(h) ? '#fb923c' : 'rgba(255,255,255,0.3)' }}>
+                    {h}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-white/30">Ofiary:</span>
+              <input type="number" min="0" value={form.casualties} onChange={e => setForm(p => ({...p, casualties: e.target.value}))}
+                className="w-16 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500/50" />
+            </div>
+            <button onClick={addIncident} disabled={!form.location}
+              className="w-full bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 disabled:opacity-40 text-orange-400 rounded-lg py-1.5 text-xs font-bold transition-colors">
+              🚒 Zarejestruj incydent
+            </button>
+          </div>
+        )}
+
+        <div className="flex-1 overflow-y-auto">
+          {incidents.length === 0 && <div className="text-center text-white/25 text-xs pt-8">Brak incydentów</div>}
+          {[...active, ...others].map(inc => {
+            const sc = FIRE_STATUS_CFG[inc.status];
+            const tc = FIRE_TYPE_CFG[inc.type];
+            return (
+              <button key={inc.id} onClick={() => { setSelected(inc); setShowForm(false); }}
+                className="w-full text-left px-3 py-2.5 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                style={{ background: selected?.id === inc.id ? 'rgba(88,101,242,0.06)' : undefined }}>
+                <div className="flex justify-between items-center mb-0.5">
+                  <span className="text-xs font-semibold text-white/80">{tc.icon} {tc.label}</span>
+                  <span className="text-xs font-bold" style={{ color: sc.color }}>{sc.label}</span>
+                </div>
+                <div className="text-xs text-white/30 truncate">{inc.location}</div>
+                {inc.hazards.length > 0 && <div className="text-xs text-orange-400/60 truncate mt-0.5">⚠️ {inc.hazards.slice(0,2).join(', ')}{inc.hazards.length > 2 ? '…' : ''}</div>}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Right detail */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {!selected ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-4xl mb-3 opacity-30">🚒</div>
+              <p className="text-white/25 text-sm">Wybierz incydent lub utwórz nowy</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="p-4 border-b border-white/[0.06] flex-shrink-0">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className="font-bold text-white">{FIRE_TYPE_CFG[selected.type].icon} {FIRE_TYPE_CFG[selected.type].label}</h3>
+                  <div className="text-xs text-white/30">{selected.location} · {fmtAgo(selected.createdAt)} temu</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                  <div className="text-white/25 mb-0.5">Ofiary</div>
+                  <div className="text-white font-bold text-lg">{selected.casualties}</div>
+                </div>
+                <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                  <div className="text-white/25 mb-0.5">Jednostka</div>
+                  <div className="text-white font-mono">{selected.assignedTo}</div>
+                </div>
+              </div>
+              {selected.hazards.length > 0 && (
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {selected.hazards.map(h => <span key={h} className="text-xs px-2 py-0.5 rounded bg-orange-500/10 border border-orange-500/20 text-orange-300">⚠️ {h}</span>)}
+                </div>
+              )}
+              <div className="flex gap-1.5">
+                {(Object.keys(FIRE_STATUS_CFG) as FireStatus[]).map(s => (
+                  <button key={s} onClick={() => updateStatus(selected.id, s)}
+                    className="text-xs px-3 py-1.5 rounded-lg border transition-all font-medium"
+                    style={{ background: selected.status === s ? FIRE_STATUS_CFG[s].color + '20' : 'transparent', border: `1px solid ${selected.status === s ? FIRE_STATUS_CFG[s].color + '40' : 'rgba(255,255,255,0.07)'}`, color: selected.status === s ? FIRE_STATUS_CFG[s].color : 'rgba(255,255,255,0.3)' }}>
+                    {FIRE_STATUS_CFG[s].label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex-1 flex flex-col min-h-0 p-4 gap-3">
+              <SLabel>Dziennik akcji</SLabel>
+              <div className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-xl p-3 overflow-y-auto text-xs text-white/40 font-mono whitespace-pre-wrap min-h-0">
+                {selected.notes || <span className="text-white/20">Brak notatek…</span>}
+              </div>
+              <div className="flex gap-2 flex-shrink-0">
+                <input value={noteInput} onChange={e => setNoteInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addNote(selected.id)}
+                  placeholder="Dodaj wpis do dziennika…"
+                  className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-orange-500/50 transition-colors" />
+                <button onClick={() => addNote(selected.id)} disabled={!noteInput.trim()}
+                  className="bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/30 disabled:opacity-40 text-orange-400 rounded-lg px-3 text-xs transition-colors">Dodaj</button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ROAD PANEL (DOT)
+// ─────────────────────────────────────────────────────────────────────────────
+
+type RoadIncidentType = 'ACCIDENT' | 'ROAD_CLOSURE' | 'SIGN_DAMAGE' | 'SIGNAL_FAILURE' | 'POTHOLE' | 'DEBRIS' | 'FLOOD' | 'OTHER';
+type RoadStatus = 'OPEN' | 'PARTIAL' | 'CLOSED' | 'RESOLVED';
+
+interface RoadIncident {
+  id: string;
+  type: RoadIncidentType;
+  location: string;
+  road: string;
+  status: RoadStatus;
+  closureType: 'NONE' | 'PARTIAL' | 'FULL';
+  notes: string;
+  assignedTo: string;
+  createdAt: string;
+}
+
+const ROAD_TYPE_CFG: Record<RoadIncidentType, { label: string; icon: string }> = {
+  ACCIDENT:       { label: 'Wypadek blokujący',   icon: '💥' },
+  ROAD_CLOSURE:   { label: 'Zamknięcie drogi',    icon: '🚧' },
+  SIGN_DAMAGE:    { label: 'Uszkodzone znaki',     icon: '⚠️' },
+  SIGNAL_FAILURE: { label: 'Awaria sygnalizacji',  icon: '🚦' },
+  POTHOLE:        { label: 'Dziura w drodze',      icon: '🕳️' },
+  DEBRIS:         { label: 'Szczątki na drodze',   icon: '🪨' },
+  FLOOD:          { label: 'Zalana droga',         icon: '🌊' },
+  OTHER:          { label: 'Inne',                 icon: '🔧' },
+};
+
+const ROAD_STATUS_CFG: Record<RoadStatus, { label: string; color: string }> = {
+  OPEN:     { label: 'Otwarta',    color: '#22c55e' },
+  PARTIAL:  { label: 'Częściowa', color: '#f97316' },
+  CLOSED:   { label: 'Zamknięta', color: '#ef4444' },
+  RESOLVED: { label: 'Rozwiązano', color: '#3b82f6' },
+};
+
+function RoadPanel({ callsign }: { callsign: string }) {
+  const [incidents, setIncidents] = useState<RoadIncident[]>([]);
+  const [form, setForm] = useState<{ type: RoadIncidentType; location: string; road: string; closureType: 'NONE'|'PARTIAL'|'FULL' }>({ type: 'ACCIDENT', location: '', road: '', closureType: 'NONE' });
+  const [showForm, setShowForm] = useState(false);
+  const [selected, setSelected] = useState<RoadIncident | null>(null);
+  const [noteInput, setNoteInput] = useState('');
+
+  function addIncident() {
+    if (!form.location) return;
+    const inc: RoadIncident = {
+      id: Date.now().toString(),
+      ...form,
+      status: form.closureType === 'FULL' ? 'CLOSED' : form.closureType === 'PARTIAL' ? 'PARTIAL' : 'OPEN',
+      notes: '',
+      assignedTo: callsign || 'DOT',
+      createdAt: new Date().toISOString(),
+    };
+    setIncidents(prev => [inc, ...prev]);
+    setShowForm(false);
+    setSelected(inc);
+  }
+
+  function updateStatus(id: string, status: RoadStatus) {
+    setIncidents(prev => prev.map(i => i.id === id ? { ...i, status } : i));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : prev);
+  }
+
+  function addNote(id: string) {
+    if (!noteInput.trim()) return;
+    const note = `[${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}] ${noteInput}`;
+    setIncidents(prev => prev.map(i => i.id === id ? { ...i, notes: i.notes ? i.notes + '\n' + note : note } : i));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, notes: prev.notes ? prev.notes + '\n' + note : note } : prev);
+    setNoteInput('');
+  }
+
+  const active = incidents.filter(i => i.status !== 'RESOLVED');
+  const resolved = incidents.filter(i => i.status === 'RESOLVED');
+
+  return (
+    <div className="flex h-full min-h-0">
+      <div className="w-72 flex-shrink-0 border-r border-white/[0.06] flex flex-col">
+        <div className="p-3 border-b border-white/[0.06] flex-shrink-0">
+          <button onClick={() => { setShowForm(p => !p); setSelected(null); }}
+            className="w-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-400 rounded-lg py-2 text-xs font-semibold transition-colors">
+            {showForm ? '✕ Anuluj' : '+ Nowy incydent drogowy'}
+          </button>
+        </div>
+        {showForm && (
+          <div className="p-3 border-b border-white/[0.06] space-y-2 flex-shrink-0 bg-amber-500/5">
+            <select value={form.type} onChange={e => setForm(p => ({...p, type: e.target.value as RoadIncidentType}))}
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50">
+              {(Object.keys(ROAD_TYPE_CFG) as RoadIncidentType[]).map(t => (
+                <option key={t} value={t}>{ROAD_TYPE_CFG[t].icon} {ROAD_TYPE_CFG[t].label}</option>
+              ))}
+            </select>
+            <input value={form.road} onChange={e => setForm(p => ({...p, road: e.target.value}))} placeholder="Nazwa drogi / ulicy"
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white placeholder-white/20 focus:outline-none focus:border-amber-500/50" />
+            <input value={form.location} onChange={e => setForm(p => ({...p, location: e.target.value}))} placeholder="Dokładna lokalizacja *"
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-2 py-1.5 text-xs text-white placeholder-white/20 focus:outline-none focus:border-amber-500/50" />
+            <div>
+              <div className="text-xs text-white/25 mb-1">Zamknięcie drogi:</div>
+              <div className="flex gap-1.5">
+                {(['NONE','PARTIAL','FULL'] as const).map(ct => (
+                  <button key={ct} onClick={() => setForm(p => ({...p, closureType: ct}))}
+                    className="flex-1 text-xs py-1 rounded border transition-colors"
+                    style={{ background: form.closureType === ct ? 'rgba(245,158,11,0.2)' : 'transparent', border: `1px solid ${form.closureType === ct ? 'rgba(245,158,11,0.4)' : 'rgba(255,255,255,0.07)'}`, color: form.closureType === ct ? '#fbbf24' : 'rgba(255,255,255,0.3)' }}>
+                    {ct === 'NONE' ? 'Brak' : ct === 'PARTIAL' ? 'Częściowe' : 'Pełne'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button onClick={addIncident} disabled={!form.location}
+              className="w-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 disabled:opacity-40 text-amber-400 rounded-lg py-1.5 text-xs font-bold transition-colors">
+              🚧 Zarejestruj incydent
+            </button>
+          </div>
+        )}
+        <div className="flex-1 overflow-y-auto">
+          {incidents.length === 0 && <div className="text-center text-white/25 text-xs pt-8">Brak incydentów drogowych</div>}
+          {[...active, ...resolved].map(inc => {
+            const sc = ROAD_STATUS_CFG[inc.status];
+            const tc = ROAD_TYPE_CFG[inc.type];
+            return (
+              <button key={inc.id} onClick={() => { setSelected(inc); setShowForm(false); }}
+                className="w-full text-left px-3 py-2.5 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                style={{ background: selected?.id === inc.id ? 'rgba(88,101,242,0.06)' : undefined }}>
+                <div className="flex justify-between items-center mb-0.5">
+                  <span className="text-xs font-semibold text-white/80">{tc.icon} {tc.label}</span>
+                  <span className="text-xs font-bold" style={{ color: sc.color }}>{sc.label}</span>
+                </div>
+                <div className="text-xs text-white/30 truncate">{inc.road ? `${inc.road} — ` : ''}{inc.location}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="flex-1 flex flex-col min-w-0">
+        {!selected ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-4xl mb-3 opacity-30">🚧</div>
+              <p className="text-white/25 text-sm">Wybierz incydent lub utwórz nowy</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="p-4 border-b border-white/[0.06] flex-shrink-0">
+              <div className="mb-3">
+                <h3 className="font-bold text-white">{ROAD_TYPE_CFG[selected.type].icon} {ROAD_TYPE_CFG[selected.type].label}</h3>
+                <div className="text-xs text-white/30">{selected.road ? `${selected.road} · ` : ''}{selected.location} · {fmtAgo(selected.createdAt)} temu</div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                  <div className="text-white/25 mb-0.5">Zamknięcie</div>
+                  <div className="text-white">{selected.closureType === 'NONE' ? 'Brak' : selected.closureType === 'PARTIAL' ? 'Częściowe' : 'Pełne'}</div>
+                </div>
+                <div className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                  <div className="text-white/25 mb-0.5">Jednostka</div>
+                  <div className="text-white font-mono">{selected.assignedTo}</div>
+                </div>
+              </div>
+              <div className="flex gap-1.5 flex-wrap">
+                {(Object.keys(ROAD_STATUS_CFG) as RoadStatus[]).map(s => (
+                  <button key={s} onClick={() => updateStatus(selected.id, s)}
+                    className="text-xs px-3 py-1.5 rounded-lg border transition-all font-medium"
+                    style={{ background: selected.status === s ? ROAD_STATUS_CFG[s].color + '20' : 'transparent', border: `1px solid ${selected.status === s ? ROAD_STATUS_CFG[s].color + '40' : 'rgba(255,255,255,0.07)'}`, color: selected.status === s ? ROAD_STATUS_CFG[s].color : 'rgba(255,255,255,0.3)' }}>
+                    {ROAD_STATUS_CFG[s].label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex-1 flex flex-col min-h-0 p-4 gap-3">
+              <SLabel>Dziennik interwencji</SLabel>
+              <div className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-xl p-3 overflow-y-auto text-xs text-white/40 font-mono whitespace-pre-wrap min-h-0">
+                {selected.notes || <span className="text-white/20">Brak notatek…</span>}
+              </div>
+              <div className="flex gap-2 flex-shrink-0">
+                <input value={noteInput} onChange={e => setNoteInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addNote(selected.id)}
+                  placeholder="Dodaj wpis…"
+                  className="flex-1 bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-amber-500/50 transition-colors" />
+                <button onClick={() => addNote(selected.id)} disabled={!noteInput.trim()}
+                  className="bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 disabled:opacity-40 text-amber-400 rounded-lg px-3 text-xs transition-colors">Dodaj</button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DISPATCH PANEL (DYSPOZYTORNIA / ADMIN)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function DispatchPanel({ cadRole }: { cadRole: CadRole }) {
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [calls, setCalls] = useState<CadCall[]>([]);
+  const [loadingUnits, setLoadingUnits] = useState(true);
+  const [loadingCalls, setLoadingCalls] = useState(true);
+  const [plateQuery, setPlateQuery] = useState('');
+  const [plateResult, setPlateResult] = useState<PlateResult | null>(null);
+  const [plateLoading, setPlateLoading] = useState(false);
+  const [plateNotFound, setPlateNotFound] = useState(false);
+  const [dispatchTab, setDispatchTab] = useState<'units'|'calls'|'plates'>('units');
+
+  const loadUnits = async () => {
+    setLoadingUnits(true);
+    try { setUnits(await fetch('/api/cad/units').then(r => r.ok ? r.json() : [])); }
+    catch { setUnits([]); }
+    finally { setLoadingUnits(false); }
+  };
+
+  const loadCalls = async () => {
+    setLoadingCalls(true);
+    try { setCalls(await fetch('/api/cad/calls').then(r => r.ok ? r.json() : [])); }
+    catch { setCalls([]); }
+    finally { setLoadingCalls(false); }
+  };
+
+  useEffect(() => { loadUnits(); loadCalls(); const iv = setInterval(() => { loadUnits(); loadCalls(); }, 15_000); return () => clearInterval(iv); }, []);
+
+  useEffect(() => {
+    if (plateQuery.length < 3) { setPlateResult(null); setPlateNotFound(false); return; }
+    const t = setTimeout(async () => {
+      setPlateLoading(true); setPlateNotFound(false);
+      try {
+        const data = await fetch(`/api/cad/plates?q=${encodeURIComponent(plateQuery)}`).then(r => r.json());
+        setPlateResult(data[0] ?? null);
+        setPlateNotFound(!data[0]);
+      } finally { setPlateLoading(false); }
+    }, 500);
+    return () => clearTimeout(t);
+  }, [plateQuery]);
+
+  const byService = units.reduce<Record<string, Unit[]>>((acc, u) => { (acc[u.service] = acc[u.service] || []).push(u); return acc; }, {});
+  const activeCalls = calls.filter(c => c.status !== 'CLOSED');
+  const onlineCount = units.filter(u => u.status !== 'OFFLINE').length;
+
+  return (
+    <div className="h-full flex flex-col">
+      {/* Sub-tabs */}
+      <div className="border-b border-white/[0.06] flex flex-shrink-0 px-3 pt-1 gap-1">
+        {(['units','calls','plates'] as const).map(t => (
+          <button key={t} onClick={() => setDispatchTab(t)}
+            className="px-4 py-2 text-xs font-medium rounded-t-lg border-b-2 transition-all whitespace-nowrap"
+            style={{ color: dispatchTab === t ? '#f4f4f8' : 'rgba(255,255,255,0.25)', borderBottomColor: dispatchTab === t ? '#5865F2' : 'transparent', background: dispatchTab === t ? 'rgba(88,101,242,0.08)' : 'transparent', border: 'none', borderBottom: dispatchTab === t ? '2px solid #5865F2' : '2px solid transparent' }}>
+            {t === 'units' ? `Jednostki (${onlineCount}/${units.length})` : t === 'calls' ? `Zgłoszenia (${activeCalls.length})` : 'Tablice'}
+          </button>
+        ))}
+        <div className="ml-auto flex items-center pb-1">
+          <button onClick={() => { loadUnits(); loadCalls(); }} className="text-xs text-white/25 hover:text-white/40 px-2 py-1 rounded transition-colors">↻ Odśwież</button>
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        {/* UNITS */}
+        {dispatchTab === 'units' && (
+          <div className="p-4 space-y-4">
+            {loadingUnits && <div className="flex justify-center pt-8"><Spinner /></div>}
+            {!loadingUnits && units.length === 0 && <div className="text-center text-white/25 text-sm pt-8">Brak jednostek online</div>}
+            {Object.entries(byService).map(([service, serviceUnits]) => (
+              <div key={service}>
+                <SLabel>{service} ({serviceUnits.length})</SLabel>
+                <div className="space-y-1.5">
+                  {serviceUnits.map(u => {
+                    const st = UNIT_STATUS[u.status as UnitStatus] ?? UNIT_STATUS.OFFLINE;
+                    return (
+                      <div key={u.id} className="bg-[#16161d] border border-white/[0.07] rounded-xl px-3 py-2.5 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Dot color={st.color} />
+                          <div>
+                            <div className="text-xs font-semibold font-mono text-white">{u.callsign}</div>
+                            <div className="text-xs text-white/30 truncate max-w-[140px]">{u.name}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium" style={{ color: st.color }}>{st.label}</span>
+                          <span className="text-xs text-white/20 font-mono">{fmtAgo(u.onDutySince)}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* CALLS */}
+        {dispatchTab === 'calls' && (
+          <div className="p-4 space-y-2">
+            {loadingCalls && <div className="flex justify-center pt-8"><Spinner /></div>}
+            {!loadingCalls && activeCalls.length === 0 && <div className="text-center text-white/25 text-sm pt-8">Brak aktywnych zgłoszeń</div>}
+            {activeCalls.map(c => {
+              const pc = PRIO_CFG[c.priority];
+              return (
+                <div key={c.id} className={`bg-[#16161d] border border-white/[0.07] border-l-4 rounded-xl p-3 ${pc.border}`}>
+                  <div className="flex justify-between items-start mb-1.5">
+                    <div>
+                      <span className="font-mono text-xs text-white/30 mr-2">#{c.number}</span>
+                      <span className="font-semibold text-sm text-white">{c.nature}</span>
+                    </div>
+                    <PrioBar priority={c.priority} />
+                  </div>
+                  <div className="text-xs text-white/40 mb-1">{c.location}</div>
+                  {c.dispatchedTo.length > 0 && (
+                    <div className="flex gap-1 flex-wrap">
+                      {c.dispatchedTo.map(cs => <span key={cs} className="text-xs px-1.5 py-0.5 rounded bg-[#5865F2]/10 border border-[#5865F2]/20 text-[#818cf8] font-mono">{cs}</span>)}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* PLATES */}
+        {dispatchTab === 'plates' && (
+          <div className="p-4 space-y-4">
+            <input value={plateQuery} onChange={e => setPlateQuery(e.target.value.toUpperCase())} placeholder="Wpisz numer tablicy…"
+              className="w-full bg-[#0c0c10] border border-white/[0.07] rounded-lg px-3 py-2 text-sm text-white font-mono uppercase placeholder-white/20 focus:outline-none focus:border-[#5865F2] transition-colors" />
+            {plateLoading && <div className="flex justify-center"><Spinner /></div>}
+            {plateNotFound && <div className="text-center text-white/25 text-sm">Nie znaleziono pojazdu</div>}
+            {plateResult && (
+              <div className="bg-[#16161d] border border-white/[0.07] rounded-xl p-4 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-mono font-black text-xl text-white tracking-widest">{plateResult.tablica}</span>
+                  <div className="flex gap-2">
+                    {plateResult.owner.isArrested && <Pill color="#ef4444">ZATRZYMANY</Pill>}
+                    {plateResult.owner.activeWarns > 0 && <Pill color="#f97316">WARNY: {plateResult.owner.activeWarns}</Pill>}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {[['Marka', plateResult.marka],['Model', plateResult.model],['Rok', plateResult.rok],['Kolor', plateResult.kolor]].map(([l,v]) => (
+                    <div key={l as string} className="bg-[#0c0c10] rounded-lg px-3 py-2 border border-white/[0.07]">
+                      <div className="text-white/25 mb-0.5">{l}</div>
+                      <div className="text-white font-medium">{v}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-white/[0.07] pt-3 text-xs">
+                  <div className="flex justify-between mb-1">
+                    <span className="text-white/25">Właściciel</span>
+                    <span className="text-white font-medium">{plateResult.owner.robloxName}</span>
+                  </div>
+                  {plateResult.owner.phone && (
+                    <div className="flex justify-between">
+                      <span className="text-white/25">Telefon</span>
+                      <span className="text-white font-mono">{plateResult.owner.phone}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // GŁÓWNA STRONA CAD
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1772,11 +2680,11 @@ export default function CadPage() {
             {activeTab === 'emergency_call'&& <EmergencyCallPanel onSent={() => setActiveTab('calls_view')} />}
             {activeTab === 'staff'         && <StaffPanel accessLevel={session?.user?.accessLevel ?? 0} />}
             {activeTab === 'panel'         && <PlayerPanel hasSession={!!session} />}
-            {(activeTab === 'medical' || activeTab === 'fire' || activeTab === 'road' || activeTab === 'arrests' || activeTab === 'dispatch') && (
-              <div className="h-full flex flex-col">
-                <CallsPanel role={cadRole} callsign={callsign} />
-              </div>
-            )}
+            {activeTab === 'arrests'  && <ArrestsPanel  canAdd={['OWNER','ADMIN','MOD','POLICJA'].includes(cadRole)} callsign={callsign} />}
+            {activeTab === 'medical'  && <MedicalPanel  cadRole={cadRole} callsign={callsign} />}
+            {activeTab === 'fire'     && <FirePanel      callsign={callsign} />}
+            {activeTab === 'road'     && <RoadPanel      callsign={callsign} />}
+            {activeTab === 'dispatch' && <DispatchPanel  cadRole={cadRole} />}
           </div>
         </main>
 

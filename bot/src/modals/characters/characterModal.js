@@ -1,6 +1,6 @@
 // Modal tworzenia postaci RP — generuje dowód osobisty
-// Pola od gracza: imię, nazwisko, wiek, historia
-// Reszta (płeć, data urodzenia, wygląd, PESEL, dokumentId) — autogeneracja
+// Pola od gracza: imię, nazwisko, wiek, wygląd, historia
+// Reszta (płeć, data urodzenia, PESEL, dokumentId) — autogeneracja
 
 const { EmbedBuilder } = require('discord.js');
 const {
@@ -8,13 +8,6 @@ const {
   generateDocumentId,
 } = require('../../utils/tableRejestracyjna');
 const logger = require('../../utils/logger');
-
-// ─── Losowe dane wyglądu ─────────────────────────────────────────────────────
-
-const EYE_COLORS  = ['niebieskie', 'zielone', 'brązowe', 'szare', 'piwne', 'orzechowe', 'czarne'];
-const HAIR_COLORS = ['czarne', 'brązowe', 'blond', 'ciemnoblond', 'kasztanowe', 'rude', 'szare', 'ciemnobrązowe'];
-
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 function randomGender() { return Math.random() < 0.5 ? 'M' : 'K'; }
 
@@ -38,6 +31,7 @@ module.exports = {
     const firstName = interaction.fields.getTextInputValue('first_name').trim();
     const lastName  = interaction.fields.getTextInputValue('last_name').trim();
     const ageRaw    = interaction.fields.getTextInputValue('age').trim();
+    const wyglad    = interaction.fields.getTextInputValue('wyglad').trim();
     const historia  = interaction.fields.getTextInputValue('historia').trim();
 
     // Walidacja wieku
@@ -59,8 +53,6 @@ module.exports = {
       // Autogeneracja
       const gender    = randomGender();
       const birthDate = birthDateFromAge(age);
-      const eyeColor  = pick(EYE_COLORS);
-      const hairColor = pick(HAIR_COLORS);
       const peselRp   = generatePeselRp(birthDate, gender);
 
       const birthDateStr = birthDate.toLocaleDateString('pl-PL', {
@@ -75,7 +67,7 @@ module.exports = {
         documentId = user.character.documentId;
         await prisma.character.update({
           where: { userId: user.id },
-          data: { firstName, lastName, birthDate, gender, eyeColor, hairColor, photoUrl: null, peselRp },
+          data: { firstName, lastName, birthDate, gender, eyeColor: wyglad, hairColor: null, photoUrl: null, peselRp },
         });
       } else {
         // Nowa postać — wygeneruj unikalny nr dokumentu
@@ -89,7 +81,7 @@ module.exports = {
           data: {
             userId: user.id,
             firstName, lastName, birthDate, gender,
-            eyeColor, hairColor, photoUrl: null,
+            eyeColor: wyglad, hairColor: null, photoUrl: null,
             peselRp, documentId,
           },
         });
@@ -107,8 +99,8 @@ module.exports = {
           { name: '🔢 PESEL RP',          value: `\`${peselRp}\``,                          inline: true },
           { name: '🪪 Nr dokumentu',      value: `\`${documentId}\``,                       inline: true },
           { name: '📱 Nr telefonu',       value: user.phoneNumber ? `\`${user.phoneNumber}\`` : 'Brak', inline: true },
-          { name: '👁️ Wygląd',           value: `Oczy: ${eyeColor} | Włosy: ${hairColor}`, inline: false },
-          { name: '📖 Historia',          value: historia,                                  inline: false },
+          { name: '👁️ Wygląd',           value: wyglad,   inline: false },
+          { name: '📖 Historia',          value: historia, inline: false },
         )
         .setFooter({ text: `AURORA Greenville RP | Discord: ${interaction.user.tag}` })
         .setTimestamp();
@@ -140,7 +132,7 @@ module.exports = {
               `👤 **${firstName} ${lastName}**, ${age} lat\n` +
               `⚤ **Płeć:** ${gender === 'M' ? 'Mężczyzna' : 'Kobieta'}\n` +
               `🎂 **Urodzony/a:** ${birthDateStr}\n` +
-              `👁️ **Wygląd:** Oczy ${eyeColor}, Włosy ${hairColor}\n\n` +
+              `👁️ **Wygląd:** ${wyglad}\n\n` +
               `🪪 **Nr dokumentu:** \`${documentId}\`\n` +
               `🔢 **PESEL RP:** \`${peselRp}\`\n` +
               `📱 **Nr telefonu:** \`${user.phoneNumber || 'Brak'}\``

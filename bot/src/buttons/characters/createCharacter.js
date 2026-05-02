@@ -72,10 +72,20 @@ module.exports = {
       ),
       new ActionRowBuilder().addComponents(
         new TextInputBuilder()
+          .setCustomId('wyglad')
+          .setLabel('Wygląd postaci')
+          .setStyle(TextInputStyle.Short)
+          .setPlaceholder('np. Wysoki, ciemne włosy, niebieskie oczy, 185 cm')
+          .setMinLength(10)
+          .setMaxLength(200)
+          .setRequired(true)
+      ),
+      new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
           .setCustomId('historia')
-          .setLabel('Historia postaci')
+          .setLabel('Historia i osobowość postaci')
           .setStyle(TextInputStyle.Paragraph)
-          .setPlaceholder('Kim jest Twoja postać? Skąd pochodzi, co robi w Greenville?')
+          .setPlaceholder('Kim jest Twoja postać? Skąd pochodzi, co robi w Greenville? Jaki ma charakter?')
           .setMinLength(30)
           .setMaxLength(500)
           .setRequired(true)

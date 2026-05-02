@@ -526,6 +526,23 @@ model CadUnit {
   updatedAt   DateTime @updatedAt
 }
 
+// ==================== CAD ZATRZYMANIA ====================
+
+model CadArrest {
+  id          String    @id @default(cuid())
+  targetName  String
+  robloxName  String?
+  officerName String
+  officerId   String
+  reason      String
+  charges     String[]  @default([])
+  callsign    String?
+  active      Boolean   @default(true)
+  releasedAt  DateTime?
+  releasedBy  String?
+  createdAt   DateTime  @default(now())
+}
+
 // ==================== LOGI BOTA ====================
 
 model BotLog {

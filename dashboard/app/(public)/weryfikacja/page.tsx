@@ -110,6 +110,52 @@ const QUESTIONS = [
 ];
 
 const MIN_SCORE = 8;
+const OPEN_MIN_LENGTH = 40;
+const SITUATION_MIN_LENGTH = 60;
+
+// ── Pytania otwarte ───────────────────────────────────────────────────────────
+const OPEN_QUESTIONS = [
+  {
+    id: 'o1',
+    q: 'Dlaczego chcesz dołączyć do serwera Greenville RP? Co Cię przyciąga do tego typu rozgrywki?',
+    placeholder: 'Opisz krótko swoje motywacje i oczekiwania wobec serwera...',
+    minLength: OPEN_MIN_LENGTH,
+  },
+  {
+    id: 'o2',
+    q: 'Jakie masz doświadczenie z graniem w RP (inne serwery, gry RP, itp.)?',
+    placeholder: 'Możesz napisać "brak doświadczenia" — brak RP nie dyskwalifikuje. Opisz co wiesz...',
+    minLength: OPEN_MIN_LENGTH,
+  },
+];
+
+// ── Symulacje sytuacji ────────────────────────────────────────────────────────
+const SITUATIONS = [
+  {
+    id: 's1',
+    title: 'Sytuacja 1 — Świadek wypadku drogowego',
+    scenario: 'Jesteś cywilnym mieszkańcem Greenville. Jedziesz autem i nagle widzisz poważny wypadek — dwa rozbite auta, jedna osoba leży nieprzytomna na jezdni. Jesteś pierwszy na miejscu.',
+    q: 'Opisz krok po kroku co robisz jako postać RP w tej sytuacji.',
+    placeholder: 'Zatrzymuję auto, włączam awaryjne... dzwonię na 911... opisuję miejsce... nie ruszam poszkodowanego...',
+    minLength: SITUATION_MIN_LENGTH,
+  },
+  {
+    id: 's2',
+    title: 'Sytuacja 2 — Konflikt z innym graczem',
+    scenario: 'Podczas sesji RP inny gracz atakuje Twoją postać bez żadnego powodu fabularnego — typowy RDM. Twoja postać "ginie". Jesteś sfrustrowany.',
+    q: 'Jak reagujesz? Opisz zarówno co robi Twoja postać (IC) jak i co robisz Ty jako gracz (OOC).',
+    placeholder: 'IC: stosuję NLR — nie wracam na miejsce zdarzenia, nie pamiętam śmierci... OOC: otwieram ticket...',
+    minLength: SITUATION_MIN_LENGTH,
+  },
+  {
+    id: 's3',
+    title: 'Sytuacja 3 — Informacja z Discorda',
+    scenario: 'Na kanale #ogłoszenia na Discordzie pojawia się informacja, że policja szuka postaci o imieniu "Marco Ricci" za przemyt. Twoja postać przypadkowo spotkała dzisiaj w grze kogoś, kto przedstawił się jako Marco Ricci.',
+    q: 'Czy Twoja postać może teraz zgłosić policji miejsce pobytu Marco? Dlaczego tak lub nie?',
+    placeholder: 'Nie — to byłby metagaming. Moja postać nie "czyta" Discorda. Wiedzę z OOC (Discorda) nie można przekazywać IC...',
+    minLength: SITUATION_MIN_LENGTH,
+  },
+];
 
 // ── Style helpers ─────────────────────────────────────────────────────────────
 const page: CSSProperties  = { minHeight: '100vh', background: '#0c0c10', fontFamily: "'Inter', -apple-system, sans-serif", color: '#f4f4f8', padding: '60px 20px 80px' };
@@ -120,7 +166,13 @@ const label: CSSProperties = { fontSize: 11, fontWeight: 600, letterSpacing: '0.
 const hint: CSSProperties  = { fontSize: 11, color: 'rgba(255,255,255,0.2)', marginTop: 5 };
 
 // ── Types ────────────────────────────────────────────────────────────────────
-interface FormState { discordId: string; robloxNick: string; answers: (number | null)[]; }
+interface FormState {
+  discordId: string;
+  robloxNick: string;
+  answers: (number | null)[];
+  openAnswers: string[];
+  situationAnswers: string[];
+}
 type SubmitStatus = 'idle' | 'loading' | 'passed' | 'failed' | 'error';
 interface ResultData { score: number; total: number; results: { correct: boolean; correctAnswer: number; userAnswer: number }[]; message?: string; }
 
@@ -179,8 +231,13 @@ function Question({
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 export default function WeryfikacjaPage() {
-  const [form, setForm] = useState<FormState>({ discordId: '', robloxNick: '', answers: Array(QUESTIONS.length).fill(null) });
-  // Wszystkie pytania domyślnie otwarte
+  const [form, setForm] = useState<FormState>({
+    discordId: '',
+    robloxNick: '',
+    answers: Array(QUESTIONS.length).fill(null),
+    openAnswers: Array(OPEN_QUESTIONS.length).fill(''),
+    situationAnswers: Array(SITUATIONS.length).fill(''),
+  });
   const [openQuestions, setOpenQuestions] = useState<boolean[]>(Array(QUESTIONS.length).fill(true));
   const [status, setStatus] = useState<SubmitStatus>('idle');
   const [result, setResult] = useState<ResultData | null>(null);
@@ -189,15 +246,23 @@ export default function WeryfikacjaPage() {
   const setAnswer = (qi: number, ai: number) => {
     setForm(prev => { const a = [...prev.answers]; a[qi] = ai; return { ...prev, answers: a }; });
   };
+  const setOpenAnswer = (i: number, val: string) => {
+    setForm(prev => { const a = [...prev.openAnswers]; a[i] = val; return { ...prev, openAnswers: a }; });
+  };
+  const setSituationAnswer = (i: number, val: string) => {
+    setForm(prev => { const a = [...prev.situationAnswers]; a[i] = val; return { ...prev, situationAnswers: a }; });
+  };
 
   const toggleQuestion = (qi: number) => {
     setOpenQuestions(prev => { const n = [...prev]; n[qi] = !n[qi]; return n; });
   };
 
-  const answered       = form.answers.filter(a => a !== null).length;
-  const discordIdValid = /^\d{17,20}$/.test(form.discordId.trim());
-  const robloxValid    = form.robloxNick.trim().length >= 3;
-  const canSubmit      = answered === QUESTIONS.length && discordIdValid && robloxValid;
+  const answered          = form.answers.filter(a => a !== null).length;
+  const openFilled        = form.openAnswers.every((a, i) => a.trim().length >= OPEN_QUESTIONS[i].minLength);
+  const situationsFilled  = form.situationAnswers.every((a, i) => a.trim().length >= SITUATIONS[i].minLength);
+  const discordIdValid    = /^\d{17,20}$/.test(form.discordId.trim());
+  const robloxValid       = form.robloxNick.trim().length >= 3;
+  const canSubmit         = answered === QUESTIONS.length && openFilled && situationsFilled && discordIdValid && robloxValid;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,7 +273,13 @@ export default function WeryfikacjaPage() {
       const res = await fetch('/api/weryfikacja/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ discordId: form.discordId.trim(), robloxNick: form.robloxNick.trim(), answers: form.answers }),
+        body: JSON.stringify({
+          discordId: form.discordId.trim(),
+          robloxNick: form.robloxNick.trim(),
+          answers: form.answers,
+          openAnswers: form.openAnswers,
+          situationAnswers: form.situationAnswers,
+        }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Wystąpił błąd serwera.'); setStatus('error'); return; }
@@ -218,6 +289,13 @@ export default function WeryfikacjaPage() {
       setError('Nie udało się połączyć z serwerem. Spróbuj ponownie.');
       setStatus('error');
     }
+  };
+
+  const resetForm = () => {
+    setStatus('idle');
+    setResult(null);
+    setForm({ discordId: '', robloxNick: '', answers: Array(QUESTIONS.length).fill(null), openAnswers: Array(OPEN_QUESTIONS.length).fill(''), situationAnswers: Array(SITUATIONS.length).fill('') });
+    setOpenQuestions(Array(QUESTIONS.length).fill(true));
   };
 
   // ── Sukces ─────────────────────────────────────────────────────────────────
@@ -280,8 +358,7 @@ export default function WeryfikacjaPage() {
               <a href="https://discord.gg/BU8EBPsYXV" target="_blank" rel="noopener noreferrer" style={{ color: '#5865F2', textDecoration: 'none' }}>regulamin serwera</a>
               {' '}i spróbuj ponownie za 24 godziny.
             </p>
-            <button
-              onClick={() => { setStatus('idle'); setResult(null); setForm({ discordId: '', robloxNick: '', answers: Array(QUESTIONS.length).fill(null) }); setOpenQuestions(Array(QUESTIONS.length).fill(true)); }}
+            <button onClick={resetForm}
               style={{ padding: '10px 28px', borderRadius: 8, fontWeight: 600, fontSize: 14, background: '#5865F2', color: '#fff', border: 'none', cursor: 'pointer' }}
             >
               Spróbuj ponownie
@@ -304,8 +381,13 @@ export default function WeryfikacjaPage() {
           <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.38)', margin: '0 0 20px', lineHeight: 1.6 }}>
             Wypełnij formularz i odpowiedz na pytania z regulaminu, aby dołączyć do serwera.
           </p>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600, border: '1px solid rgba(88,101,242,0.25)', background: 'rgba(88,101,242,0.08)', color: '#818cf8' }}>
-            Minimum {MIN_SCORE} z {QUESTIONS.length} poprawnych odpowiedzi
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600, border: '1px solid rgba(88,101,242,0.25)', background: 'rgba(88,101,242,0.08)', color: '#818cf8' }}>
+              Quiz: minimum {MIN_SCORE} z {QUESTIONS.length} poprawnych
+            </div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.35)' }}>
+              + {OPEN_QUESTIONS.length} pytania otwarte + {SITUATIONS.length} symulacje
+            </div>
           </div>
         </div>
 
@@ -377,14 +459,84 @@ export default function WeryfikacjaPage() {
             </div>
           </div>
 
-          {/* Progress */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0 16px' }}>
+          {/* Quiz progress */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0 32px' }}>
             <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2 }}>
               <div style={{ height: '100%', borderRadius: 2, background: '#5865F2', width: `${(answered / QUESTIONS.length) * 100}%`, transition: 'width .3s' }} />
             </div>
-            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', flexShrink: 0 }}>
-              {answered}/{QUESTIONS.length}
-            </span>
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', flexShrink: 0 }}>{answered}/{QUESTIONS.length}</span>
+          </div>
+
+          {/* Pytania otwarte */}
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <div style={{ width: 22, height: 22, borderRadius: 6, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>✍</div>
+              <p style={{ ...label, margin: 0 }}>Pytania otwarte</p>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.18)', marginLeft: 'auto' }}>Wymagane</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {OPEN_QUESTIONS.map((oq, i) => {
+                const val    = form.openAnswers[i];
+                const filled = val.trim().length >= oq.minLength;
+                return (
+                  <div key={oq.id} style={{ ...card, marginBottom: 0, padding: '18px 20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10, gap: 12 }}>
+                      <p style={{ fontSize: 13, fontWeight: 500, color: '#f4f4f8', margin: 0, lineHeight: 1.55 }}>{i + 1}. {oq.q}</p>
+                      {filled && <span style={{ fontSize: 10, color: '#22c55e', flexShrink: 0, marginTop: 2 }}>✓</span>}
+                    </div>
+                    <textarea
+                      value={val}
+                      onChange={e => setOpenAnswer(i, e.target.value)}
+                      placeholder={oq.placeholder}
+                      rows={3}
+                      style={{ ...inp, resize: 'vertical', lineHeight: 1.6, borderColor: val && !filled ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.07)' }}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
+                      <span style={{ fontSize: 11, color: filled ? 'rgba(34,197,94,0.5)' : 'rgba(255,255,255,0.18)' }}>
+                        {val.trim().length}/{oq.minLength} znaków minimum
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Symulacje sytuacji */}
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <div style={{ width: 22, height: 22, borderRadius: 6, background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>🎭</div>
+              <p style={{ ...label, margin: 0 }}>Symulacje sytuacji</p>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.18)', marginLeft: 'auto' }}>Wymagane</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {SITUATIONS.map((sit, i) => {
+                const val    = form.situationAnswers[i];
+                const filled = val.trim().length >= sit.minLength;
+                return (
+                  <div key={sit.id} style={{ ...card, marginBottom: 0, padding: '18px 20px' }}>
+                    <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#fbbf24', margin: '0 0 8px' }}>{sit.title}</p>
+                    <div style={{ background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.12)', borderRadius: 7, padding: '10px 14px', marginBottom: 12 }}>
+                      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.6 }}>{sit.scenario}</p>
+                    </div>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: '#f4f4f8', margin: '0 0 10px', lineHeight: 1.55 }}>❓ {sit.q}</p>
+                    <textarea
+                      value={val}
+                      onChange={e => setSituationAnswer(i, e.target.value)}
+                      placeholder={sit.placeholder}
+                      rows={4}
+                      style={{ ...inp, resize: 'vertical', lineHeight: 1.6, borderColor: val && !filled ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.07)' }}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
+                      <span style={{ fontSize: 11, color: filled ? 'rgba(34,197,94,0.5)' : 'rgba(255,255,255,0.18)' }}>
+                        {val.trim().length}/{sit.minLength} znaków minimum
+                      </span>
+                      {filled && <span style={{ fontSize: 11, color: '#22c55e' }}>✓ Wystarczająco</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Error */}
