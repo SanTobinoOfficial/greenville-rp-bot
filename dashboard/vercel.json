@@ -1,6 +1,13 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npx prisma generate && npx prisma db push --accept-data-loss && next build",
+  "buildCommand": "npx prisma generate && next build",
   "installCommand": "npm install",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "experimentalServices": {
+    "web": {
+      "routePrefix": "/",
+      "framework": "nextjs",
+      "buildCommand": "npm install && npx prisma generate && npm run build"
+    }
+  }
 }

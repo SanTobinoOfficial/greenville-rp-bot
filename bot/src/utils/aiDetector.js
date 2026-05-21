@@ -76,7 +76,7 @@ function detectAI(text) {
 
   // 6. Powtarzające się słowa kluczowe (AI lubi powtarzać kontekst)
   const words = t.split(/\s+/).filter(w => w.length > 5);
-  const wordCount: Record<string, number> = {};
+  const wordCount = {};
   for (const w of words) { wordCount[w] = (wordCount[w] || 0) + 1; }
   const repeated = Object.entries(wordCount).filter(([, c]) => c >= 4);
   if (repeated.length >= 2) {

@@ -41,7 +41,7 @@ module.exports = {
 
   async execute(interaction, client, prisma) {
     // Sprawdź weryfikację
-    if (!await isVerified(interaction, prisma)) {
+    if (!isVerified(interaction.member)) {
       return interaction.reply({
         content: '❌ Musisz być zweryfikowanym mieszkańcem, żeby wybrać pracę.',
         ephemeral: true,
