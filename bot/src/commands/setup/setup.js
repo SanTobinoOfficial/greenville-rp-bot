@@ -80,12 +80,10 @@ module.exports = {
       startStatsUpdater(client);
 
       // Krok 4: Zapis do bazy danych
-      await prisma.settings.update({
+      await prisma.settings.upsert({
         where: { id: 'global' },
-        data: {
-          setupCompleted: true,
-          guildId: interaction.guild.id,
-        },
+        update: { setupCompleted: true, guildId: interaction.guild.id },
+        create: { id: 'global', setupCompleted: true, guildId: interaction.guild.id },
       });
 
       // Inicjalizacja domyślnych pytań quizu

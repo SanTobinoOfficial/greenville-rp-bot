@@ -229,23 +229,24 @@ function buildStructure(roles, everyoneId) {
 
 // ─── Główna funkcja ───────────────────────────────────────────────────────────
 
-async function setupServer(guild) {
+async function setupServer(guild, progress) {
+  const report = progress ?? (() => {});
   logger.info('🚀 setupServer: start');
 
-  const channels = await guild.channels.fetch();
-  const roles    = await guild.roles.fetch();
-  const everyone = guild.roles.everyone;
+  const existingChannels = await guild.channels.fetch();
+  const existingRoles    = await guild.roles.fetch();
+  const everyone         = guild.roles.everyone;
 
   // Usuń kanały
-  logger.info(`🗑️  Usuwanie ${channels.size} kanałów...`);
-  for (const [, ch] of channels) {
+  await report(`🗑️ Usuwanie ${existingChannels.size} istniejących kanałów...`);
+  for (const [, ch] of existingChannels) {
     await ch.delete('Setup — czyste konto').catch(() => {});
     await delay(350);
   }
 
   // Usuń role
-  const deletable = [...roles.values()].filter(r => r.name !== '@everyone' && !r.managed);
-  logger.info(`🗑️  Usuwanie ${deletable.length} ról...`);
+  const deletable = [...existingRoles.values()].filter(r => r.name !== '@everyone' && !r.managed);
+  await report(`🗑️ Usuwanie ${deletable.length} istniejących ról...`);
   for (const r of deletable) {
     await r.delete('Setup — czyste konto').catch(() => {});
     await delay(350);
@@ -254,7 +255,7 @@ async function setupServer(guild) {
   // Twórz role — w odwróconej kolejności (Owner pierwszy, Niezweryfikowany ostatni)
   // Discord wstawia każdą nową rolę na pozycję 1, przesuwając poprzednie w górę.
   // Dlatego pierwsza stworzona rola ląduje najwyżej — tworzymy od najważniejszej do najniższej.
-  logger.info('🎭 Tworzenie ról (od najwyższej do najniższej)...');
+  await report(`🎭 Tworzenie ${ROLE_DEFS.length} ról...`);
   const createdRoles = {};
   for (const def of [...ROLE_DEFS].reverse()) {
     try {
@@ -273,7 +274,10 @@ async function setupServer(guild) {
 
   // Twórz kanały
   const structure = buildStructure(createdRoles, everyone.id);
-  logger.info('📁 Tworzenie struktury kanałów...');
+  await report(`📁 Tworzenie struktury kanałów (${structure.length} kategorii)...`);
+
+  const createdChannels = {};
+  let channelCount = 0;
 
   for (const cat of structure) {
     try {
@@ -283,12 +287,13 @@ async function setupServer(guild) {
         permissionOverwrites: cat.perm ?? [],
         reason: 'Setup AURORA Greenville RP',
       });
+      createdChannels[cat.name] = category;
       logger.info(`  📁 ${category.name}`);
       await delay(400);
 
       for (const child of (cat.children ?? [])) {
         try {
-          await guild.channels.create({
+          const channel = await guild.channels.create({
             name:  child.name,
             type:  child.type,
             parent: category,
@@ -297,6 +302,8 @@ async function setupServer(guild) {
             permissionOverwrites: child.perm ?? cat.perm ?? [],
             reason: 'Setup AURORA Greenville RP',
           });
+          createdChannels[child.name] = channel;
+          channelCount++;
           logger.info(`    ✅ ${child.name}`);
           await delay(350);
         } catch (e) {
@@ -309,7 +316,7 @@ async function setupServer(guild) {
   }
 
   logger.info('✅ setupServer: gotowe');
-  return createdRoles;
+  return { roles: createdRoles, channels: createdChannels };
 }
 
 module.exports = { setupServer };

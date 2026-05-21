@@ -17,6 +17,7 @@ dashboard/node_modules/
 dashboard/.next/
 dashboard/out/
 dashboard/build/
+*.tsbuildinfo
 
 # Prisma generated client
 bot/node_modules/.prisma/
@@ -40,3 +41,11 @@ Thumbs.db
 direct-setup.js
 do-githuba/
 *.zip
+
+# Klucze i dane wrażliwe
+GITHUBKEY.txt
+*.key
+*.secret
+bot-update/
+update_formularze.py
+zi92MGBm
