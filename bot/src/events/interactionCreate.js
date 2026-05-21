@@ -140,9 +140,10 @@ const BUTTON_HANDLERS = {
   'ticket_close':    'tickets/closeTicket',
   'ticket_claim':    'tickets/claimTicket',
   // ── Inne ───────────────────────────────────────────────────
-  'vehicle_register':'vehicles/registerVehicle',
-  'character_create':'characters/createCharacter',
-  'license_apply':   'licenses/applyLicense',
+  'vehicle_register':      'vehicles/registerVehicle',
+  'character_create':      'characters/createCharacter',
+  'license_apply':         'licenses/applyLicense',
+  'toggle_notifications':  'notifications/toggleNotifications',
 };
 
 // Dopasowanie po prefixie (np. ticket_close_1234 → prefix 'ticket')
