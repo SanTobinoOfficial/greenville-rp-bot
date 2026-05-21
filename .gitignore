@@ -37,6 +37,10 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Tool caches
+.claude/
+.vercel/
+
 # Greenville RP — pliki tymczasowe
 direct-setup.js
 do-githuba/
