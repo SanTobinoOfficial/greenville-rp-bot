@@ -46,7 +46,7 @@ module.exports = {
         .setDescription(
           `**${member.user.username}** dołączył/a do **AURORA Greenville RP**!\n\n` +
           `👤 Member **#${memberCount}** | Dołączył: ${joinDate}\n\n` +
-          `👉 Zacznij od kanału <#${guild.channels.cache.find(c => c.name === '📋│weryfikacja')?.id || 'weryfikacja'}>`
+          `👉 Zacznij od kanału <#${guild.channels.cache.find(c => c.name.includes('zacznij-tutaj'))?.id || guild.channels.cache.find(c => c.name.includes('weryfikacja'))?.id || 'weryfikacja'}>`
         )
         .setFooter({ text: 'AURORA Greenville RP — Przywitanie' })
         .setTimestamp();
