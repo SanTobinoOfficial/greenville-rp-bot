@@ -53,10 +53,14 @@ module.exports = {
       INNE:      '❓ Inne',
     };
 
-    // Znajdź kanał ticketów / zgłoszeń
+    // Znajdź kanał skargi / zgłoszeń
+    const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
     const ticketChannel = interaction.guild.channels.cache.find(
-      c => (c.name.includes('zgłoszenia') || c.name.includes('raporty') || c.name.includes('staff-only') || c.name.includes('logi-tickety'))
-        && c.isTextBased()
+      c => c.isTextBased() && (
+        norm(c.name).includes('skargi') ||
+        norm(c.name).includes('logi-ticketow') ||
+        norm(c.name).includes('zgloszen')
+      )
     );
 
     // Zapisz ticket w bazie

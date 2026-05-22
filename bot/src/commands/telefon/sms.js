@@ -74,7 +74,7 @@ module.exports = {
       .setTimestamp();
 
     const telefonChannel = interaction.guild.channels.cache.find(
-      c => c.name === '📱│telefon' && c.isTextBased()
+      c => c.isTextBased() && c.name.toLowerCase().includes('telefon')
     );
     if (telefonChannel) {
       await telefonChannel.send({ embeds: [smsEmbed] });

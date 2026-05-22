@@ -38,12 +38,11 @@ module.exports = {
         finesReceived: { where: { active: true } },
         arrests: { where: { active: true } },
       },
-      // Dodaj pola pracy
     });
-    // Pobierz pola pracy osobno (mogą nie być w include)
+    // Pobierz pola pracy i ekonomii osobno
     const userJob = await prisma.user.findUnique({
       where: { discordId },
-      select: { currentJob: true, jobCategory: true, jobAssignedAt: true },
+      select: { currentJob: true, jobCategory: true, jobAssignedAt: true, balance: true, bankBalance: true },
     });
 
     if (!user) {
@@ -113,6 +112,17 @@ module.exports = {
       embed.addFields({
         name: '💼 Praca RP',
         value: `${userJob.currentJob}\n📁 ${userJob.jobCategory ?? '—'}${userJob.jobAssignedAt ? `\n📅 Od <t:${Math.floor(userJob.jobAssignedAt.getTime()/1000)}:D>` : ''}`,
+        inline: true,
+      });
+    }
+
+    // Ekonomia (tylko dla staffu lub własny profil)
+    if (userJob && (userJob.balance !== undefined)) {
+      const bal    = userJob.balance    ?? 0;
+      const bank   = userJob.bankBalance ?? 0;
+      embed.addFields({
+        name: '💰 Ekonomia',
+        value: `👛 Portfel: **${bal.toLocaleString('pl-PL')}$**\n🏦 Bank: **${bank.toLocaleString('pl-PL')}$**`,
         inline: true,
       });
     }

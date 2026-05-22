@@ -48,7 +48,7 @@ module.exports = {
 
         // Log
         const logChannel = interaction.guild.channels.cache.find(
-          c => c.name === '🔨│logi-moderacji' && c.isTextBased()
+          c => c.isTextBased() && c.name.toLowerCase().includes('logi-mod')
         );
         if (logChannel) {
           await logChannel.send({

@@ -3,6 +3,7 @@
 const { ActivityType } = require('discord.js');
 const { startStatsUpdater } = require('../utils/statsUpdater');
 const { startRadio } = require('../music/radioManager');
+const { startCaseExpirer } = require('../utils/caseExpirer');
 const logger = require('../utils/logger');
 
 module.exports = {
@@ -24,6 +25,9 @@ module.exports = {
 
     // Uruchom aktualizator statystyk
     startStatsUpdater(client);
+
+    // Uruchom automatyczne wygasanie przypadków moderacyjnych
+    startCaseExpirer(client);
 
     // Uruchom radio 24/7
     try {

@@ -30,7 +30,7 @@ module.exports = {
       new StringSelectMenuOptionBuilder()
         .setLabel(job.name)
         .setValue(`job_${job.id}`)
-        .setDescription(`${job.wynagrodzenie_min}–${job.wynagrodzenie_max}$ | Typ: ${job.typ === 'SERVICE' ? 'Służby (wymaga podania)' : job.typ === 'CRIMINAL' ? 'Kryminalne' : 'Cywilna'}`)
+        .setDescription(`Typ: ${job.typ === 'SERVICE' ? 'Służby (wymaga podania)' : job.typ === 'CRIMINAL' ? 'Kryminalne' : 'Cywilna'}`)
         .setEmoji(job.emoji ?? '💼')
     );
 

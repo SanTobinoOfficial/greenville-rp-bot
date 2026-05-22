@@ -6,6 +6,9 @@ const { EmbedBuilder } = require('discord.js');
 const COLOR = 0xE74C3C;
 const FOOTER = { text: 'AURORA Greenville RP — Regulamin Serwera' };
 
+// URL zdjęcia pojazdu administracji — wgraj na Imgur lub Discord CDN i podmień URL:
+const ADMIN_VEHICLE_IMAGE_URL = 'https://i.imgur.com/PLACEHOLDER_ADMIN_CAR.png';
+
 function buildRegulaminEmbeds() {
   const embeds = [];
 
@@ -74,19 +77,18 @@ function buildRegulaminEmbeds() {
           '**2.4.2.** Napad na bank: min. 2, maks. 3 osoby.',
           '**2.4.3.** Ucieczka przed policją bez teamu "Heist Crew" dozwolona jeśli nie jesteś poszukiwany.',
           '**2.4.4.** Obowiązek odgrywania czynności na czacie podczas napadu (/me rozwierca zamek).',
-          '**2.5.** Wymagane konto Roblox 13+.',
-          '**2.6.** Ubiór i pojazdy mają wyglądać realistycznie (kolor, felgi).',
-          '**2.7.** "Auto Flip" w ustawieniach gry musi być wyłączony.',
-          '**2.8.** Prędkość FRP wynosi **131 mph**.',
-          '**2.9.1.** Obowiązek rejestracji pojazdów/przyczep na kanale #rejestracja-pojazdów.',
-          '**2.9.2.** Autobusy szkolne i pojazdy poczty nie wymagają rejestracji.',
-          '**2.10.** Exploiting → permanentny ban.',
+          '**2.5.** Ubiór i pojazdy mają wyglądać realistycznie (kolor, felgi).',
+          '**2.6.** "Auto Flip" w ustawieniach gry musi być wyłączony.',
+          '**2.7.** Prędkość FRP wynosi **131 mph**.',
+          '**2.8.1.** Obowiązek rejestracji pojazdów/przyczep na kanale #rejestracja-pojazdów.',
+          '**2.8.2.** Autobusy szkolne i pojazdy poczty nie wymagają rejestracji.',
+          '**2.9.** Exploiting → permanentny ban.',
         ].join('\n'),
       })
       .setFooter(FOOTER)
   );
 
-  // ==================== EMBED 4: POJAZDY I STAFF ====================
+  // ==================== EMBED 4: ZASADY SESJI RP (cd.) ====================
   embeds.push(
     new EmbedBuilder()
       .setColor(COLOR)
@@ -97,32 +99,84 @@ function buildRegulaminEmbeds() {
             '**2.11.1.** Pojazd Staff: jasnozielony Dodge Charger (BullHorn Prancer), czarne tablice.',
             '**2.11.2.** Pojazd HR: pomarańczowy Dodge Charger (BullHorn Prancer), czarne tablice. Ucieczka przed tymi pojazdami jest zabroniona.',
             '**2.11.3.** Staff i HR w pojeździe służbowym nie uczestniczą w akcjach RP.',
-            '**2.12.1.** 10 mandatów / 5 grzywien / 5 aresztów → prawo jazdy zatrzymane na **1 miesiąc**. Po zatrzymaniu PJ możesz jeździć przez 10 minut.',
-            '**2.12.2.** Po miesiącu możliwość zdania egzaminu przywracającego uprawnienia.',
             '**2.13.** OOC na czacie piszemy w nawiasach: (Zaraz wracam). Zakaz długich konwersacji OOC.',
-            '**2.14.1.** Wspierający — do 9 zarejestrowanych pojazdów + dostęp do kanałów Wspierających.',
-            '**2.14.2.** Boosterzy — do 10 zarejestrowanych pojazdów + wszystkie przywileje Wspierających.',
-            '**2.15.** Staff może wybrać 1 pojazd z zakazanych (za zgodą właściciela).',
-            '**2.16.** Pojazdy służb przeznaczone tylko dla nich (radiowozy → policja, lawety DOT → tylko DOT).',
             '**2.17.** Akcje RP może Voidować tylko Staff.',
-            '**2.18.** Zakaz nierealistycznego modyfikowania zawieszenia.',
             '**2.19.** Wypadek powyżej 35 mph → obowiązek odgrywania obrażeń i wezwania EMS.',
-            '**2.20.** "Laser Blaster" policji = paralizator RP.',
             '**2.21.1.** Peacetime 1° — zakaz akcji Crime i ucieczki przed policją.',
             '**2.21.2.** Peacetime 2° — j.w. + Void wypadków + limit FRP 70 mph.',
-            '**2.22.** Zakaz nadawania "blacklist" innym graczom na własny dom.',
           ].join('\n'),
         },
         {
-          name: '§5. Zasady dotyczące pojazdów',
+          name: '§5. Zasady komunikacji IC/OOC',
           value: [
-            '**1.** Mieszkaniec może zarejestrować maks. **5 pojazdów** (łącznie do 90 000$). Nie dotyczy pojazdów limitowanych, eventowych i kolekcjonerskich.',
-            '**2.** Pojazd Administracji: fioletowy Durant Camion PPV, tablice Admin-[numer]. Traktowany jak pojazd policyjny.',
-            '**3.** Pojazdy można respawnować wyłącznie: obok własnego domu, na spawnie, w miejscu pracy.',
+            '**1.** Komunikacja IC (In Character) — mówisz i działasz jako postać.',
+            '**2.** OOC (Out of Character) — zawsze w nawiasach: (muszę wyjść na chwilę).',
+            '**3.** Zakaz używania informacji z OOC w IC (metagaming).',
+            '**4.** Komendy RP: **/me** — opis czynności, **/do** — opis otoczenia.',
+          ].join('\n'),
+        },
+        {
+          name: '§6. Zasady służb',
+          value: [
+            '**1.** Wejście na służbę komendą `/duty` — obowiązkowe.',
+            '**2.** Pojazdy służb dostępne **wyłącznie** dla danej służby.',
+            '**3.** Policja: zakaz nadużywania "Laser Blaster" — to paralizator RP, nie broń śmiertelna.',
+            '**4.** EMS/Straż: priorytet pojazdów uprzywilejowanych na drodze.',
+            '**5.** DOT: wyłącznie pojazdy DOT do obsługi infrastruktury.',
           ].join('\n'),
         }
       )
       .setFooter(FOOTER)
+  );
+
+  // ==================== EMBED 5: §7 ZASADY POJAZDÓW ====================
+  embeds.push(
+    new EmbedBuilder()
+      .setColor(COLOR)
+      .addFields(
+        {
+          name: '§7. Zasady dotyczące pojazdów (1–5)',
+          value: [
+            '**1.** 👤 **Mieszkaniec** — maks. **5 pojazdów** (łącznie wartość każdego do **90 000$**).',
+            '   ↳ Nie dotyczy pojazdów limitowanych i kolekcjonerskich *(wyjątki — otwórz ticket)*.',
+            '**2.** 💜 **Wspierający** — do **9** zarejestrowanych pojazdów + przywileje.',
+            '**3.** 💎 **Discord Nitro Booster** — do **10** pojazdów + wszystkie przywileje Wspierających.',
+            '**4.** Rejestracja na kanale **#rejestracja-auta** obowiązkowa **przed** wyjazdem w ruch.',
+            '**5.** Zakaz nierealistycznego modyfikowania zawieszenia pojazdu.',
+          ].join('\n'),
+        },
+        {
+          name: '§7. Zasady dotyczące pojazdów (6–10)',
+          value: [
+            '**6.** "Laser Blaster" policji = **paralizator RP** — obowiązek odgrywania jego efektu.',
+            '**7.** Po **10 mandatach / 5 grzywnach / 5 aresztach** → PJ zatrzymane na **30 dni**.',
+            '   ↳ Po 30 dniach możliwy egzamin przywracający uprawnienia.',
+            '**8.** Pojazdy służb (radiowozy, karetki, wozy strażackie, lawety DOT) dostępne **wyłącznie** dla danej służby.',
+            '**9.** 🔴 **Pojazd Administracji:** Czerwony Falcon Scavenger WSP \\[unmarked\\] 2021',
+            '   ↳ Tablice: **Admin-[numer]** — traktowany jak radiowóz.',
+            '   ↳ ⛔ Podszywanie się pod administrację = **permanentny ban**.',
+            '**10.** Zakaz nadawania "blacklist" na własny dom innym graczom podczas trwającej akcji RP.',
+          ].join('\n'),
+        }
+      )
+      .setFooter(FOOTER)
+  );
+
+  // ==================== EMBED 6: POJAZD ADMINISTRACJI (ze zdjęciem) ====================
+  embeds.push(
+    new EmbedBuilder()
+      .setColor(0xE74C3C)
+      .setTitle('🔴 Pojazd Administracji AURORA Greenville RP')
+      .setDescription(
+        '**Czerwony Falcon Scavenger WSP \\[unmarked\\] 2021**\n' +
+        'Tablice: **Admin-[numer]**\n\n' +
+        '> Pojazd używany **wyłącznie** przez członków Administracji serwera.\n' +
+        '> Traktowany jak **radiowóz policyjny** — ucieczka i podszywanie się **zabronione**.\n\n' +
+        '⛔ **Podszywanie się pod Administrację = PERMANENTNY BAN** ⛔'
+      )
+      .setImage(ADMIN_VEHICLE_IMAGE_URL)
+      .setFooter({ text: 'AURORA Greenville RP — Pojazdy Administracji' })
+      .setTimestamp()
   );
 
   return embeds;

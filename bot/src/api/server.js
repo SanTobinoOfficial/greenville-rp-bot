@@ -238,7 +238,9 @@ function parseDuration(str) {
 }
 
 async function sendLogEmbed(guild, channelName, embed) {
-  const ch = guild.channels.cache.find(c => c.name.includes(channelName) && c.isTextBased());
+  const normFn = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
+  const target = normFn(channelName);
+  const ch = guild.channels.cache.find(c => c.isTextBased() && normFn(c.name).includes(target));
   if (ch) await ch.send({ embeds: [embed] }).catch(() => {});
 }
 
@@ -672,7 +674,8 @@ async function handleSesja(client, prisma, data) {
     if (isNaN(sessionDate.getTime())) return { ok: false, error: 'Nieprawidłowy format daty/godziny' };
 
     const hostDb = await ensureDbUser(prisma, hostDiscordId ?? 'dashboard', hostName ?? 'Dashboard');
-    const sessionChannel = guild.channels.cache.find(c => c.name.includes('sesje') && c.isTextBased());
+    const normSes = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
+    const sessionChannel = guild.channels.cache.find(c => c.isTextBased() && normSes(c.name).includes('ogloszenia-sesji'));
 
     const session = await prisma.session.create({
       data: { hostId: hostDb.id, date: sessionDate, maxPlayers: maksGraczy, description: opis ?? null, status: 'UPCOMING' },
@@ -733,8 +736,9 @@ async function handlePeacetime(client, prisma, data) {
       .addFields({ name: '👤 Ustawił', value: issuerName ?? 'Dashboard', inline: true })
       .setTimestamp();
 
-    const sesjeChannel = guild.channels.cache.find(c => c.name.includes('sesje') && c.isTextBased());
-    const ogloszeniaChannel = guild.channels.cache.find(c => c.name.includes('ogłoszenia') && c.isTextBased());
+    const normCh = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
+    const sesjeChannel = guild.channels.cache.find(c => c.isTextBased() && normCh(c.name).includes('ogloszenia-sesji'));
+    const ogloszeniaChannel = guild.channels.cache.find(c => c.isTextBased() && normCh(c.name).includes('ogloszenia') && !normCh(c.name).includes('sesji') && !normCh(c.name).includes('staff'));
     if (sesjeChannel) await sesjeChannel.send({ embeds: [embed] });
     if (ogloszeniaChannel && ogloszeniaChannel.id !== sesjeChannel?.id) await ogloszeniaChannel.send({ embeds: [embed] });
 
@@ -914,7 +918,7 @@ async function handleQuizResult(client, prisma, data) {
     else if (partialPass) embed.setColor(0xFEE75C).setTitle('⚠️ Quiz zaliczony z ostrzeżeniem').setDescription(`Wynik: **${score}/${total}** — Masz dostęp, ale przestudiuj regulamin!`);
     else embed.setColor(0xED4245).setTitle('❌ Quiz niezaliczony').setDescription(`Wynik: **${score}/${total}** — Spróbuj ponownie po 24h.`);
     await member.user.send({ embeds: [embed] }).catch(() => {});
-    const logChannel = guild.channels.cache.find(c => c.name === '🪪│logi-weryfikacji' && c.isTextBased());
+    const logChannel = guild.channels.cache.find(c => c.isTextBased() && c.name.toLowerCase().includes('logi-weryfikacji'));
     if (logChannel) {
       await logChannel.send({
         embeds: [new EmbedBuilder().setColor(passed || partialPass ? 0x57F287 : 0xED4245)
@@ -932,7 +936,7 @@ async function handleApplicationSubmitted(client, prisma, data) {
   if (!guild) return;
   try {
     const { EmbedBuilder } = require('discord.js');
-    const hrChannel = guild.channels.cache.find(c => c.name === '💬│chat-hr' && c.isTextBased());
+    const hrChannel = guild.channels.cache.find(c => c.isTextBased() && c.name.toLowerCase().includes('hr-chat'));
     if (hrChannel) {
       await hrChannel.send({ embeds: [new EmbedBuilder().setColor(0x10B981).setTitle('📋 Nowe podanie')
         .addFields({ name: 'Gracz', value: `<@${userId}>`, inline: true }, { name: 'Pozycja', value: position, inline: true }, { name: 'ID', value: applicationId, inline: true })

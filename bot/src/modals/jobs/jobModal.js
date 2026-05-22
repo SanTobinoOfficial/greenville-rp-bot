@@ -131,7 +131,7 @@ module.exports = {
         .setDescription(`Pomyślnie podjąłeś pracę **${job.name}**!\n\nPamiętaj o zapoznaniu się z mini-regulaminem tej pracy.`)
         .addFields(
           { name: '📁 Kategoria', value: job.kategoria, inline: true },
-          { name: '💰 Wynagrodzenie', value: `${job.wynagrodzenie_min}–${job.wynagrodzenie_max}$/h`, inline: true },
+          { name: '📋 Typ', value: job.typ, inline: true },
           { name: '⏳ Cooldown', value: 'Możesz zmienić pracę za **2 godziny**', inline: false },
         )
         .setFooter({ text: 'AURORA Greenville RP • System Pracy' })

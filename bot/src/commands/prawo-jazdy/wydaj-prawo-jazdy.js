@@ -170,7 +170,7 @@ module.exports = {
 
     try {
       const wynikiChannel = guild.channels.cache.find(
-        c => c.name === 'wyniki-egzaminów' && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes('wyniki-egzamin')
       );
       if (wynikiChannel) {
         await wynikiChannel.send({ embeds: [certEmbed] });

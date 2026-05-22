@@ -1,100 +1,111 @@
-// Komenda /regulamin — wysyła embed z regulaminem na bieżący kanał
-// Dostępna dla administratorów
+// Komenda /regulamin — wysyła embedy z regulaminem z server-config.json
+// Dostępna dla Managerów i wyżej
 
 const {
   SlashCommandBuilder,
   PermissionFlagsBits,
   EmbedBuilder,
 } = require('discord.js');
+const config = require('../../../../server-config.json');
+
+const CHOICES = [
+  { name: '📜 Cały regulamin (wszystkie sekcje)', value: 'all' },
+  { name: '§1 Postanowienia ogólne',               value: '1' },
+  { name: '§2-§3 Zasady komunikacji i głosowe',    value: '2' },
+  { name: '§4 Słownik pojęć RP',                   value: '3' },
+  { name: '§5 Zasady sesji RP',                    value: '4' },
+  { name: '§6-§7 Przestępczość i pojazdy',         value: '5' },
+];
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('regulamin')
-    .setDescription('Wysyła regulamin serwera na ten kanał')
+    .setDescription('Wysyła regulamin serwera na bieżący kanał')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
     .addStringOption(opt =>
       opt
         .setName('sekcja')
-        .setDescription('Która sekcja regulaminu? (domyślnie: cały)')
+        .setDescription('Która część regulaminu? (domyślnie: cały)')
         .setRequired(false)
-        .addChoices(
-          { name: '📜 Cały regulamin', value: 'all' },
-          { name: '§1 Zasady ogólne', value: 'general' },
-          { name: '§2 Zasady Roleplay', value: 'roleplay' },
-          { name: '§3 Służby', value: 'sluzby' },
-          { name: '§4 Sankcje', value: 'sankcje' },
-        )
+        .addChoices(...CHOICES)
     ),
 
   async execute(interaction) {
-    const sekcja = interaction.options.getString('sekcja') ?? 'all';
-
     await interaction.deferReply({ ephemeral: true });
 
-    const embed = buildRegulamim(sekcja);
-    await interaction.channel.send({ embeds: [embed] });
+    const sekcja = interaction.options.getString('sekcja') ?? 'all';
+    const reg = config.regulamin;
+    const color = parseInt(reg.color.replace('#', ''), 16);
 
-    await interaction.editReply({ content: `✅ Regulamin wysłany na <#${interaction.channelId}>!` });
+    let sectionsToSend = [];
+
+    if (sekcja === 'all') {
+      sectionsToSend = reg.sections;
+    } else {
+      const idx = parseInt(sekcja) - 1;
+      if (reg.sections[idx]) {
+        sectionsToSend = [reg.sections[idx]];
+      } else {
+        sectionsToSend = [reg.sections[0]];
+      }
+    }
+
+    const embeds = sectionsToSend.map((section, sIdx) => {
+      const embed = new EmbedBuilder()
+        .setColor(color)
+        .setFooter({ text: reg.footer })
+        .setTimestamp();
+
+      if (sIdx === 0 && section.title) {
+        embed.setTitle(section.title);
+        if (section.intro) embed.setDescription(section.intro);
+      }
+
+      for (const field of (section.fields || [])) {
+        const value = field.rules
+          .map((r, i) => `${i + 1}. ${r}`)
+          .join('\n');
+
+        // Discord field values max 1024 chars — split if needed
+        const chunks = splitText(value, 1020);
+        chunks.forEach((chunk, ci) => {
+          embed.addFields({
+            name: ci === 0 ? field.name : `${field.name} (cd.)`,
+            value: chunk,
+            inline: false,
+          });
+        });
+      }
+
+      return embed;
+    });
+
+    // Send each embed to channel (max 10 embeds per message)
+    const BATCH = 10;
+    for (let i = 0; i < embeds.length; i += BATCH) {
+      await interaction.channel.send({ embeds: embeds.slice(i, i + BATCH) });
+    }
+
+    await interaction.editReply({
+      content: `✅ Regulamin wysłany na <#${interaction.channelId}>!`,
+    });
   },
 };
 
-function buildRegulamim(sekcja) {
-  const sections = {
-    general:
-      '**§1 — Zasady ogólne**\n' +
-      '> • Szanuj innych graczy i staff\n' +
-      '> • Obowiązuje język **polski** na kanałach serwera\n' +
-      '> • Zakaz reklamy innych serwerów\n' +
-      '> • Zakaz spamu i floodowania\n' +
-      '> • Zakaz używania wulgaryzmów w OOC\n' +
-      '> • Wykonuj polecenia staffu\n',
-
-    roleplay:
-      '**§2 — Zasady Roleplay**\n' +
-      '> • **FRP** *(Fail RP)* — zachowania niezgodne z realizmem są zabronione\n' +
-      '> • **NLR** *(New Life Rule)* — po śmierci zapominasz wszystko z poprzedniego życia\n' +
-      '> • **Metagaming** — używanie informacji z zewnątrz (Discord, stream) jest zabronione\n' +
-      '> • **RDM** *(Random Death Match)* — zabijanie bez uzasadnienia RP jest zabronione\n' +
-      '> • **VDM** *(Vehicle Death Match)* — potrącanie samochodem bez powodu jest zabronione\n' +
-      '> • **Combat Logging** — wychodzenie podczas akcji RP jest zabronione\n' +
-      '> • **Powertaming** — narzucanie postaci działań bez jej zgody jest zabronione\n' +
-      '> • OOC w IC jest dozwolone tylko przez komendę `/ooc` lub `/b`\n',
-
-    sluzby:
-      '**§3 — Służby mundurowe**\n' +
-      '> • Wykonuj polecenia przełożonych i dowódców\n' +
-      '> • Nie nadużywaj uprawnień służbowych\n' +
-      '> • Zgłoś nieobecność z odpowiednim wyprzedzeniem\n' +
-      '> • W służbie obowiązuje mundur i pojazd służbowy\n' +
-      '> • Akcje specjalne wymagają zgody officera prowadzącego\n' +
-      '> • Radiowanie (radio) wyłącznie przez dedykowany system CAD\n',
-
-    sankcje:
-      '**§4 — Sankcje i kary**\n' +
-      '> • Standardowa ścieżka kar: **Warn → Kick → Ban** (czas do decyzji staffu)\n' +
-      '> • Poważne naruszenia skutkują **natychmiastowym banem** bez ostrzeżenia\n' +
-      '> • Odwołania od kar przez system ticketów\n' +
-      '> • Recydywa skutkuje surowszymi karami\n' +
-      '> • Decyzje staffu są ostateczne\n',
-  };
-
-  let description = '';
-
-  if (sekcja === 'all') {
-    description =
-      sections.general + '\n' +
-      sections.roleplay + '\n' +
-      sections.sluzby + '\n' +
-      sections.sankcje + '\n' +
-      '*Nieznajomość regulaminu nie zwalnia z odpowiedzialności.*';
-  } else {
-    description = sections[sekcja] ?? sections.general;
+/** Split long text into chunks fitting Discord's 1024-char field limit */
+function splitText(text, limit) {
+  if (text.length <= limit) return [text];
+  const lines = text.split('\n');
+  const chunks = [];
+  let current = '';
+  for (const line of lines) {
+    if ((current + '\n' + line).length > limit) {
+      if (current) chunks.push(current);
+      current = line;
+    } else {
+      current = current ? current + '\n' + line : line;
+    }
   }
-
-  return new EmbedBuilder()
-    .setColor(0xED4245)
-    .setTitle('📜 Regulamin AURORA Greenville RP')
-    .setDescription(description)
-    .setFooter({ text: 'AURORA Greenville RP — Regulamin v2.0' })
-    .setTimestamp();
+  if (current) chunks.push(current);
+  return chunks;
 }

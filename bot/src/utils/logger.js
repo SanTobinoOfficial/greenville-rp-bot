@@ -60,7 +60,7 @@ const logger = {
       if (!guild) return;
 
       const channel = guild.channels.cache.find(
-        c => c.name === channelName && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes(channelName.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l'))
       );
       if (channel) {
         await channel.send({ embeds: [embed] });

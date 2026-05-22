@@ -8,6 +8,7 @@ const {
   ButtonStyle,
 } = require('discord.js');
 const logger = require('../utils/logger');
+const { buildRegulaminEmbeds, buildPojeciaRpEmbed } = require('./regulamin');
 
 // Pomocnik: znajdź kanał tekstowy po nazwie
 function ch(guild, name) {
@@ -58,66 +59,23 @@ async function setupEmbeds(guild) {
     logger.info('  ✅ #zacznij-tutaj');
   }
 
-  // ── 2. #regulamin ────────────────────────────────────────────────────────────
+  // ── 2. #regulamin — pełny regulamin (6 embedów) ─────────────────────────────
   const regulaminChannel = ch(guild, '❗│regulamin');
   if (regulaminChannel) {
-    const embed = new EmbedBuilder()
-      .setColor(0xED4245)
-      .setTitle('📜 Regulamin AURORA Greenville RP')
-      .setDescription(
-        '**§1 — Zasady ogólne**\n' +
-        '> • Szanuj innych graczy i staff\n' +
-        '> • Obowiązuje język polski\n' +
-        '> • Zakaz reklamy innych serwerów\n' +
-        '> • Zakaz spamu i floodowania\n\n' +
-        '**§2 — Zasady Roleplay**\n' +
-        '> • **FRP** (Fail RP) — zachowania niezgodne z realizmem są zabronione\n' +
-        '> • **NLR** (New Life Rule) — po śmierci zapominasz wszystko z poprzedniego życia\n' +
-        '> • **Metagaming** — używanie informacji z zewnątrz (Discord, stream) jest zabronione\n' +
-        '> • **RDM** (Random Death Match) — zabijanie bez powodu RP jest zabronione\n' +
-        '> • **VDM** (Vehicle Death Match) — potrącanie samochodem bez powodu jest zabronione\n\n' +
-        '**§3 — Służby**\n' +
-        '> • Wykonuj polecenia przełożonych\n' +
-        '> • Nie nadużywaj uprawnień służbowych\n' +
-        '> • Zgłoś nieobecność z wyprzedzeniem\n\n' +
-        '**§4 — Sankcje**\n' +
-        '> • Warn → Kick → Ban (czas do decyzji staffu)\n' +
-        '> • Poważne naruszenia skutkują natychmiastowym banem\n\n' +
-        '*Nieznajomość regulaminu nie zwalnia z odpowiedzialności.*'
-      )
-      .setFooter({ text: 'AURORA Greenville RP — Regulamin' })
-      .setTimestamp();
-
-    await regulaminChannel.send({ embeds: [embed] }).catch(e =>
-      logger.error('Błąd wysyłania regulaminu:', e)
-    );
+    const embeds = buildRegulaminEmbeds();
+    // Discord pozwala maks. 10 embedów na wiadomość — wysyłamy partiami
+    for (let i = 0; i < embeds.length; i += 10) {
+      await regulaminChannel.send({ embeds: embeds.slice(i, i + 10) }).catch(e =>
+        logger.error('Błąd wysyłania regulaminu (partia):', e)
+      );
+    }
     logger.info('  ✅ #regulamin');
   }
 
-  // ── 3. #słownik-rp ───────────────────────────────────────────────────────────
+  // ── 3. #słownik-rp — pełne pojęcia RP ──────────────────────────────────────
   const slownikChannel = ch(guild, '📖│słownik-rp');
   if (slownikChannel) {
-    const embed = new EmbedBuilder()
-      .setColor(0x5865F2)
-      .setTitle('📖 Słownik pojęć RP')
-      .setDescription(
-        '**Podstawowe skróty i pojęcia:**\n\n' +
-        '🔴 **FRP** — Fail Role Play — zachowanie łamiące realizm RP\n' +
-        '🔴 **RDM** — Random Death Match — zabójstwo bez powodu RP\n' +
-        '🔴 **VDM** — Vehicle Death Match — potrącenie samochodem bez powodu\n' +
-        '🔴 **NLR** — New Life Rule — po śmierci nie pamiętasz nic z poprzedniego życia\n' +
-        '🔴 **Metagaming** — używanie wiedzy zdobytej poza postacią (np. z Discorda)\n\n' +
-        '🟡 **IC** — In Character — rozmawiasz jako postać (nie jako ty)\n' +
-        '🟡 **OOC** — Out of Character — rozmowa poza roleplay (np. przez /ooc)\n' +
-        '🟡 **Powertaming** — narzucanie działań innej postaci siłą\n' +
-        '🟡 **Godmodding** — granie niezniszczalną postacią\n\n' +
-        '🟢 **IC imię** — imię twojej postaci RP\n' +
-        '🟢 **PESEL** — numer identyfikacyjny postaci w RP\n' +
-        '🟢 **Służby** — Policja, EMS, Straż Pożarna, DOT, Straż Miejska, Taksówkarz\n' +
-        '🟢 **Sesja** — zorganizowany czas gry RP na serwerze Roblox'
-      )
-      .setFooter({ text: 'AURORA Greenville RP — Słownik RP' });
-
+    const embed = buildPojeciaRpEmbed();
     await slownikChannel.send({ embeds: [embed] }).catch(e =>
       logger.error('Błąd wysyłania słownika:', e)
     );

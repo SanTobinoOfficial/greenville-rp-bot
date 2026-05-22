@@ -15,7 +15,7 @@ module.exports = {
       // ==================== ZMIANA NICKU ====================
       if (oldMember.nickname !== newMember.nickname) {
         const nickLogChannel = guild.channels.cache.find(
-          c => c.name === '✏️│logi-nicków' && c.isTextBased()
+          c => c.isTextBased() && c.name.toLowerCase().includes('logi-nick')
         );
         if (nickLogChannel) {
           await nickLogChannel.send({
@@ -35,14 +35,64 @@ module.exports = {
         }
       }
 
+      // ==================== NITRO BOOST ====================
+      const wasBooster = oldMember.premiumSince != null;
+      const isBooster  = newMember.premiumSince != null;
+
+      if (!wasBooster && isBooster) {
+        // Właśnie doboostował serwer
+        const boosterRole = guild.roles.cache.find(r => r.name === 'Nitro Booster');
+        if (boosterRole && !newMember.roles.cache.has(boosterRole.id)) {
+          await newMember.roles.add(boosterRole, 'Auto: Nitro Boost').catch(() => {});
+        }
+        try {
+          await newMember.send({
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0xFF73FA)
+                .setTitle('💜 Dziękujemy za Nitro Boost!')
+                .setDescription(
+                  `Hej **${newMember.user.username}**! 🚀\n\n` +
+                  `Bardzo dziękujemy za wsparcie serwera AURORA Greenville RP boostem!\n` +
+                  `Jako podzięka masz dostęp do kanału **#vip-lounge** i rolę **Nitro Booster** 💜`
+                )
+                .setFooter({ text: 'AURORA Greenville RP — Dziękujemy!' })
+                .setTimestamp()
+            ]
+          });
+        } catch {}
+
+        const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
+        const boostCh = guild.channels.cache.find(
+          c => c.isTextBased() &&
+          norm(c.name).includes('ogloszenia') &&
+          !norm(c.name).includes('staffu') &&
+          !norm(c.name).includes('sesji')
+        );
+        if (boostCh) {
+          await boostCh.send({
+            content: `<@${newMember.id}> właśnie zboostował serwer! 💜 Dziękujemy! 🚀`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0xFF73FA)
+                .setTitle('💜 Nowy Nitro Booster!')
+                .setDescription(`**${newMember.user.username}** wspiera AURORA Greenville RP boostem Nitro! Dziękujemy! 🎉`)
+                .setThumbnail(newMember.user.displayAvatarURL({ dynamic: true, size: 128 }))
+                .setTimestamp()
+            ]
+          }).catch(() => {});
+        }
+      }
+
       // ==================== ZMIANY RÓL ====================
       const addedRoles = newMember.roles.cache.filter(r => !oldMember.roles.cache.has(r.id));
       const removedRoles = oldMember.roles.cache.filter(r => !newMember.roles.cache.has(r.id));
 
       if (addedRoles.size === 0 && removedRoles.size === 0) return;
 
+      const normRole = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
       const roleLogChannel = guild.channels.cache.find(
-        c => c.name === '📋│logi-ról' && c.isTextBased()
+        c => c.isTextBased() && normRole(c.name).includes('logi-rol')
       );
       if (!roleLogChannel) return;
 

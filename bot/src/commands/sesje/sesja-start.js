@@ -22,12 +22,17 @@ module.exports = {
 
     const sessionId = interaction.options.getString('id');
 
+    // Pobierz wewnętrzne ID hosta z bazy (hostId w Session to UUID, nie Discord ID)
+    const hostDbUser = await prisma.user.findUnique({ where: { discordId: interaction.user.id } });
+
     const session = sessionId
       ? await prisma.session.findUnique({ where: { id: sessionId } })
-      : await prisma.session.findFirst({
-          where: { hostId: interaction.user.id, status: 'UPCOMING' },
-          orderBy: { date: 'asc' },
-        });
+      : (hostDbUser
+          ? await prisma.session.findFirst({
+              where: { hostId: hostDbUser.id, status: 'UPCOMING' },
+              orderBy: { date: 'asc' },
+            })
+          : null);
 
     if (!session) {
       return interaction.editReply({ content: '❌ Nie znaleziono sesji do rozpoczęcia.' });
@@ -57,7 +62,7 @@ module.exports = {
 
     // Ping na kanale ogłoszeń
     const announceChannel = interaction.guild.channels.cache.find(
-      c => c.name === '📢│sesje-ogłoszenia' && c.isTextBased()
+      c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes('ogloszenia-sesji')
     );
     if (announceChannel) {
       await announceChannel.send({

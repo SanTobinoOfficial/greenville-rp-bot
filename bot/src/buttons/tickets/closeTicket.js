@@ -127,7 +127,7 @@ module.exports = {
     // ==================== WYSYŁKA TRANSKRYPTU NA LOGI ====================
 
     const logChannel = interaction.guild.channels.cache.find(
-      c => c.name === TICKET_LOG_CHANNEL && c.isTextBased()
+      c => c.isTextBased() && c.name.toLowerCase().includes('logi-ticket')
     );
 
     if (logChannel) {

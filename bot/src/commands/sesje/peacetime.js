@@ -92,7 +92,7 @@ module.exports = {
     // ==================== AKTUALIZACJA TOPIC KANAŁU ====================
 
     const rpChannel = interaction.guild.channels.cache.find(
-      c => c.name === RP_ANNOUNCEMENTS_CHANNEL && c.isTextBased()
+      c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes('ogloszenia-sesji')
     );
 
     if (rpChannel) {

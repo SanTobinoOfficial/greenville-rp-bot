@@ -144,14 +144,17 @@ const BUTTON_HANDLERS = {
   'character_create':      'characters/createCharacter',
   'license_apply':         'licenses/applyLicense',
   'toggle_notifications':  'notifications/toggleNotifications',
+  // ── Giveaway ──────────────────────────────────────────────
+  'giveaway_join':         'giveaway/joinGiveaway',
 };
 
 // Dopasowanie po prefixie (np. ticket_close_1234 → prefix 'ticket')
 const BUTTON_PREFIX_HANDLERS = {
-  'quiz':      'verification/quizAnswer',   // quiz_A_0, quiz_B_2, itd.
-  'session':   'sessions/sessionButton',
-  'license':   'licenses/applyLicense',
-  'job':       'jobs/jobApply',             // job_apply_[jobId], job_cancel
+  'quiz':       'verification/quizAnswer',        // quiz_A_0, quiz_B_2, itd.
+  'driveexam':  'licenses/drivingExamAnswer',     // driveexam_A_0_B, itd.
+  'session':    'sessions/sessionButton',
+  'license':    'licenses/applyLicense',
+  'job':        'jobs/jobApply',                  // job_apply_[jobId], job_cancel
 };
 
 const MODAL_HANDLERS = {

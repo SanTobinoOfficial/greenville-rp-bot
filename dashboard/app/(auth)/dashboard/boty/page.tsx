@@ -373,7 +373,7 @@ const BOT_COLORS: Record<string, string> = {
 
 export default async function BotyPage() {
   const session = await getServerSession(authOptions);
-  if (!session || session.user.accessLevel < ACCESS_LEVELS.STAFF) redirect('/dashboard');
+  if (!session || session.user.accessLevel < ACCESS_LEVELS.HELPER) redirect('/dashboard');
 
   const totalCmds = BOTY.reduce((sum, bot) => sum + bot.komendy.length, 0);
 

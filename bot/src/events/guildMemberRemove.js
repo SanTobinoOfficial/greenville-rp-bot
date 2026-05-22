@@ -31,15 +31,16 @@ module.exports = {
         .setTimestamp();
 
       const odlotyChannel = guild.channels.cache.find(
-        c => c.name === '🛫│odloty' && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().includes('odloty')
       );
       if (odlotyChannel) {
         await odlotyChannel.send({ embeds: [embed] });
       }
 
       // Log na #logi-członków
+      const normMbr = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
       const logChannel = guild.channels.cache.find(
-        c => c.name === '👥│logi-członków' && c.isTextBased()
+        c => c.isTextBased() && normMbr(c.name).includes('logi-czl')
       );
       if (logChannel) {
         await logChannel.send({

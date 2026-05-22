@@ -30,9 +30,7 @@ module.exports = {
       return interaction.update({ content: '❌ Nie znaleziono pracy.', embeds: [], components: [] });
     }
 
-    const wynagrodzenie = job.wynagrodzenie_max === 0
-      ? 'Brak wynagrodzenia'
-      : `${job.wynagrodzenie_min}$ – ${job.wynagrodzenie_max}$/h`;
+    // Economy removed
 
     const regulaminLines = typeof job.mini_regulamin === 'string'
       ? job.mini_regulamin.split('\n').filter(Boolean)
@@ -50,8 +48,7 @@ module.exports = {
       .setDescription(job.opis)
       .addFields(
         { name: '📁 Kategoria', value: job.kategoria, inline: true },
-        { name: '💰 Wynagrodzenie', value: wynagrodzenie, inline: true },
-        { name: '📋 Typ podania', value: TYPE_LABELS[job.typ] ?? job.typ, inline: false },
+        { name: '📋 Typ podania', value: TYPE_LABELS[job.typ] ?? job.typ, inline: true },
       );
 
     if (job.wymagania && job.wymagania.length > 0) {

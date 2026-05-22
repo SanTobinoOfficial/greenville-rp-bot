@@ -14,7 +14,7 @@ module.exports = {
       if (!message.guild) return;
 
       const logChannel = message.guild.channels.cache.find(
-        c => c.name === '🗑️│logi-wiadomości' && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().includes('logi-wiadom')
       );
       if (!logChannel) return;
 

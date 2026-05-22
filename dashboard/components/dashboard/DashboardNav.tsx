@@ -31,6 +31,7 @@ import {
   Bot,
   Building2,
   MailOpen,
+  Radio,
 } from 'lucide-react';
 
 interface NavItem {
@@ -42,6 +43,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/dashboard',                label: 'Statystyki',   icon: BarChart2,     minLevel: ACCESS_LEVELS.HELPER },
+  { href: '/dashboard/panel-cad',     label: 'Panel CAD',    icon: Radio,         minLevel: ACCESS_LEVELS.HELPER },
   { href: '/dashboard/podania',        label: 'Podania',      icon: ClipboardList, minLevel: ACCESS_LEVELS.HELPER },
   { href: '/dashboard/gracze',         label: 'Gracze',       icon: Users,         minLevel: ACCESS_LEVELS.MOD    },
   { href: '/dashboard/moderacja',      label: 'Moderacja',    icon: Hammer,        minLevel: ACCESS_LEVELS.MOD    },

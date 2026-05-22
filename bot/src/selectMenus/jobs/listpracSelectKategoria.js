@@ -27,10 +27,7 @@ module.exports = {
 
     // Podziel prace na grupy (ograniczenie pola embeda = 1024 znaków)
     const lines = jobs.map(job => {
-      const wynagrodzenie = job.wynagrodzenie_max === 0
-        ? 'Brak'
-        : `${job.wynagrodzenie_min}–${job.wynagrodzenie_max}$/h`;
-      return `${job.emoji} **${job.name}** — ${wynagrodzenie} | ${TYPE_LABELS[job.typ] ?? job.typ}`;
+      return `${job.emoji} **${job.name}** — ${TYPE_LABELS[job.typ] ?? job.typ}`;
     });
 
     // Podziel na chunki po max 15 (żeby embed nie był za długi)

@@ -47,7 +47,7 @@ module.exports = {
 
     // Log
     const logChannel = interaction.guild.channels.cache.find(
-      c => c.name === '🚗│logi-pojazdów' && c.isTextBased()
+      c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes('logi-pojazd')
     );
     if (logChannel) {
       await logChannel.send({

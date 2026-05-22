@@ -336,8 +336,18 @@ async function finishQuiz(interaction, client, prisma, session, lastCorrect, las
       if (mieszkaniecRole) await member.roles.add(mieszkaniecRole).catch(() => {});
       if (niezwerRole) await member.roles.remove(niezwerRole).catch(() => {});
 
+      // Aktualizuj datę weryfikacji
+      await prisma.user.update({
+        where: { discordId: interaction.user.id },
+        data: {
+          verifiedAt: new Date(),
+          quizScore: score,
+          quizAttempts: { increment: 1 },
+        },
+      }).catch(() => {});
+
       // Log na #logi-weryfikacji
-      const logCh = guild.channels.cache.find(c => c.name === '🪪│logi-weryfikacji' && c.isTextBased());
+      const logCh = guild.channels.cache.find(c => c.isTextBased() && c.name.toLowerCase().includes('logi-weryfikacji'));
       if (logCh) {
         await logCh.send({
           embeds: [
@@ -356,6 +366,14 @@ async function finishQuiz(interaction, client, prisma, session, lastCorrect, las
     } catch (e) {
       logger.error('Błąd nadawania roli po quizie:', e);
     }
+  }
+
+  // Update attempts count (for failed attempts)
+  if (!passed) {
+    await prisma.user.updateMany({
+      where: { discordId: interaction.user.id },
+      data: { quizAttempts: { increment: 1 } },
+    }).catch(() => {});
   }
 
   const feedbackLast = new EmbedBuilder()

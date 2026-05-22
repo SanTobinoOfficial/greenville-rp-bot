@@ -119,7 +119,7 @@ module.exports = {
 
       // Wyślij na kanał #rejestracja-pojazdów
       const regChannel = interaction.guild.channels.cache.find(
-        c => c.name === '🚗│rejestracja-pojazdów' && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes('rejestracja-pojazd')
       );
       if (regChannel) {
         await regChannel.send({
@@ -130,7 +130,7 @@ module.exports = {
 
       // Log
       const logChannel = interaction.guild.channels.cache.find(
-        c => c.name === '🚗│logi-pojazdów' && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes('logi-pojazd')
       );
       if (logChannel) {
         await logChannel.send({ embeds: [dowodEmbed] });

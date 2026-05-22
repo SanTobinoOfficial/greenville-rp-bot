@@ -102,7 +102,7 @@ module.exports = {
 
       // Krok 7: Log na #logi-weryfikacji
       const verifyLogChannel = interaction.guild.channels.cache.find(
-        c => c.name === '🪪│logi-weryfikacji' && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().includes('logi-weryfikacji')
       );
       if (verifyLogChannel) {
         await verifyLogChannel.send({

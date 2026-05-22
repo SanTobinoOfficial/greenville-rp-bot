@@ -53,6 +53,19 @@ model User {
   jobCategory     String?
   jobAssignedAt   DateTime?
   jobCooldownEnd  DateTime?
+
+  // ── Egzamin na prawo jazdy ───────────────────────────────────
+  licenseExamLastAttempt   DateTime?   // timestamp ostatniego podejścia
+  licenseExamLastKategoria String?     // kategoria ostatniego podejścia
+
+  // ── Ekonomia RP ──────────────────────────────────────────────
+  balance         Int       @default(5000)   // portfel (gotówka)
+  bankBalance     Int       @default(10000)  // konto bankowe
+  dailyLastClaim  DateTime?                  // ostatni odbiór daily
+  dailyStreak     Int       @default(0)      // seria dni z rzędu
+
+  transactions    Transaction[] @relation("TransactionFrom")
+  transactionsIn  Transaction[] @relation("TransactionTo")
 }
 
 // ==================== POSTAĆ (DOWÓD OSOBISTY) ====================
@@ -541,6 +554,23 @@ model CadArrest {
   releasedAt  DateTime?
   releasedBy  String?
   createdAt   DateTime  @default(now())
+}
+
+// ==================== EKONOMIA RP ====================
+
+model Transaction {
+  id          String   @id @default(cuid())
+  fromId      String
+  toId        String?
+  type        String   // TRANSFER, SALARY, FINE, BAIL, DEPOSIT, WITHDRAW, REWARD
+  amount      Int
+  description String
+  balanceBefore Int    @default(0)
+  balanceAfter  Int    @default(0)
+  createdAt   DateTime @default(now())
+
+  from User  @relation("TransactionFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to   User? @relation("TransactionTo",   fields: [toId],   references: [id], onDelete: SetNull)
 }
 
 // ==================== LOGI BOTA ====================

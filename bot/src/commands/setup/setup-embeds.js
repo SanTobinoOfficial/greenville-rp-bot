@@ -10,12 +10,78 @@ const {
   ButtonStyle,
 } = require('discord.js');
 const logger = require('../../utils/logger');
+const serverConfig = require('../../../../server-config.json');
+
+/** Split long text into chunks fitting Discord's 1024-char field limit */
+function splitFieldText(text, limit = 1020) {
+  if (text.length <= limit) return [text];
+  const lines = text.split('\n');
+  const chunks = [];
+  let current = '';
+  for (const line of lines) {
+    if ((current + '\n' + line).length > limit) {
+      if (current) chunks.push(current);
+      current = line;
+    } else {
+      current = current ? current + '\n' + line : line;
+    }
+  }
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+/** Build embeds array from server-config.json regulamin */
+function buildRegulamEmbedsFromConfig() {
+  const reg = serverConfig.regulamin;
+  const color = parseInt(reg.color.replace('#', ''), 16);
+
+  return reg.sections.map((section, sIdx) => {
+    const embed = new EmbedBuilder()
+      .setColor(color)
+      .setFooter({ text: reg.footer })
+      .setTimestamp();
+
+    if (sIdx === 0 && section.title) {
+      embed.setTitle(section.title);
+      if (section.intro) embed.setDescription(section.intro);
+    }
+
+    for (const field of (section.fields || [])) {
+      const value = field.rules.map((r, i) => `${i + 1}. ${r}`).join('\n');
+      const chunks = splitFieldText(value, 1020);
+      chunks.forEach((chunk, ci) => {
+        embed.addFields({
+          name: ci === 0 ? field.name : `${field.name} (cd.)`,
+          value: chunk,
+          inline: false,
+        });
+      });
+    }
+
+    return embed;
+  });
+}
 
 // Pomocnik: znajdź kanał po fragmencie nazwy
 function ch(guild, fragment) {
   return guild.channels.cache.find(
     c => c.isTextBased() && c.name.toLowerCase().includes(fragment.toLowerCase())
   );
+}
+
+// Pomocnik: usuń poprzednie wiadomości bota w kanale (maks. 100)
+async function clearBotMessages(channel, clientId) {
+  try {
+    const messages = await channel.messages.fetch({ limit: 100 });
+    const botMsgs = messages.filter(m => m.author.id === clientId);
+    if (botMsgs.size === 0) return;
+    // bulkDelete działa tylko dla wiadomości < 14 dni
+    const recent = botMsgs.filter(m => Date.now() - m.createdTimestamp < 12 * 24 * 60 * 60 * 1000);
+    const old    = botMsgs.filter(m => Date.now() - m.createdTimestamp >= 12 * 24 * 60 * 60 * 1000);
+    if (recent.size > 1) await channel.bulkDelete(recent).catch(() => {});
+    else if (recent.size === 1) await recent.first().delete().catch(() => {});
+    for (const msg of old.values()) await msg.delete().catch(() => {});
+  } catch { /* ignoruj błędy uprawnień */ }
 }
 
 module.exports = {
@@ -39,10 +105,13 @@ module.exports = {
     const sent = [];
     const failed = [];
 
+    const clientId = interaction.client.user.id;
+
     // ── 1. #zacznij-tutaj — weryfikacja ─────────────────────────
     const verifyChannel = ch(guild, 'zacznij-tutaj');
     if (verifyChannel) {
       try {
+        await clearBotMessages(verifyChannel, clientId);
         const embed = new EmbedBuilder()
           .setColor(0x30d158)
           .setTitle('✅ Witaj w AURORA Greenville RP!')
@@ -80,39 +149,17 @@ module.exports = {
       }
     }
 
-    // ── 2. #regulamin ────────────────────────────────────────────
+    // ── 2. #regulamin — pełny regulamin z server-config.json ─────
     const regulaminChannel = ch(guild, 'regulamin');
     if (regulaminChannel) {
       try {
-        const embed = new EmbedBuilder()
-          .setColor(0xED4245)
-          .setTitle('📜 Regulamin AURORA Greenville RP')
-          .setDescription(
-            '**§1 — Zasady ogólne**\n' +
-            '> • Szanuj innych graczy i staff\n' +
-            '> • Obowiązuje język polski\n' +
-            '> • Zakaz reklamy innych serwerów\n' +
-            '> • Zakaz spamu i floodowania\n\n' +
-            '**§2 — Zasady Roleplay**\n' +
-            '> • **FRP** (Fail RP) — zachowania niezgodne z realizmem są zabronione\n' +
-            '> • **NLR** (New Life Rule) — po śmierci zapominasz wszystko z poprzedniego życia\n' +
-            '> • **Metagaming** — używanie informacji z zewnątrz (Discord, stream) jest zabronione\n' +
-            '> • **RDM** (Random Death Match) — zabijanie bez powodu RP jest zabronione\n' +
-            '> • **VDM** (Vehicle Death Match) — potrącanie samochodem bez powodu jest zabronione\n\n' +
-            '**§3 — Służby**\n' +
-            '> • Wykonuj polecenia przełożonych\n' +
-            '> • Nie nadużywaj uprawnień służbowych\n' +
-            '> • Zgłoś nieobecność z wyprzedzeniem\n\n' +
-            '**§4 — Sankcje**\n' +
-            '> • Warn → Kick → Ban (czas do decyzji staffu)\n' +
-            '> • Poważne naruszenia skutkują natychmiastowym banem\n\n' +
-            '*Nieznajomość regulaminu nie zwalnia z odpowiedzialności.*'
-          )
-          .setFooter({ text: 'AURORA Greenville RP — Regulamin' })
-          .setTimestamp();
-
-        await regulaminChannel.send({ embeds: [embed] });
-        sent.push(`✅ #${regulaminChannel.name}`);
+        await clearBotMessages(regulaminChannel, clientId);
+        const regEmbeds = buildRegulamEmbedsFromConfig();
+        // Discord: max 10 embeds per message
+        for (let i = 0; i < regEmbeds.length; i += 10) {
+          await regulaminChannel.send({ embeds: regEmbeds.slice(i, i + 10) });
+        }
+        sent.push(`✅ #${regulaminChannel.name} (${regEmbeds.length} embedów)`);
       } catch (e) {
         failed.push(`❌ regulamin: ${e.message}`);
       }
@@ -122,26 +169,59 @@ module.exports = {
     const slownikChannel = ch(guild, 'slownik') || ch(guild, 'słownik');
     if (slownikChannel) {
       try {
+        await clearBotMessages(slownikChannel, clientId);
         const embed = new EmbedBuilder()
           .setColor(0x5865F2)
-          .setTitle('📖 Słownik pojęć RP')
-          .setDescription(
-            '**Podstawowe skróty i pojęcia:**\n\n' +
-            '🔴 **FRP** — Fail Role Play — zachowanie łamiące realizm RP\n' +
-            '🔴 **RDM** — Random Death Match — zabójstwo bez powodu RP\n' +
-            '🔴 **VDM** — Vehicle Death Match — potrącenie samochodem bez powodu\n' +
-            '🔴 **NLR** — New Life Rule — po śmierci nie pamiętasz nic z poprzedniego życia\n' +
-            '🔴 **Metagaming** — używanie wiedzy zdobytej poza postacią (np. z Discorda)\n\n' +
-            '🟡 **IC** — In Character — rozmawiasz jako postać (nie jako ty)\n' +
-            '🟡 **OOC** — Out of Character — rozmowa poza roleplay (np. przez /ooc)\n' +
-            '🟡 **Powertaming** — narzucanie działań innej postaci siłą\n' +
-            '🟡 **Godmodding** — granie niezniszczalną postacią\n\n' +
-            '🟢 **IC imię** — imię twojej postaci RP\n' +
-            '🟢 **PESEL** — numer identyfikacyjny postaci w RP\n' +
-            '🟢 **Służby** — Policja, EMS, Straż Pożarna, DOT, Straż Miejska, Taksówkarz\n' +
-            '🟢 **Sesja** — zorganizowany czas gry RP na serwerze Roblox'
+          .setTitle('📖 Słownik pojęć Roleplay — AURORA Greenville RP')
+          .setDescription('**Znajomość poniższych pojęć jest obowiązkowa** przed przystąpieniem do sesji RP.\nNiezrozumienie pojęć nie zwalnia z odpowiedzialności za ich naruszenie.')
+          .addFields(
+            {
+              name: '🔴 Zakazy absolutne (ban)',
+              value: [
+                '**FRP** (Fail Roleplay) — zachowanie sprzeczne z realizmem RP',
+                '**RDM** (Random Death Match) — atakowanie bez powodu RP',
+                '**VDM** (Vehicle Death Match) — taranowanie pojazdem bez powodu',
+                '**Metagaming** — używanie wiedzy z poza gry (Discord/stream) w IC',
+                '**Powergaming** — narzucanie innym akcji bez ich zgody',
+                '**Combat Logging** — wyjście z gry podczas trwącej akcji RP',
+              ].join('\n'),
+              inline: false,
+            },
+            {
+              name: '🟡 Zasady kluczowe',
+              value: [
+                '**NLR** — po śmierci zapominasz wszystko z poprzedniego życia',
+                '**Fear RP** — odgrywaj strach przy zagrożeniu życia',
+                '**Void** — anulowanie akcji RP (tylko Staff)',
+                '**Peacetime** — tryb bez akcji kryminalnych (Pt1°/Pt2°)',
+                '**Hostage RP** — wymaga zgody OOC celu + aktywnego Hosta',
+              ].join('\n'),
+              inline: false,
+            },
+            {
+              name: '🟢 Podstawy komunikacji',
+              value: [
+                '**IC** — In Character: mówisz jako postać',
+                '**OOC** — Out of Character: rozmowa poza RP w nawiasach ()',
+                '**/me** — opisujesz czynność postaci, np. /me wyciąga dokumenty',
+                '**/do** — opisujesz otoczenie (scena, przedmioty)',
+              ].join('\n'),
+              inline: false,
+            },
+            {
+              name: '🔵 Kody i systemy',
+              value: [
+                '**10-4** — Potwierdzam (kod radiowy)',
+                '**10-33** — ALARM! Pilna pomoc! (najwyższy priorytet)',
+                '**10-70** — Pościg w toku',
+                '**BOLO** — Be On Look Out: ogłoszenie o poszukiwanej osobie',
+                'Pełna lista: `/kod-10`',
+              ].join('\n'),
+              inline: false,
+            },
           )
-          .setFooter({ text: 'AURORA Greenville RP — Słownik RP' });
+          .setFooter({ text: 'AURORA Greenville RP — Słownik RP v5.0' })
+          .setTimestamp();
 
         await slownikChannel.send({ embeds: [embed] });
         sent.push(`✅ #${slownikChannel.name}`);
@@ -154,6 +234,7 @@ module.exports = {
     const ticketChannel = ch(guild, 'ticket');
     if (ticketChannel) {
       try {
+        await clearBotMessages(ticketChannel, clientId);
         const embed = new EmbedBuilder()
           .setColor(0x00c8ff)
           .setTitle('🎫 System ticketów')
@@ -193,6 +274,7 @@ module.exports = {
     const postacChannel = ch(guild, 'postac') || ch(guild, 'postać');
     if (postacChannel) {
       try {
+        await clearBotMessages(postacChannel, clientId);
         const embed = new EmbedBuilder()
           .setColor(0x30d158)
           .setTitle('🪪 Tworzenie postaci RP')
@@ -228,6 +310,7 @@ module.exports = {
     const prawoChannel = ch(guild, 'prawo-jazdy') || ch(guild, 'prawojazdy');
     if (prawoChannel) {
       try {
+        await clearBotMessages(prawoChannel, clientId);
         const embed = new EmbedBuilder()
           .setColor(0xF59E0B)
           .setTitle('🚗 Prawo jazdy — egzaminy')
@@ -265,6 +348,7 @@ module.exports = {
     const autoChannel = ch(guild, 'rejestracja');
     if (autoChannel) {
       try {
+        await clearBotMessages(autoChannel, clientId);
         const embed = new EmbedBuilder()
           .setColor(0x94A3B8)
           .setTitle('🚗 Rejestracja pojazdu')
@@ -300,6 +384,7 @@ module.exports = {
     const notifChannel = ch(guild, 'powiadomien') || ch(guild, 'powiadomień');
     if (notifChannel) {
       try {
+        await clearBotMessages(notifChannel, clientId);
         const embed = new EmbedBuilder()
           .setColor(0xFFFFFF)
           .setTitle('🔔 Powiadomienia o sesjach')
@@ -329,6 +414,7 @@ module.exports = {
     const faqChannel = ch(guild, 'faq');
     if (faqChannel) {
       try {
+        await clearBotMessages(faqChannel, clientId);
         const embed = new EmbedBuilder()
           .setColor(0x5865F2)
           .setTitle('❓ Najczęściej zadawane pytania')
@@ -355,7 +441,32 @@ module.exports = {
       }
     }
 
+    // ── 10. #taryfikator ─────────────────────────────────────────
+    const taryfikatorChannel = ch(guild, 'taryfikator');
+    if (taryfikatorChannel) {
+      try {
+        await clearBotMessages(taryfikatorChannel, clientId);
+        const emb1 = new EmbedBuilder()
+          .setColor(0x5865F2)
+          .setTitle('⚖️ TARYFIKATOR KAR — AURORA Greenville RP')
+          .setDescription('Kompletny taryfikator kar Discord i RP. Recydywa (w ciągu 30 dni) = kara x2.\nPełna lista: `/taryfikator`')
+          .addFields(
+            { name: '🟦 NIEBIESKA — Minimalna', value: 'Spam, caps, OT → **Warn/Mute**', inline: true },
+            { name: '🟩 ZIELONA — Niska',       value: 'FRP 1×, Metagaming → **Warn + Kick**', inline: true },
+            { name: '🟧 POMARAŃCZOWA — Wysoka', value: 'RDM, VDM, CL → **Ban 3–14 dni**', inline: true },
+            { name: '🟥 CZERWONA — Krytyczna',  value: 'Exploit, dox, NSFW → **Permanentny ban**', inline: true },
+          )
+          .setFooter({ text: 'AURORA Greenville RP — Taryfikator v5.0' })
+          .setTimestamp();
+        await taryfikatorChannel.send({ embeds: [emb1] });
+        sent.push(`✅ #${taryfikatorChannel.name}`);
+      } catch (e) {
+        failed.push(`❌ taryfikator: ${e.message}`);
+      }
+    }
+
     // ── Wynik ────────────────────────────────────────────────────
+    const total = 10;
     const lines = [];
     if (sent.length > 0) lines.push('**Wysłano:**\n' + sent.join('\n'));
     if (failed.length > 0) lines.push('**Błędy:**\n' + failed.join('\n'));
@@ -369,14 +480,14 @@ module.exports = {
           .setColor(failed.length === 0 ? 0x57F287 : 0xFEE75C)
           .setTitle(
             failed.length === 0
-              ? `✅ Wysłano ${sent.length}/9 embedów!`
-              : `⚠️ Wysłano ${sent.length}/9 embedów (z błędami)`
+              ? `✅ Wysłano ${sent.length}/${total} embedów!`
+              : `⚠️ Wysłano ${sent.length}/${total} embedów (z błędami)`
           )
           .setDescription(lines.join('\n\n'))
           .setTimestamp(),
       ],
     });
 
-    logger.info(`/setup-embeds użyte przez ${interaction.user.tag} — ${sent.length}/9 kanałów`);
+    logger.info(`/setup-embeds użyte przez ${interaction.user.tag} — ${sent.length}/${total} kanałów`);
   },
 };

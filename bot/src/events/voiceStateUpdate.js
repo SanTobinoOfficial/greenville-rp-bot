@@ -15,7 +15,7 @@ module.exports = {
       if (!member || member.user.bot) return;
 
       const logChannel = guild.channels.cache.find(
-        c => c.name === '🔊│logi-głosowe' && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes('logi-glosowe')
       );
       if (!logChannel) return;
 

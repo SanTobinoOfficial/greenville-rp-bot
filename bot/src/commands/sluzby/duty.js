@@ -103,11 +103,21 @@ module.exports = {
         .setDescription(`<@${interaction.user.id}> rozpoczął/a służbę.`);
     }
 
-    // Log na kanale służby
+    // Log na kanale służby — szukaj dedykowanego czatu służby
+    const SERVICE_CHANNEL_FRAGMENTS = {
+      policja:       'policja-czat',
+      ems:           'ems-czat',
+      straz:         'straz-czat',
+      dot:           'dot-czat',
+      straz_miejska: 'sm-czat',
+      taksowkarz:    'ogolny',
+    };
+    const fragment = SERVICE_CHANNEL_FRAGMENTS[serviceKey] || 'ogolny';
+    const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
     const logChannel = interaction.guild.channels.cache.find(
-      c => c.name.includes('duty') || c.name.includes('służba') || c.name.includes('logi-sluzby')
+      c => c.isTextBased() && norm(c.name).includes(fragment)
     );
-    if (logChannel?.isTextBased()) {
+    if (logChannel) {
       await logChannel.send({ embeds: [embed] }).catch(() => null);
     }
 

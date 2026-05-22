@@ -218,7 +218,7 @@ module.exports = {
 
     // Wysłanie embeda do kanału #mandaty
     const mandatyChannel = interaction.guild.channels.cache.find(
-      c => c.name === 'mandaty' && c.isTextBased()
+      c => c.isTextBased() && c.name.toLowerCase().includes('moje-mandaty')
     );
 
     if (mandatyChannel) {
@@ -230,7 +230,7 @@ module.exports = {
     // Powiadomienie dla administracji o auto-zawieszeniu
     if (licencjaZawieszona) {
       const staffChannel = interaction.guild.channels.cache.find(
-        c => (c.name === 'logi-moderacji' || c.name === 'logi-rp') && c.isTextBased()
+        c => c.isTextBased() && (c.name.toLowerCase().includes('logi-mod') || c.name.toLowerCase().includes('logi-rp'))
       );
 
       if (staffChannel) {

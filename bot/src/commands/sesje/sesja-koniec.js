@@ -15,9 +15,13 @@ module.exports = {
 
     await interaction.deferReply();
 
-    const session = await prisma.session.findFirst({
-      where: { hostId: interaction.user.id, status: 'ONGOING' },
-    });
+    // Pobierz wewnętrzne ID hosta (hostId w Session to UUID, nie Discord ID)
+    const hostDbUser = await prisma.user.findUnique({ where: { discordId: interaction.user.id } });
+    const session = hostDbUser
+      ? await prisma.session.findFirst({
+          where: { hostId: hostDbUser.id, status: 'ONGOING' },
+        })
+      : null;
 
     if (!session) {
       return interaction.editReply({ content: '❌ Nie masz aktywnej sesji.' });
@@ -35,7 +39,7 @@ module.exports = {
 
     // Zresetuj peacetime
     const rpChannel = interaction.guild.channels.cache.find(
-      c => c.name === '🚔│ogłoszenia-roleplay' && c.isTextBased()
+      c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes('ogloszenia-sesji')
     );
     if (rpChannel) {
       await rpChannel.setTopic('✅ Normalny tryb — Brak Peacetime').catch(() => {});

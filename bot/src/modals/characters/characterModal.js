@@ -107,7 +107,7 @@ module.exports = {
 
       // Wyślij na kanał #dowód-osobisty
       const dowodChannel = interaction.guild.channels.cache.find(
-        c => c.name === '🪪│dowód-osobisty' && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l').includes('dowod-osobisty')
       );
       if (dowodChannel) {
         await dowodChannel.send({
@@ -142,7 +142,7 @@ module.exports = {
 
       // Log
       const logChannel = interaction.guild.channels.cache.find(
-        c => c.name === '🪪│logi-weryfikacji' && c.isTextBased()
+        c => c.isTextBased() && c.name.toLowerCase().includes('logi-weryfikacji')
       );
       if (logChannel) {
         await logChannel.send({

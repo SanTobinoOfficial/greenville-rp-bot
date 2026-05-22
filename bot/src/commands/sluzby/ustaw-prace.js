@@ -8,7 +8,7 @@ const path = require('path');
 const fs = require('fs');
 
 function getJobs() {
-  const configPath = path.resolve(__dirname, '../../../../../server-config.json');
+  const configPath = path.resolve(__dirname, '../../../../server-config.json');
   const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
   return config.jobs ?? [];
 }
@@ -142,7 +142,7 @@ module.exports = {
         { name: '🛡️ Staff', value: interaction.user.tag, inline: true },
         { name: `${job.emoji} Praca`, value: job.name, inline: true },
         { name: '📁 Kategoria', value: job.kategoria, inline: true },
-        { name: '💰 Wynagrodzenie', value: `${job.wynagrodzenie_min}–${job.wynagrodzenie_max}$/h`, inline: true },
+        { name: '📋 Typ', value: job.typ, inline: true },
         { name: '⏳ Cooldown', value: zachowajCooldown ? 'Zachowany (stary)' : 'Ustawiony na 2h', inline: true },
       )
       .setFooter({ text: 'AURORA Greenville RP • System Pracy' })

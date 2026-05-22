@@ -8,7 +8,7 @@ const path = require('path');
 const fs = require('fs');
 
 function getJob(jobId) {
-  const configPath = path.resolve(__dirname, '../../../../../server-config.json');
+  const configPath = path.resolve(__dirname, '../../../../server-config.json');
   const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
   return (config.jobs ?? []).find(j => j.name === jobId || j.id === jobId);
 }
@@ -85,13 +85,6 @@ module.exports = {
 
       if (jobDetails) {
         embed.addFields(
-          {
-            name: '💰 Wynagrodzenie',
-            value: jobDetails.wynagrodzenie_max === 0
-              ? 'Brak wynagrodzenia'
-              : `${jobDetails.wynagrodzenie_min}–${jobDetails.wynagrodzenie_max}$/h`,
-            inline: true,
-          },
           {
             name: '📋 Typ pracy',
             value: jobDetails.typ === 'SERVICE' ? '🏛️ Służbowa' : jobDetails.typ === 'CRIMINAL' ? '💀 Kryminalna' : '✅ Cywilna',
