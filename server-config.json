@@ -905,11 +905,11 @@
       "fields": [
         {
           "name": "📖 Pojęcia podstawowe",
-          "value": "**FRP** (Fail Roleplay) — Nieprawidłowe odegranie lub brak odegrania akcji RP.\n**IC** (In Character) — Wszystko dziające się w rozgrywce roleplay.\n**OOC** (Out Of Character) — Wszystko poza grą, w realnym świecie.\n**CL** (Combat Logging) — Wyjście z gry podczas akcji RP, aby uniknąć odpowiedzialności.\n**VDA** (Vehicle Driver Assault) — Umyślne taranowanie osób pojazdem.\n**PG** (Power Gaming) — Zmuszanie innych do akcji RP bez ich zgody.\n**MG** (Meta Gaming) — Wykorzystywanie informacji z OOC w IC."
+          "value": "**FRP** (Fail Roleplay) — Nieprawidłowe odegranie lub brak odegrania akcji RP.\n**IC** (In Character) — Wszystko dziające się w rozgrywce roleplay.\n**OOC** (Out Of Character) — Wszystko poza grą, w realnym świecie.\n**CL** (Combat Logging) — Wyjście z gry podczas aktywnej sceny RP, aby uniknąć konsekwencji.\n**VDA** (Vehicle Driver Assault) — Celowe taranowanie gracza pojazdem bez powodu fabularnego.\n**PG** (Power Gaming) — Zmuszanie innych do akcji RP bez ich zgody.\n**MG** (Meta Gaming) — Wykorzystywanie informacji z OOC w IC."
         },
         {
           "name": "🚗 Pojęcia drogowe",
-          "value": "**CB** (Cop Baiting) — Prowokowanie policji bez wyraźnego powodu.\n**FD** (Fail Driving) — Jazda w sposób nierealistyczny.\n**Prędkość FRP** — **131 mph** (przekroczenie uznawane jako FRP).\n**Imersja** — Wczucie się w postać i otoczenie.\n**Nieposzanowanie życia** — Narażanie postaci na obrażenia lub niebezpieczne sytuacje bez uzasadnienia RP."
+          "value": "**CB** (Cop Baiting) — Prowokowanie policji bez wyraźnego powodu.\n**FD** (Fail Driving) — Jazda w sposób nierealistyczny.\n**Prędkość FRP** — **131 mph** (przekroczenie uznawane jako FRP).\n**Imersja** — Wczucie się w postać i otoczenie.\n**Nieposzanowanie życia** — Narażanie postaci na niebezpieczne sytuacje bez uzasadnienia fabularnego."
         },
         {
           "name": "💬 Komendy RP",
@@ -1095,21 +1095,21 @@
       },
       {
         "order": 16,
-        "question": "Przy jakim wypadku obowiązuje odgrywanie obrażeń i wezwanie EMS?",
+        "question": "Od jakiej prędkości zderzenia obowiązuje odegranie obrażeń przez /me i wezwanie EMS (Roleplay)?",
         "answers": [
           "Powyżej 20 mph",
           "Powyżej 35 mph",
           "Powyżej 50 mph",
-          "Tylko śmiertelny wypadek"
+          "Tylko przy uszkodzeniu pojazdu"
         ],
         "correct": 1
       },
       {
         "order": 17,
-        "question": "Co to jest RDA (Random Driver Assault)?",
+        "question": "Co to jest VDA (Vehicle Driver Assault)?",
         "answers": [
           "Losowe wyścigi bez zgody Hosta",
-          "Atak na gracza pojazdem lub bez uzasadnienia fabularnego",
+          "Celowe taranowanie gracza pojazdem bez powodu fabularnego",
           "Rola kierowcy w trybie akcji",
           "Zgłoszenie incydentu drogowego"
         ],
@@ -1273,16 +1273,14 @@
               "**FRP (Fail Roleplay)** — scena lub zachowanie niemożliwe w rzeczywistości, psujące klimat RP.",
               "**Metagaming (MG)** — przenoszenie wiedzy z zewnątrz gry (Discord, stream, OOC) do świata IC. Ciężkie naruszenie.",
               "**Powergaming (PG)** — wymuszanie akcji na innym graczu bez zgody lub odgrywanie fizycznie niemożliwych czynności.",
-              "**RDA (Random Driver/Player Assault)** — atak na gracza pojazdem lub fizyczny bez żadnego uzasadnienia fabularnego.",
               "**VDA (Vehicle Driver Assault)** — celowe taranowanie gracza pojazdem bez powodu fabularnego.",
-              "**Combat Logging (CL)** — celowe rozłączenie z grą podczas aktywnego konfliktu RP. Skutkuje surowym banem.",
-              "**Fear RP** — groźba lub przymus ze strony innej postaci = Twoja postać nie może ignorować sytuacji — musisz reagować realistycznie.",
+              "**Combat Logging (CL)** — celowe rozłączenie z grą podczas aktywnej sceny RP w celu uniknięcia konsekwencji.",
               "**OOC (Out of Character)** — komunikat poza postacią; używaj nawiasów () lub komendy /b.",
               "**IC (In Character)** — jesteś swoją postacią — mówisz i działasz w świecie RP.",
               "**Void** — unieważnienie akcji RP — uprawnienie wyłącznie Staffu serwera.",
               "**Peacetime** — tryb z ograniczonymi akcjami kryminalnymi — szczegóły w §6.",
               "**/me** — opis czynności postaci (np. /me wyjmuje legitymację). Obowiązkowe przy kluczowych akcjach.",
-              "**Hostage RP** — wzięcie zakładnika wymaga jego zgody OOC oraz obecności aktywnego Hosta sesji."
+              "**Zatrzymanie RP** — przymusowe zatrzymanie postaci wymaga jej zgody OOC oraz obecności aktywnego Hosta sesji."
             ]
           }
         ]
@@ -1320,9 +1318,8 @@
               "Wszelkie akcje kryminalne oraz wybór teamu \"Criminal\" wymagają **zgody Hosta sesji** — bez niej to FRP.",
               "Napad na bank: min. **2**, maks. **3** uczestników z obowiązkowym RP Momentem przez /me.",
               "Napad na sklep: maks. **2** osoby; ten sam sklep nie może być napadnięty ponownie przez **30 minut**.",
-              "Atakowanie lub zastraszanie cywilów bez fabularnego uzasadnienia (RDA) jest surowo zabronione.",
-              "Zakaz brania zakładników na terenie komisariatu, szpitala oraz remizy strażackiej.",
-              "Hostage RP: ofiara musi wyrazić zgodę OOC; na miejscu musi być przynajmniej jeden czynny funkcjonariusz.",
+              "Nękanie lub zmuszanie cywilów do działań RP bez ich zgody (PG) jest surowo zabronione.",
+              "Przymusowe zatrzymanie RP: osoba musi wyrazić zgodę OOC; na miejscu musi być przynajmniej jeden czynny funkcjonariusz.",
               "W pościgu może uczestniczyć maks. **3 pojazdy** po stronie uciekających; blokowanie dróg bez powodu = FRP.",
               "Ucieczka przed policją bez teamu \"Heist Crew\" jest dozwolona, o ile nie posiadasz aktywnego listu gończego.",
               "Peacetime 1° — całkowity zakaz akcji kryminalnych i ucieczek przed policją.",
@@ -1338,7 +1335,7 @@
               "Nitro Booster: do **10** pojazdów i pełne przywileje Wspierającego.",
               "Każdy pojazd musi być zarejestrowany w #rejestracja-auta przed wyjazdem na sesję.",
               "Nierealistyczne modyfikacje zawieszenia (np. jazda na ogonie) są zakazane.",
-              "Trafienie \"Laser Blasterem\" policji = efekt paralizatora — obowiązkowe odegranie przez /me.",
+              "Zatrzymanie przez policję = obowiązkowe odegranie sytuacji przez /me i stosowanie się do poleceń funkcjonariusza.",
               "Po 10 mandatach, 5 grzywnach lub 5 aresztach prawo jazdy zostaje zawieszone na **30 dni** — możliwy egzamin przywracający.",
               "Pojazdy służbowe (radiowozy, karetki, wozy strażackie, lawety DOT) zarezerwowane wyłącznie dla odpowiednich służb.",
               "Czerwony **Falcon Scavenger WSP [unmarked] 2021** z tablicą Admin-[numer] należy do Administracji — traktowany jak radiowóz. Podszywanie się = ban.",
@@ -1363,7 +1360,7 @@
               "Trzecia nieusprawiedliwiona nieobecność na sesji = automatyczne usunięcie ze służby.",
               "Każde zgłoszenie w systemie CAD musi zostać obsłużone przez Policję.",
               "EMS i Straż Pożarna pełnią funkcje pomocnicze — nie angażują się w akcje zbrojne po stronie służb.",
-              "DOT kontroluje ruch drogowy i egzekwuje przepisy — użycie broni wyłącznie w samoobronie.",
+              "DOT kontroluje ruch drogowy i egzekwuje przepisy — zawsze działa zgodnie z procedurami służbowymi.",
               "Security Guard i Park Ranger działają w wyznaczonych strefach — pościgi poza jurysdykcją są zakazane."
             ]
           }
@@ -1653,7 +1650,7 @@
           "min": 40
         }
       ],
-      "mini_regulamin": "1. Zawsze priorytetyzuj zagrożenie życia nad innymi obrażeniami.\n2. Karetka pogotowia jest pojazdem uprzywilejowanym — używaj sygnałów.\n3. Nie możesz odmówić pomocy medycznej żadnej osobie.\n4. Każda interwencja musi być odnotowana w systemie CAD.\n5. Ściśle współpracuj z policją na miejscu wypadku.",
+      "mini_regulamin": "1. Udzielasz pomocy medycznej przy wypadkach RP — zawsze reaguj na wezwanie EMS.\n2. Karetka pogotowia jest pojazdem uprzywilejowanym — używaj sygnałów.\n3. Nie możesz odmówić pomocy medycznej żadnej osobie.\n4. Każda interwencja musi być odnotowana w systemie CAD.\n5. Ściśle współpracuj z policją na miejscu wypadku.",
       "max_pracownikow": 8
     },
     {
@@ -2780,7 +2777,7 @@
           "min": 30
         }
       ],
-      "mini_regulamin": "1. Działalność kryminalna musi być zgodna z zasadami FRP.\n2. Nie możesz atakować służb bez uzasadnienia fabularnego (RDA/VDA).\n3. Przestępstwa muszą być RP — z fabułą i motywacją.\n4. Areszty i kary są częścią gry — akceptujesz je bez OOC narzekania.\n5. Nie możesz być jednocześnie w Heist Crew i w służbach.",
+      "mini_regulamin": "1. Działalność kryminalna musi być zgodna z zasadami FRP.\n2. Nie możesz taranować pojazdów służb bez uzasadnienia fabularnego (VDA).\n3. Przestępstwa muszą być RP — z fabułą i motywacją.\n4. Areszty i kary są częścią gry — akceptujesz je bez OOC narzekania.\n5. Nie możesz być jednocześnie w Heist Crew i w służbach.",
       "max_pracownikow": 6
     },
     {
@@ -3546,10 +3543,9 @@
       "POLICJA": [
         "Wypadek drogowy",
         "Pościg",
-        "Strzelanina",
         "Napad",
-        "Bójka",
         "Włamanie",
+        "Zakłócenie porządku",
         "Kontrola rutynowa",
         "Mandat",
         "Areszt",
@@ -3590,12 +3586,11 @@
       "ADMIN": [
         "Wypadek drogowy",
         "Pościg",
-        "Strzelanina",
         "Napad",
-        "Bójka",
+        "Włamanie",
         "Pożar",
         "Pogotowie medyczne",
-        "Włamanie",
+        "Zakłócenie porządku",
         "Inne"
       ],
       "CYWIL": [
@@ -3891,11 +3886,6 @@
         "desc": "Wymuszanie na innej postaci działań bez jej zgody lub odgrywanie rzeczy fizycznie niemożliwych do wykonania."
       },
       {
-        "term": "RDA — Random Player Assault",
-        "color": "🔴",
-        "desc": "Atak na gracza (fizyczny lub pojazdem) bez żadnego uzasadnienia w fabule RP. Zakaz bezwzględny."
-      },
-      {
         "term": "VDA — Vehicle Driver Assault",
         "color": "🔴",
         "desc": "Celowe taranowanie gracza pojazdem bez fabularnego powodu. Zakaz bezwzględny."
@@ -3908,7 +3898,7 @@
       {
         "term": "Fear RP",
         "color": "🟡",
-        "desc": "Gdy inna postać zagraża Ci fizycznie lub kieruje na Ciebie broń — Twoja postać musi reagować realistycznie (strachem, uległością). Ignorowanie zagrożenia = FRP."
+        "desc": "Gdy inna postać Cię zagraża lub przymusza (np. blokuje pojazdem, grozi konsekwencjami IC) — Twoja postać musi reagować realistycznie. Ignorowanie zagrożenia = FRP."
       },
       {
         "term": "IC — In Character",
@@ -3936,9 +3926,9 @@
         "desc": "Komenda do opisania czynności twojej postaci (np. /me otwiera drzwi). Obowiązkowa przy kluczowych momentach."
       },
       {
-        "term": "Hostage RP",
+        "term": "Zatrzymanie RP",
         "color": "🟡",
-        "desc": "Wzięcie zakładnika — wymaga jego wyraźnej zgody OOC oraz obecności co najmniej jednego aktywnego funkcjonariusza."
+        "desc": "Przymusowe zatrzymanie postaci IC (np. blokada pojazdem, ograniczenie wolności) — wymaga wyraźnej zgody zatrzymywanego OOC i obecności aktywnego Hosta sesji."
       },
       {
         "term": "BOLO",

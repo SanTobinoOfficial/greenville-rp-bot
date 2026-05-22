@@ -82,18 +82,17 @@ function buildPojeciaRpEmbed() {
           '**FRP** *(Fail Roleplay)* — scena lub zachowanie niemożliwe w rzeczywistości, psujące klimat sesji.',
           '**MG** *(Metagaming)* — przenoszenie wiedzy spoza gry (Discord, stream) do świata IC.',
           '**PG** *(Powergaming)* — wymuszanie na innej postaci działań bez jej zgody lub odgrywanie niemożliwych czynności.',
-          '**RDA** *(Random Player Assault)* — atak na gracza bez fabularnego uzasadnienia.',
-          '**VDA** *(Vehicle Driver Assault)* — celowe taranowanie gracza pojazdem.',
-          '**CL** *(Combat Logging)* — rozłączenie z grą w trakcie aktywnej akcji RP, by uniknąć konsekwencji.',
+          '**VDA** *(Vehicle Driver Assault)* — celowe taranowanie gracza pojazdem bez powodu fabularnego.',
+          '**CL** *(Combat Logging)* — rozłączenie z grą w trakcie aktywnej sceny RP, by uniknąć konsekwencji.',
         ].join('\n'),
       },
       {
         name: '🟡 Zasady sytuacyjne',
         value: [
-          '**Fear RP** — gdy inna postać Ci zagraża, musisz reagować realistycznie — ignorowanie zagrożenia = FRP.',
+          '**Fear RP** — gdy inna postać Cię przymusza lub blokuje (np. pojazdem), musisz reagować realistycznie — ignorowanie = FRP.',
           '**Void** — cofnięcie i unieważnienie akcji RP. Prawo wyłącznie Staffu — gracze nie mogą go stosować.',
           '**Peacetime** — Pt1°: zakaz całkowity akcji kryminalnych. Pt2°: dodatkowo limit 70 mph + auto-Void wypadków.',
-          '**Hostage RP** — wzięcie zakładnika wymaga jego zgody OOC i obecności aktywnego Hosta sesji.',
+          '**Zatrzymanie RP** — przymusowe zatrzymanie postaci IC wymaga zgody OOC zatrzymywanego i obecności aktywnego Hosta.',
         ].join('\n'),
       },
       {

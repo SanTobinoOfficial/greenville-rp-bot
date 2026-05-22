@@ -68,10 +68,10 @@ const QUESTIONS = [
     tip: 'Cooldown 24h po nieudanym teście. Wykorzystaj ten czas, by lepiej zapoznać się z mini-regulaminem pracy.',
   },
   {
-    q: 'Twój kolega z pracy atakuje klienta bez żadnego powodu fabularnego. To jest...',
-    options: ['Normalna scena akcji RP', 'Fear RP — klient się bał', 'RDA i/lub FRP — naruszenie regulaminu serwera', 'Dozwolone, jeśli klient wyraził zgodę OOC'],
+    q: 'Twój kolega z pracy nęka klienta i wymusza na nim działania bez jego zgody OOC. To jest...',
+    options: ['Normalna scena akcji RP', 'Fear RP — klient się bał', 'PG (Powergaming) i/lub FRP — naruszenie regulaminu serwera', 'Dozwolone, jeśli klient wyraził zgodę IC'],
     answer: 2,
-    tip: 'RDA = atak na gracza bez uzasadnienia fabularnego. FRP = zachowanie niemożliwe w rzeczywistości. Oba są zakazane.',
+    tip: 'PG = wymuszanie działań na innej postaci bez jej zgody. FRP = zachowanie niemożliwe w rzeczywistości. Oba są zakazane.',
   },
   {
     q: 'Które zachowanie jest właściwe przy obsłudze klienta IC?',
