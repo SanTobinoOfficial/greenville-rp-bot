@@ -38,9 +38,9 @@ async function purgeAndSend(channel, embeds, label) {
     log(`  ⚠️  Nie udało się wyczyścić ${label}: ${e.message}`);
   }
 
-  // Wyślij partiami (maks. 10 embedów na wiadomość)
-  for (let i = 0; i < embeds.length; i += 10) {
-    await channel.send({ embeds: embeds.slice(i, i + 10) });
+  // Wysyłaj jeden embed na wiadomość — Discord limit: 6000 znaków łącznie na wiadomość
+  for (const embed of embeds) {
+    await channel.send({ embeds: [embed] });
     await new Promise(r => setTimeout(r, 500));
   }
   log(`  ✅ ${label} — wysłano ${embeds.length} embed(ów)`);
