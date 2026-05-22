@@ -279,6 +279,42 @@ function ofertPrywatneEmbed() {
     .setTimestamp();
 }
 
+function sluzbyEmbed() {
+  return new EmbedBuilder()
+    .setColor(0x3B82F6)
+    .setTitle('🚔 Podania do służb — AURORA Greenville RP')
+    .setDescription(
+      'Chcesz służyć mieszkańcom Greenville? Dołącz do jednej ze służb mundurowych!\n\n' +
+      '**Dostępne służby:**\n' +
+      '> 🚔 **Fox Valley Metro Police Dept.** — patrol, interwencje, pościgi\n' +
+      '> ⭐ **Outagamie County Sheriff\'s Office** — obszary wiejskie i powiatu\n' +
+      '> 🛣️ **Wisconsin State Patrol** — autostrady i drogi stanowe\n' +
+      '> 📡 **Outagamie County Communications** — dyspozytornia 911\n' +
+      '> 🚒 **Greenville Fire Rescue** — pożary, wypadki, ratownictwo\n' +
+      '> 🔥 **Brookmere Fire Department** — straż dzielnicy Brookmere\n' +
+      '> 🚑 **Fox Mountain Medical** — EMS, karetki, SOR\n' +
+      '> 🚧 **Wisconsin DOT** — drogi, lawety, sygnalizacja\n' +
+      '> 🌲 **National Park Service** — Park Ranger, ochrona przyrody\n' +
+      '> 🔐 **Security Guard** — ochrona obiektów prywatnych\n' +
+      '> 🚕 **Taxi Driver** — transport miejski na zlecenie\n\n' +
+      '**Jak złożyć podanie?**\n' +
+      '> **1️⃣ Kliknij przycisk** poniżej i wybierz kategorię służby\n' +
+      '> **2️⃣ Wybierz konkretną jednostkę** z listy\n' +
+      '> **3️⃣ Przeczytaj wymagania i regulamin** danej służby\n' +
+      '> **4️⃣ Wypełnij formularz rekrutacyjny** (podanie tekstowe)\n' +
+      '> **5️⃣ Poczekaj na decyzję HR** — do **48–72 godzin**\n\n' +
+      '**Wymagania ogólne:**\n' +
+      '> ✅ Rola **Mieszkaniec** (weryfikacja Discord + Roblox)\n' +
+      '> ✅ Aktywna **postać RP** (imię, dowód, telefon)\n' +
+      '> ✅ Prawo jazdy odpowiedniej kategorii (dla większości służb)\n' +
+      '> ✅ Czysta historia — brak aktywnych banów i wielu warnów\n' +
+      '> ✅ Aktywność na sesjach — min. kilka godzin historii RP\n\n' +
+      '*Podania rozpatruje Komisja Rekrutacyjna (HR). Wyniki publikowane są na <#wyniki-podań>.*'
+    )
+    .setFooter({ text: 'AURORA Greenville RP — Rekrutacja do Służb' })
+    .setTimestamp();
+}
+
 function zatrudnienieEmbed() {
   return new EmbedBuilder()
     .setColor(0x22C55E)
@@ -405,7 +441,7 @@ client.once('ready', async () => {
       log('  ✅ #oferty-prywatne');
     }
 
-    // ── #dostępne-stanowiska — system zatrudnienia ───────────────────────────
+    // ── #dostępne-stanowiska — prace cywilne (quiz 80%) ─────────────────────
     const stanowiskaCh = find(guild, 'dostepne-stanowiska', 'stanowiska', 'zatrudnienie');
     if (stanowiskaCh) {
       log(`Zatrudnienie → ${stanowiskaCh.name}`);
@@ -419,6 +455,22 @@ client.once('ready', async () => {
       await stanowiskaCh.send({ embeds: [zatrudnienieEmbed()], components: [row] })
         .catch(e => log(`  ⚠️  błąd wysyłki: ${e.message}`));
       log('  ✅ #dostępne-stanowiska');
+    }
+
+    // ── #podania-o-służbę — służby mundurowe ─────────────────────────────────
+    const sluzbyPodaniaCh = find(guild, 'podania-o-sluzbe', 'podania-o-sl');
+    if (sluzbyPodaniaCh) {
+      log(`Podania o służbę → ${sluzbyPodaniaCh.name}`);
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId('job_apply')
+          .setLabel('🚔 Wybierz służbę i aplikuj')
+          .setStyle(ButtonStyle.Primary)
+      );
+      await purge(sluzbyPodaniaCh);
+      await sluzbyPodaniaCh.send({ embeds: [sluzbyEmbed()], components: [row] })
+        .catch(e => log(`  ⚠️  błąd wysyłki: ${e.message}`));
+      log('  ✅ #podania-o-służbę');
     }
 
     log('\n🎉 Wszystkie kanały wypełnione!');
