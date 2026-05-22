@@ -49,10 +49,11 @@ model User {
   proximityMessages ProximityMessage[]
 
   // ── Praca RP ─────────────────────────────────────────────────
-  currentJob      String?
-  jobCategory     String?
-  jobAssignedAt   DateTime?
-  jobCooldownEnd  DateTime?
+  currentJob       String?
+  jobCategory      String?
+  jobAssignedAt    DateTime?
+  jobCooldownEnd   DateTime?
+  jobQuizCooldown  DateTime?   // cooldown 24h po nieudanym teście rekrutacyjnym
 
   // ── Egzamin na prawo jazdy ───────────────────────────────────
   licenseExamLastAttempt   DateTime?   // timestamp ostatniego podejścia

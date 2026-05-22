@@ -279,6 +279,35 @@ function ofertPrywatneEmbed() {
     .setTimestamp();
 }
 
+function zatrudnienieEmbed() {
+  return new EmbedBuilder()
+    .setColor(0x22C55E)
+    .setTitle('💼 System zatrudnienia — AURORA Greenville RP')
+    .setDescription(
+      'Szukasz pracy w Greenville? Zatrudnij się w jednej z dostępnych firm!\n\n' +
+      '**Jak przebiega rekrutacja?**\n' +
+      '> **1️⃣ Wybierz stanowisko** — kliknij przycisk i wybierz pracę z listy\n' +
+      '> **2️⃣ Zapoznaj się z regulaminem** — przeczytaj zasady pracy na danym stanowisku\n' +
+      '> **3️⃣ Wypełnij test wiedzy** — odpowiedz na pytania dotyczące pracy\n' +
+      '> **4️⃣ Uzyskaj min. 80%** — zdaj test i zdobądź automatycznie rolę pracownika\n\n' +
+      '**Ważne informacje:**\n' +
+      '> ⏳ **Cooldown 24 godziny** — po nieudanej próbie odczekaj dobę\n' +
+      '> 📋 Każde stanowisko ma **własny regulamin** — zapoznaj się przed testem\n' +
+      '> 👤 Wymagana rola **Mieszkaniec** oraz aktywna postać RP\n' +
+      '> 🔄 Zmiana pracy możliwa po **złożeniu rezygnacji** przez ticket\n\n' +
+      '**Rodzaje dostępnych prac:**\n' +
+      '> 🍔 Gastronomia (restauracje, kawiarnie, fast-food)\n' +
+      '> 🛒 Handel i sklepy\n' +
+      '> 🚗 Motoryzacja (salony, warsztaty, myjnie)\n' +
+      '> 🏥 Służba zdrowia i finanse\n' +
+      '> 🎓 Edukacja i usługi\n' +
+      '> 🎭 Rozrywka i hotelarstwo\n\n' +
+      '*Na służby mundurowe (policja, EMS, straż) złóż podanie na <#podania-o-służbę>.*'
+    )
+    .setFooter({ text: 'AURORA Greenville RP — Zatrudnienie' })
+    .setTimestamp();
+}
+
 // ─── main ────────────────────────────────────────────────────────────────────
 
 client.once('ready', async () => {
@@ -374,6 +403,22 @@ client.once('ready', async () => {
       log(`Oferty prywatne → ${ofertyCh.name}`);
       await send(ofertyCh, [ofertPrywatneEmbed()]);
       log('  ✅ #oferty-prywatne');
+    }
+
+    // ── #dostępne-stanowiska — system zatrudnienia ───────────────────────────
+    const stanowiskaCh = find(guild, 'dostepne-stanowiska', 'stanowiska', 'zatrudnienie');
+    if (stanowiskaCh) {
+      log(`Zatrudnienie → ${stanowiskaCh.name}`);
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId('job_apply')
+          .setLabel('💼 Wybierz pracę i aplikuj')
+          .setStyle(ButtonStyle.Success)
+      );
+      await purge(stanowiskaCh);
+      await stanowiskaCh.send({ embeds: [zatrudnienieEmbed()], components: [row] })
+        .catch(e => log(`  ⚠️  błąd wysyłki: ${e.message}`));
+      log('  ✅ #dostępne-stanowiska');
     }
 
     log('\n🎉 Wszystkie kanały wypełnione!');

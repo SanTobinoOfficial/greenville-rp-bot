@@ -146,6 +146,8 @@ const BUTTON_HANDLERS = {
   'toggle_notifications':  'notifications/toggleNotifications',
   // ── Giveaway ──────────────────────────────────────────────
   'giveaway_join':         'giveaway/joinGiveaway',
+  // ── Zatrudnienie ──────────────────────────────────────────
+  'job_apply':             'jobs/jobApply',        // bare przycisk w embedzie #dostępne-stanowiska
 };
 
 // Dopasowanie po prefixie (np. ticket_close_1234 → prefix 'ticket')
@@ -154,7 +156,8 @@ const BUTTON_PREFIX_HANDLERS = {
   'driveexam':  'licenses/drivingExamAnswer',     // driveexam_A_0_B, itd.
   'session':    'sessions/sessionButton',
   'license':    'licenses/applyLicense',
-  'job':        'jobs/jobApply',                  // job_apply_[jobId], job_cancel
+  'job':        'jobs/jobApply',                  // job_apply_[jobId], job_cancel, job_quiz_start_[id]
+  'jobquiz':    'jobs/jobQuizAnswer',             // jobquiz_A_0_jobId — odpowiedzi testu
 };
 
 const MODAL_HANDLERS = {

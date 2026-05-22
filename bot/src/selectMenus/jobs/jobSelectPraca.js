@@ -1,4 +1,6 @@
 // Handler: job_select_praca — po wyborze pracy pokazuje embed z regulaminem + przycisk
+// PUBLIC jobs → przycisk "Zacznij test" (quiz 10 pytań, 80%, cooldown 24h)
+// SERVICE jobs → przycisk "Aplikuj" (modal + rozpatrzenie przez Staff)
 const {
   EmbedBuilder,
   ButtonBuilder,
@@ -67,19 +69,41 @@ module.exports = {
       });
     }
 
-    embed
-      .addFields({
-        name: '⚠️ Ważne',
-        value: 'Po wybraniu pracy obowiązuje **2-godzinny cooldown** przed kolejną zmianą.\nKliknij przycisk poniżej, aby zaakceptować regulamin i złożyć podanie.',
+    // Opis procesu zależny od typu pracy
+    if (job.typ === 'PUBLIC' || job.typ === 'CRIMINAL') {
+      embed.addFields({
+        name: '📋 Jak zdobyć tę pracę?',
+        value: [
+          '> 1️⃣ Przeczytaj mini-regulamin powyżej',
+          '> 2️⃣ Kliknij **"Zacznij test"** poniżej',
+          '> 3️⃣ Odpowiedz na **10 pytań** — wymagane min. **8/10 (80%)**',
+          '> 4️⃣ Przy zdaniu: rola pracownika przydzielona automatycznie!',
+          '> ⏳ Oblany test = cooldown **24 godziny**',
+        ].join('\n'),
         inline: false,
-      })
-      .setFooter({ text: 'AURORA Greenville RP • System Pracy' })
+      });
+    } else {
+      embed.addFields({
+        name: '⚠️ Ważne',
+        value: 'Podanie trafi do Staffu i zostanie rozpatrzone w ciągu 48–72 godzin.\nKliknij przycisk poniżej, aby złożyć podanie.',
+        inline: false,
+      });
+    }
+
+    embed
+      .setFooter({ text: 'AURORA Greenville RP • System Zatrudnienia' })
       .setTimestamp();
 
-    const applyBtn = new ButtonBuilder()
-      .setCustomId(`job_apply_${jobId}`)
-      .setLabel('✅ Akceptuję regulamin i aplikuję')
-      .setStyle(ButtonStyle.Success);
+    // Przycisk zależny od typu pracy
+    const applyBtn = (job.typ === 'PUBLIC' || job.typ === 'CRIMINAL')
+      ? new ButtonBuilder()
+          .setCustomId(`job_quiz_start_${jobId}`)
+          .setLabel('📋 Zacznij test rekrutacyjny')
+          .setStyle(ButtonStyle.Success)
+      : new ButtonBuilder()
+          .setCustomId(`job_apply_${jobId}`)
+          .setLabel('📝 Złóż podanie')
+          .setStyle(ButtonStyle.Primary);
 
     const cancelBtn = new ButtonBuilder()
       .setCustomId('job_cancel')
