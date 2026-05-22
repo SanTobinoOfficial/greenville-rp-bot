@@ -46,6 +46,12 @@ const TICKET_CATEGORIES = [
     value: 'skarga',
     emoji: '😡',
   },
+  {
+    label: '🚘 Prośba o dostęp do limitek',
+    description: 'Poproś Administrację o rolę Dostęp do limitek',
+    value: 'limited',
+    emoji: '🚘',
+  },
 ];
 
 module.exports = {

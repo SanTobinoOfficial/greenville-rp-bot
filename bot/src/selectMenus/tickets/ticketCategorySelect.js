@@ -19,6 +19,7 @@ const CATEGORY_LABELS = {
   pojazd:     '🚗 Problem z pojazdem / PJ',
   praca:      '💼 Sprawa dot. pracy / służby',
   skarga:     '😡 Skarga na gracza lub staffa',
+  limited:    '🚘 Prośba o dostęp do limitek',
 };
 
 // Role które mogą widzieć i obsługiwać tickety
