@@ -292,7 +292,7 @@ function ticketEmbed() {
       '> 🚗 **Problem z pojazdem / PJ** — błąd pojazdu lub postaci\n' +
       '> 💼 **Sprawa dot. pracy / służby** — kwestie zatrudnienia\n' +
       '> 😡 **Skarga na gracza lub staffa** — naruszenie regulaminu\n' +
-      '> 🚘 **Prośba o dostęp do limitek** — poproś o rolę limitowanych pojazdów\n\n' +
+      '> 🚘 **Prośba o dostęp do limited** — poproś o rolę dostępu do limited\n\n' +
       '**Jak to działa:**\n' +
       '> 1️⃣ Kliknij przycisk poniżej\n' +
       '> 2️⃣ Wybierz kategorię zgłoszenia\n' +

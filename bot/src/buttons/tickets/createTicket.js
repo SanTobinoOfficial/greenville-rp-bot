@@ -47,8 +47,8 @@ const TICKET_CATEGORIES = [
     emoji: '😡',
   },
   {
-    label: '🚘 Prośba o dostęp do limitek',
-    description: 'Poproś Administrację o rolę Dostęp do limitek',
+    label: '🚘 Prośba o dostęp do limited',
+    description: 'Poproś Administrację o rolę dostępu do limited',
     value: 'limited',
     emoji: '🚘',
   },
