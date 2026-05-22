@@ -136,7 +136,7 @@ const SITUATIONS = [
     title: 'Sytuacja 1 — Świadek wypadku drogowego',
     scenario: 'Jesteś cywilnym mieszkańcem Greenville. Jedziesz autem i nagle widzisz poważny wypadek — dwa rozbite auta, jedna osoba leży nieprzytomna na jezdni. Jesteś pierwszy na miejscu.',
     q: 'Opisz krok po kroku co robisz jako postać RP w tej sytuacji.',
-    placeholder: 'Zatrzymuję auto, włączam awaryjne... dzwonię na 911... opisuję miejsce... nie ruszam poszkodowanego...',
+    placeholder: 'Napisz swoją odpowiedź...',
     minLength: SITUATION_MIN_LENGTH,
   },
   {
@@ -144,7 +144,7 @@ const SITUATIONS = [
     title: 'Sytuacja 2 — Konflikt z innym graczem',
     scenario: 'Podczas sesji RP inny gracz atakuje Twoją postać bez żadnego powodu fabularnego — typowy RDM. Twoja postać "ginie". Jesteś sfrustrowany.',
     q: 'Jak reagujesz? Opisz zarówno co robi Twoja postać (IC) jak i co robisz Ty jako gracz (OOC).',
-    placeholder: 'IC: stosuję NLR — nie wracam na miejsce zdarzenia, nie pamiętam śmierci... OOC: otwieram ticket...',
+    placeholder: 'Napisz swoją odpowiedź...',
     minLength: SITUATION_MIN_LENGTH,
   },
   {
@@ -152,7 +152,7 @@ const SITUATIONS = [
     title: 'Sytuacja 3 — Informacja z Discorda',
     scenario: 'Na kanale #ogłoszenia na Discordzie pojawia się informacja, że policja szuka postaci o imieniu "Marco Ricci" za przemyt. Twoja postać przypadkowo spotkała dzisiaj w grze kogoś, kto przedstawił się jako Marco Ricci.',
     q: 'Czy Twoja postać może teraz zgłosić policji miejsce pobytu Marco? Dlaczego tak lub nie?',
-    placeholder: 'Nie — to byłby metagaming. Moja postać nie "czyta" Discorda. Wiedzę z OOC (Discorda) nie można przekazywać IC...',
+    placeholder: 'Napisz swoją odpowiedź...',
     minLength: SITUATION_MIN_LENGTH,
   },
 ];
