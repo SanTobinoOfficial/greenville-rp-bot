@@ -33,7 +33,7 @@
     "service_dot": "DOT + Staff",
     "voice_view_only": "Wszyscy widzą kanał głosowy, nikt nie może do niego dołączyć",
     "service_security": "Security Guard + Staff",
-    "service_park_ranger": "Park Ranger + Staff"
+    "service_park_ranger": "NPS + Staff"
   },
   "roles": [
     {
@@ -142,11 +142,11 @@
       "note": "Sluzba — Security Guard (ochroniarz)"
     },
     {
-      "name": "Park Ranger",
+      "name": "NPS",
       "color": "#16A34A",
       "hoist": false,
       "mentionable": true,
-      "note": "Sluzba — Park Ranger (straznik parku)"
+      "note": "Sluzba — National Park Service (straznik parku)"
     },
     {
       "name": "DOT",
@@ -1361,7 +1361,7 @@
               "Każde zgłoszenie w systemie CAD musi zostać obsłużone przez Policję.",
               "EMS i Straż Pożarna pełnią funkcje pomocnicze — nie angażują się w akcje zbrojne po stronie służb.",
               "DOT kontroluje ruch drogowy i egzekwuje przepisy — zawsze działa zgodnie z procedurami służbowymi.",
-              "Security Guard i Park Ranger działają w wyznaczonych strefach — pościgi poza jurysdykcją są zakazane."
+              "Security Guard i NPS działają w wyznaczonych strefach — pościgi poza jurysdykcją są zakazane."
             ]
           }
         ]
@@ -2737,7 +2737,7 @@
       "wymagania": [
         "Prawo jazdy kat. B"
       ],
-      "rola_discord": "Park Ranger",
+      "rola_discord": "NPS",
       "typ": "SERVICE",
       "formularz": [
         {
