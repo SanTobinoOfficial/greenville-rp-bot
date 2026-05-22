@@ -279,6 +279,31 @@ function ofertPrywatneEmbed() {
     .setTimestamp();
 }
 
+function ticketEmbed() {
+  return new EmbedBuilder()
+    .setColor(0x00C8FF)
+    .setTitle('🎫 System ticketów — AURORA Greenville RP')
+    .setDescription(
+      'Potrzebujesz pomocy staffu? Masz pytanie, skargę lub problem?\n\n' +
+      '**Dostępne kategorie:**\n' +
+      '> 🆘 **Problem techniczny** — błąd, crash, lag, problem z grą\n' +
+      '> ❓ **Pytanie do staffu** — zapytaj o cokolwiek\n' +
+      '> ⚖️ **Apelacja od kary** — odwołanie od bana, muta lub ostrzeżenia\n' +
+      '> 🚗 **Problem z pojazdem / PJ** — błąd pojazdu lub postaci\n' +
+      '> 💼 **Sprawa dot. pracy / służby** — kwestie zatrudnienia\n' +
+      '> 😡 **Skarga na gracza lub staffa** — naruszenie regulaminu\n' +
+      '> 🚘 **Prośba o dostęp do limitek** — poproś o rolę limitowanych pojazdów\n\n' +
+      '**Jak to działa:**\n' +
+      '> 1️⃣ Kliknij przycisk poniżej\n' +
+      '> 2️⃣ Wybierz kategorię zgłoszenia\n' +
+      '> 3️⃣ Opisz dokładnie problem\n' +
+      '> 4️⃣ Poczekaj na odpowiedź staffu\n\n' +
+      '*Nie nadużywaj ticketów — służą do poważnych spraw.*'
+    )
+    .setFooter({ text: 'AURORA Greenville RP — Support' })
+    .setTimestamp();
+}
+
 function sluzbyEmbed() {
   return new EmbedBuilder()
     .setColor(0x3B82F6)
@@ -352,6 +377,22 @@ client.once('ready', async () => {
     const guild = await client.guilds.fetch(process.env.DISCORD_GUILD_ID);
     await guild.channels.fetch();
     log(`Serwer: ${guild.name}`);
+
+    // ── #otwórz-ticket ───────────────────────────────────────────────────────
+    const ticketCh = find(guild, 'otworz-ticket', 'otwórz-ticket', 'ticket');
+    if (ticketCh) {
+      log(`Tickety → ${ticketCh.name}`);
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId('ticket_create')
+          .setLabel('🎫 Otwórz ticket')
+          .setStyle(ButtonStyle.Primary)
+      );
+      await purge(ticketCh);
+      await ticketCh.send({ embeds: [ticketEmbed()], components: [row] })
+        .catch(e => log(`  ⚠️  błąd wysyłki: ${e.message}`));
+      log('  ✅ #otwórz-ticket');
+    }
 
     // ── Regulamin + pojazd admina ────────────────────────────────────────────
     const regCh = find(guild, 'regulamin');
