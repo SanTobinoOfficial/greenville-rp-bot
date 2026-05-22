@@ -1139,7 +1139,7 @@
       },
       {
         "order": 20,
-        "question": "Jaki kolor ma pojazd Staffu (BullHorn Prancer)?",
+        "question": "Jaki kolor ma Ford Staffu?",
         "answers": [
           "Czerwony",
           "Jasnozielony",
@@ -1304,7 +1304,7 @@
               "Jazda powyżej **131 mph** bez uzasadnienia fabularnego stanowi FRP.",
               "Rozmowy OOC podczas sesji prowadzimy wyłącznie w nawiasach (). Długie dyskusje OOC są zakazane.",
               "Zderzenie z prędkością powyżej **35 mph** wymaga odegrania obrażeń przez /me i wezwania EMS.",
-              "Staff jedzie jasnozielonym BullHorn Prancerem, HR — pomarańczowym BullHorn Prancerem. Ucieczka przed nimi jest zakazana.",
+              "Staff jedzie jasnozielonym Fordem, HR — pomarańczowym Fordem. Ucieczka przed nimi jest zakazana.",
               "Exploiting, cheaty i celowy bug abuse = permanentny ban bez możliwości odwołania.",
               "Tylko Staff może ogłosić Void — gracze nie mają tego uprawnienia.",
               "Autobusy szkolne i pojazdy pocztowe nie wymagają rejestracji w systemie pojazdów."
@@ -1334,7 +1334,7 @@
           {
             "name": "§7. Pojazdy",
             "rules": [
-              "Mieszkaniec: maks. **5 pojazdów** o łącznej wartości do 90 000$ (z wyłączeniem pojazdów limitowanych).",
+              "Mieszkaniec: maks. **5 pojazdów**, każdy o wartości do **90 000$** (z wyłączeniem pojazdów limitowanych).",
               "Wspierający: do **9** pojazdów wraz z dodatkowymi przywilejami.",
               "Nitro Booster: do **10** pojazdów i pełne przywileje Wspierającego.",
               "Każdy pojazd musi być zarejestrowany w #rejestracja-auta przed wyjazdem na sesję.",
