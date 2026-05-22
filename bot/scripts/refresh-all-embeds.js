@@ -61,7 +61,7 @@ function adminCarEmbed() {
     .setColor(0xE74C3C)
     .setTitle('🔴 Pojazd Administracji — AURORA Greenville RP')
     .setDescription(
-      '**Czerwony Durant Camion PPV**\n' +
+      '**Czerwony Falcon Scavenger WSP [unmarked] 2021**\n' +
       'Tablice: **Admin-[numer]**\n\n' +
       '> Pojazd zarezerwowany **wyłącznie** dla członków Administracji.\n' +
       '> Traktowany na drodze jak **radiowóz policyjny** — ucieczka i podszywanie się są **zakazane**.\n\n' +
