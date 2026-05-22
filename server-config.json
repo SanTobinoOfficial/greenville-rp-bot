@@ -1270,20 +1270,20 @@
           {
             "name": "§4. Słownik pojęć RP (znajomość obowiązkowa)",
             "rules": [
-              "**FRP (Fail Roleplay)** — odgrywanie sytuacji niemożliwych w realnym życiu lub sprzecznych z logiką fabularną.",
-              "**NLR (New Life Rule)** — śmierć postaci = reset jej pamięci. Powrót w to samo miejsce przed upływem 5 minut jest zakazany.",
-              "**Metagaming (MG)** — korzystanie z informacji spoza gry (Discord, stream, OOC) wewnątrz RP. Bezwzględny zakaz.",
-              "**Powergaming (PG)** — wymuszanie akcji na innych graczach bez ich zgody lub odgrywanie fizycznie niemożliwych czynności.",
-              "**RDM (Random Death Match)** — atakowanie lub zabijanie graczy bez żadnego uzasadnienia fabularnego.",
-              "**VDM (Vehicle Death Match)** — celowe użycie pojazdu jako broni do potrącania graczy.",
-              "**Combat Logging (CL)** — rozłączenie z grą podczas aktywnej akcji RP w celu uniknięcia konsekwencji. Surowy ban.",
-              "**Fear RP** — postać musi odgrywać strach o życie — broń przy głowie wyklucza walkę i ucieczkę.",
-              "**OOC (Out of Character)** — komunikat poza postacią, pisany w nawiasach () lub przez /b.",
-              "**IC (In Character)** — działanie i mówienie w imieniu postaci podczas aktywnego RP.",
-              "**Void** — unieważnienie akcji RP — prawo wyłącznie Staffu serwera.",
-              "**Peacetime** — tryb ograniczonych akcji kryminalnych — szczegóły w §6.",
-              "**/me** — opis wykonywanej czynności (np. /me wyjmuje dowód). Obowiązkowe przy kluczowych akcjach RP.",
-              "**Hostage RP** — wzięcie zakładnika wymaga jego zgody OOC i obecności aktywnego Hosta sesji."
+              "**FRP (Fail Roleplay)** — scena lub zachowanie niemożliwe w rzeczywistości, psujące klimat RP.",
+              "**NLR (New Life Rule)** — po śmierci postać traci pamięć. Zakaz powrotu w to samo miejsce przez **5 minut** od śmierci.",
+              "**Metagaming (MG)** — przenoszenie wiedzy z zewnątrz gry (Discord, stream, OOC) do świata IC. Ciężkie naruszenie.",
+              "**Powergaming (PG)** — wymuszanie akcji na innym graczu bez zgody lub odgrywanie fizycznie niemożliwych czynności.",
+              "**RDM (Random Death Match)** — atak lub zabójstwo gracza bez żadnego uzasadnienia fabularnego.",
+              "**VDM (Vehicle Death Match)** — celowe taranowanie lub rozjeżdżanie graczy pojazdem.",
+              "**Combat Logging (CL)** — celowe rozłączenie z grą podczas aktywnego konfliktu RP. Skutkuje surowym banem.",
+              "**Fear RP** — broń przy głowie = twoja postać boi się o życie — walka i ucieczka są wykluczone.",
+              "**OOC (Out of Character)** — komunikat poza postacią; używaj nawiasów () lub komendy /b.",
+              "**IC (In Character)** — jesteś swoją postacią — mówisz i działasz w świecie RP.",
+              "**Void** — unieważnienie akcji RP — uprawnienie wyłącznie Staffu serwera.",
+              "**Peacetime** — tryb z ograniczonymi akcjami kryminalnymi — szczegóły w §6.",
+              "**/me** — opis czynności postaci (np. /me wyjmuje legitymację). Obowiązkowe przy kluczowych akcjach.",
+              "**Hostage RP** — wzięcie zakładnika wymaga jego zgody OOC oraz obecności aktywnego Hosta sesji."
             ]
           }
         ]
@@ -3893,92 +3893,92 @@
       {
         "term": "FRP — Fail Roleplay",
         "color": "🔴",
-        "desc": "Zachowanie niezgodne z realizmem RP, niemożliwe w prawdziwym życiu. Zakaz."
+        "desc": "Odgrywanie scen lub zachowań, które byłyby niemożliwe lub absurdalne w rzeczywistości. Narusza klimat serwera."
       },
       {
         "term": "NLR — New Life Rule",
         "color": "🔴",
-        "desc": "Po śmierci postaci zapominasz WSZYSTKO. Zakaz powrotu w to samo miejsce przez 5 min."
+        "desc": "Twoja postać nie pamięta nic z chwili przed śmiercią — nowe życie, brak zemsty. Zakaz powrotu w to samo miejsce przez 5 minut od śmierci."
       },
       {
         "term": "Metagaming (MG)",
         "color": "🔴",
-        "desc": "Używanie wiedzy zdobytej poza grą (Discord, stream, OOC) w IC. Surowy ban."
+        "desc": "Przenoszenie wiedzy z poza gry (Discord, stream, czat OOC) do świata IC. Ciężkie naruszenie zasad fair play."
       },
       {
         "term": "Powergaming (PG)",
         "color": "🔴",
-        "desc": "Narzucanie innym graczom działań bez ich zgody. Zakaz."
+        "desc": "Wymuszanie na innej postaci działań bez jej zgody lub odgrywanie rzeczy fizycznie niemożliwych do wykonania."
       },
       {
         "term": "RDM — Random Death Match",
         "color": "🔴",
-        "desc": "Atakowanie/zabijanie graczy bez uzasadnionego powodu RP. Zakaz."
+        "desc": "Atak lub zabójstwo gracza bez żadnego uzasadnienia w fabule RP. Zakaz."
       },
       {
         "term": "VDM — Vehicle Death Match",
         "color": "🔴",
-        "desc": "Używanie pojazdu jako broni bez uzasadnienia RP. Zakaz."
+        "desc": "Celowe taranowanie lub rozjeżdżanie graczy pojazdem bez fabularnego powodu. Zakaz."
       },
       {
         "term": "Combat Logging (CL)",
         "color": "🔴",
-        "desc": "Wyjście z gry podczas trwającej akcji RP. Surowy ban."
+        "desc": "Celowe rozłączenie się z grą w trakcie konfliktu RP, aby uniknąć konsekwencji. Skutkuje surowym banem."
       },
       {
         "term": "Fear RP",
         "color": "🟡",
-        "desc": "Obowiązek odgrywania strachu o życie w realnym zagrożeniu (broń przy głowie)."
+        "desc": "Gdy ktoś przystawia ci broń do głowy — twoja postać boi się o życie. Walka ani ucieczka nie są możliwe."
       },
       {
         "term": "IC — In Character",
         "color": "🟢",
-        "desc": "Rozmowa i działanie jako postać podczas aktywnego RP."
+        "desc": "Jesteś swoją postacią — wszystko, co mówisz i robisz, dzieje się w świecie RP."
       },
       {
         "term": "OOC — Out of Character",
         "color": "🟢",
-        "desc": "Rozmowa poza postacią. Dozwolona przez nawiasy () lub /b."
+        "desc": "Wychodzisz z roli — piszesz poza postacią. Używaj nawiasów () lub komendy /b."
       },
       {
         "term": "Void",
         "color": "🟡",
-        "desc": "Anulowanie akcji RP. Może wykonać wyłącznie Staff serwera."
+        "desc": "Cofnięcie i unieważnienie akcji RP — decyzja należy wyłącznie do Staffu serwera, nie graczy."
       },
       {
         "term": "Peacetime",
         "color": "🟡",
-        "desc": "Tryb bez akcji kryminalnych. Pt1°: zakaz crime. Pt2°: limit 70mph + void."
+        "desc": "Pt1°: całkowity zakaz akcji kryminalnych i ucieczek. Pt2°: dodatkowo limit 70 mph i automatyczny Void wypadków."
       },
       {
         "term": "/me",
         "color": "🟢",
-        "desc": "Komenda opisująca czynność postaci. Obowiązkowa przy kluczowych akcjach RP."
+        "desc": "Komenda do opisania czynności twojej postaci (np. /me otwiera drzwi). Obowiązkowa przy kluczowych momentach."
       },
       {
         "term": "Hostage RP",
         "color": "🟡",
-        "desc": "Akcja wzięcia zakładnika. Wymaga zgody OOC celu i aktywnego Hosta."
+        "desc": "Wzięcie zakładnika — wymaga jego wyraźnej zgody OOC oraz obecności co najmniej jednego aktywnego funkcjonariusza."
       },
       {
         "term": "BOLO",
         "color": "🔵",
-        "desc": "Be On Look Out — ogłoszenie służb o poszukiwanej osobie/pojeździe."
+        "desc": "Be On Look Out — komunikat służb o osobie lub pojeździe, którego należy poszukiwać."
       },
       {
         "term": "10-4",
         "color": "🔵",
-        "desc": "Potwierdzam / Odbiór (kod radiowy policji)."
+        "desc": "Potwierdzam / Zrozumiałem — standardowy zwrot radiowy oznaczający odbiór komunikatu."
       },
       {
         "term": "10-33",
         "color": "🔴",
-        "desc": "ALARM! Pilna pomoc potrzebna (kod radiowy — najwyższy priorytet)."
+        "desc": "Kod alarmowy najwyższego priorytetu — natychmiastowa pomoc potrzebna na miejscu zdarzenia."
       },
       {
         "term": "10-70",
         "color": "🔴",
-        "desc": "Pościg w toku (kod radiowy policji)."
+        "desc": "Pościg w toku — wszystkie dostępne jednostki proszone o wsparcie."
       }
     ]
   }

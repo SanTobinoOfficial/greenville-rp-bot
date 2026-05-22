@@ -69,56 +69,73 @@ function buildRegulaminEmbeds() {
 /** Embed pojęć RP do kanału #słownik-rp */
 function buildPojeciaRpEmbed() {
   return new EmbedBuilder()
-    .setColor(0x3498DB)
-    .setTitle('📚 Pojęcia Roleplay — AURORA Greenville RP')
-    .setDescription('Znajomość poniższych pojęć jest **obowiązkowa** podczas sesji RP!')
+    .setColor(0x5865F2)
+    .setTitle('📚 Słownik pojęć Roleplay — AURORA Greenville RP')
+    .setDescription(
+      'Poniższe pojęcia obowiązują każdego uczestnika sesji. ' +
+      'Nieznajomość ich znaczenia nie zwalnia z przestrzegania zasad.'
+    )
     .addFields(
       {
-        name: '📖 Pojęcia podstawowe',
+        name: '🔴 Naruszenia — zakaz bezwzględny',
         value: [
-          '**FRP** (Fail Roleplay) — Nieprawidłowe odegranie lub brak odegrania akcji RP.',
-          '**IC** (In Character) — Wszystko dziające się w rozgrywce roleplay.',
-          '**OOC** (Out Of Character) — Wszystko poza grą, w realnym świecie.',
-          '**CL** (Combat Logging) — Wyjście z gry podczas akcji RP, aby uniknąć odpowiedzialności.',
-          '**VDM** (Vehicle Deathmatch) — Umyślne przejeżdżanie osób pojazdem.',
-          '**RDM** (Random Deathmatch) — Strzelanie do przypadkowych osób bez powodu fabularnego.',
-          '**PG** (Power Gaming) — Zmuszanie innych do akcji RP bez ich zgody.',
-          '**MG** (Meta Gaming) — Wykorzystywanie informacji z OOC w IC.',
-          '**NLR** (New Life Rule) — Po śmierci postaci zapominasz poprzednie życie.',
-          '**Fear RP** — Obowiązek odgrywania strachu o życie w zagrażających sytuacjach.',
+          '**FRP** *(Fail Roleplay)* — scena lub zachowanie niemożliwe w rzeczywistości, psujące klimat sesji.',
+          '**NLR** *(New Life Rule)* — po śmierci twoja postać traci pamięć. Zakaz powrotu w to samo miejsce przez **5 min**.',
+          '**MG** *(Metagaming)* — przenoszenie wiedzy spoza gry (Discord, stream) do świata IC.',
+          '**PG** *(Powergaming)* — wymuszanie na innej postaci działań bez jej zgody lub odgrywanie niemożliwych czynności.',
+          '**RDM** *(Random Death Match)* — atak lub zabójstwo gracza bez fabularnego uzasadnienia.',
+          '**VDM** *(Vehicle Death Match)* — celowe taranowanie graczy pojazdem.',
+          '**CL** *(Combat Logging)* — rozłączenie z grą w trakcie aktywnej akcji RP, by uniknąć konsekwencji.',
         ].join('\n'),
       },
       {
-        name: '🚗 Pojęcia drogowe',
+        name: '🟡 Zasady sytuacyjne',
         value: [
-          '**CB** (Cop Baiting) — Prowokowanie policji bez wyraźnego powodu.',
-          '**FD** (Fail Driving) — Jazda w sposób nierealistyczny.',
-          '**Prędkość FRP** — **131 mph** (przekroczenie uznawane jako FRP).',
-          '**Imersja** — Wczucie się w postać i otoczenie.',
-          '**Nieposzanowanie życia** — Narażanie postaci na śmierć lub obrażenia bez uzasadnienia RP.',
+          '**Fear RP** — broń przy głowie = twoja postać boi się o życie. Walka i ucieczka są wykluczone.',
+          '**Void** — cofnięcie i unieważnienie akcji RP. Prawo wyłącznie Staffu — gracze nie mogą go stosować.',
+          '**Peacetime** — Pt1°: zakaz całkowity akcji kryminalnych. Pt2°: dodatkowo limit 70 mph + auto-Void wypadków.',
+          '**Hostage RP** — wzięcie zakładnika wymaga jego zgody OOC i obecności aktywnego Hosta sesji.',
         ].join('\n'),
       },
       {
-        name: '💬 Komendy RP',
+        name: '🟢 Komunikacja IC / OOC',
         value: [
-          '**`/me`** — Opis czynności postaci (np. /me wyjmuje dokumenty).',
-          '**`/do`** — Opis otoczenia / sytuacji (np. /do widać otarcia na karoserii).',
-          '**`/b`** lub **(tekst)** — Komunikat OOC podczas sesji.',
+          '**IC** *(In Character)* — jesteś swoją postacią, mówisz i działasz w świecie RP.',
+          '**OOC** *(Out of Character)* — wychodzisz z roli; pisz w nawiasach () lub komendą /b.',
+          '**`/me`** — opisuje czynność twojej postaci (np. /me otwiera bagażnik). Obowiązkowe przy kluczowych akcjach.',
+          '**`/do`** — opisuje otoczenie lub sytuację (np. /do widać ślady hamowania).',
+        ].join('\n'),
+      },
+      {
+        name: '🔵 Kody radiowe służb',
+        value: [
+          '**BOLO** — Be On Look Out, poszukiwana osoba lub pojazd.',
+          '**10-4** — Potwierdzam / Odbiór.',
+          '**10-33** — Alarm najwyższego priorytetu — natychmiastowa pomoc.',
+          '**10-70** — Pościg w toku.',
+        ].join('\n'),
+      },
+      {
+        name: '🚗 Ograniczenia drogowe',
+        value: [
+          '**Prędkość FRP** — jazda powyżej **131 mph** bez uzasadnienia fabularnego = FRP.',
+          '**Wypadek 35 mph+** — obowiązek odegrania obrażeń przez /me i wezwania EMS.',
+          '**CB** *(Cop Baiting)* — celowe prowokowanie policji bez powodu fabularnego = FRP.',
+          '**FD** *(Fail Driving)* — jazda w sposób nierealistyczny, łamanie podstawowych zasad ruchu bez RP.',
         ].join('\n'),
       },
       {
         name: '💼 Rodzaje pracy',
         value: [
-          '**Prace publiczne** — dostępne dla każdego Mieszkańca bez aplikowania.',
-          '**Prace służbowe** — wymagają złożenia podania i akceptacji przez Komisję Rekrutacyjną.',
-          '**Prace prywatne (Właściciel Firmy)** — prowadzone przez graczy z rolą Właściciel Firmy;',
-          '   ↳ Właściciel może stworzyć **własny regulamin wewnętrzny** firmy (zatwierdzany przez HR/Admin).',
-          '   ↳ Właściciel może przygotować **własny test rekrutacyjny** dla kandydatów (wymaga akceptacji HR/Admin).',
-          '   ↳ Regulamin firmy nie może być sprzeczny z regulaminem serwera.',
+          '**Publiczne** — dostępne dla każdego Mieszkańca od ręki, bez podania.',
+          '**Służbowe** — wymagają złożenia podania i akceptacji przez Komisję Rekrutacyjną.',
+          '**Prywatne** *(Właściciel Firmy)* — prowadzone przez gracza z rolą Właściciel Firmy:',
+          '   ↳ Właściciel może tworzyć **własny regulamin wewnętrzny** firmy *(zatwierdza HR/Admin)*.',
+          '   ↳ Właściciel może układać **własne testy rekrutacyjne** *(wymagają akceptacji HR/Admin)*.',
         ].join('\n'),
       }
     )
-    .setFooter({ text: 'AURORA Greenville RP — Pojęcia RP' })
+    .setFooter({ text: 'AURORA Greenville RP — Słownik RP' })
     .setTimestamp();
 }
 
