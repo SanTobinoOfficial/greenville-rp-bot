@@ -80,18 +80,17 @@ function buildPojeciaRpEmbed() {
         name: '🔴 Naruszenia — zakaz bezwzględny',
         value: [
           '**FRP** *(Fail Roleplay)* — scena lub zachowanie niemożliwe w rzeczywistości, psujące klimat sesji.',
-          '**NLR** *(New Life Rule)* — po śmierci twoja postać traci pamięć. Zakaz powrotu w to samo miejsce przez **5 min**.',
           '**MG** *(Metagaming)* — przenoszenie wiedzy spoza gry (Discord, stream) do świata IC.',
           '**PG** *(Powergaming)* — wymuszanie na innej postaci działań bez jej zgody lub odgrywanie niemożliwych czynności.',
-          '**RDM** *(Random Death Match)* — atak lub zabójstwo gracza bez fabularnego uzasadnienia.',
-          '**VDM** *(Vehicle Death Match)* — celowe taranowanie graczy pojazdem.',
+          '**RDA** *(Random Player Assault)* — atak na gracza bez fabularnego uzasadnienia.',
+          '**VDA** *(Vehicle Driver Assault)* — celowe taranowanie gracza pojazdem.',
           '**CL** *(Combat Logging)* — rozłączenie z grą w trakcie aktywnej akcji RP, by uniknąć konsekwencji.',
         ].join('\n'),
       },
       {
         name: '🟡 Zasady sytuacyjne',
         value: [
-          '**Fear RP** — broń przy głowie = twoja postać boi się o życie. Walka i ucieczka są wykluczone.',
+          '**Fear RP** — gdy inna postać Ci zagraża, musisz reagować realistycznie — ignorowanie zagrożenia = FRP.',
           '**Void** — cofnięcie i unieważnienie akcji RP. Prawo wyłącznie Staffu — gracze nie mogą go stosować.',
           '**Peacetime** — Pt1°: zakaz całkowity akcji kryminalnych. Pt2°: dodatkowo limit 70 mph + auto-Void wypadków.',
           '**Hostage RP** — wzięcie zakładnika wymaga jego zgody OOC i obecności aktywnego Hosta sesji.',

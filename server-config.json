@@ -905,11 +905,11 @@
       "fields": [
         {
           "name": "📖 Pojęcia podstawowe",
-          "value": "**FRP** (Fail Roleplay) — Nieprawidłowe odegranie lub brak odegrania akcji RP.\n**IC** (In Character) — Wszystko dziające się w rozgrywce roleplay.\n**OOC** (Out Of Character) — Wszystko poza grą, w realnym świecie.\n**CL** (Combat Logging) — Wyjście z gry podczas akcji RP, aby uniknąć odpowiedzialności.\n**VDM** (Vehicle Deathmatch) — Umyślne przejeżdżanie osób pojazdem.\n**RDM** (Random Deathmatch) — Strzelanie do przypadkowych osób prowadzące do śmierci.\n**PG** (Power Gaming) — Zmuszanie innych do akcji RP bez ich zgody.\n**MG** (Meta Gaming) — Wykorzystywanie informacji z OOC w IC."
+          "value": "**FRP** (Fail Roleplay) — Nieprawidłowe odegranie lub brak odegrania akcji RP.\n**IC** (In Character) — Wszystko dziające się w rozgrywce roleplay.\n**OOC** (Out Of Character) — Wszystko poza grą, w realnym świecie.\n**CL** (Combat Logging) — Wyjście z gry podczas akcji RP, aby uniknąć odpowiedzialności.\n**VDA** (Vehicle Driver Assault) — Umyślne taranowanie osób pojazdem.\n**PG** (Power Gaming) — Zmuszanie innych do akcji RP bez ich zgody.\n**MG** (Meta Gaming) — Wykorzystywanie informacji z OOC w IC."
         },
         {
           "name": "🚗 Pojęcia drogowe",
-          "value": "**CB** (Cop Baiting) — Prowokowanie policji bez wyraźnego powodu.\n**FD** (Fail Driving) — Jazda w sposób nierealistyczny.\n**Prędkość FRP** — **131 mph** (przekroczenie uznawane jako FRP).\n**Imersja** — Wczucie się w postać i otoczenie.\n**Nieposzanowanie życia** — Narażanie postaci na śmierć lub obrażenia."
+          "value": "**CB** (Cop Baiting) — Prowokowanie policji bez wyraźnego powodu.\n**FD** (Fail Driving) — Jazda w sposób nierealistyczny.\n**Prędkość FRP** — **131 mph** (przekroczenie uznawane jako FRP).\n**Imersja** — Wczucie się w postać i otoczenie.\n**Nieposzanowanie życia** — Narażanie postaci na obrażenia lub niebezpieczne sytuacje bez uzasadnienia RP."
         },
         {
           "name": "💬 Komendy RP",
@@ -952,12 +952,12 @@
       },
       {
         "order": 3,
-        "question": "Co oznacza skrót VDM?",
+        "question": "Co oznacza skrót VDA (Vehicle Driver Assault)?",
         "answers": [
-          "Very Dangerous Move",
-          "Vehicle Deathmatch",
-          "Virtual Driver Mode",
-          "Violation During Mission"
+          "Very Dangerous Area — strefa niebezpieczna",
+          "Celowe taranowanie gracza pojazdem bez uzasadnienia RP",
+          "Wirtualna trasa taksówkarska",
+          "Naruszenie zasad ruchu drogowego"
         ],
         "correct": 1
       },
@@ -1040,12 +1040,12 @@
       },
       {
         "order": 11,
-        "question": "Co oznacza NLR (New Life Rule)?",
+        "question": "Co to jest Combat Logging (CL)?",
         "answers": [
-          "Zakaz gry na nowym koncie",
-          "Po śmierci zapominasz wszystko z poprzedniego życia",
-          "Nowa postać co miesiąc",
-          "Nowe zasady życia RP"
+          "Zapisywanie historii walki w systemie RP",
+          "Celowe wyjście z gry podczas aktywnej akcji RP, by uniknąć konsekwencji",
+          "Logowanie się do gry w trakcie sesji",
+          "Tryb obserwatora podczas sesji"
         ],
         "correct": 1
       },
@@ -1053,10 +1053,10 @@
         "order": 12,
         "question": "Co to jest Fear RP?",
         "answers": [
-          "Odgrywanie strachu przy zagrożeniu życia",
-          "Granie straszydła",
-          "Zakaz atakowania słabszych",
-          "System reputacji"
+          "Realistyczne odgrywanie strachu i uległości, gdy inna postać Ci zagraża",
+          "Granie postaci straszącej innych graczy",
+          "Zakaz angażowania się w sceny akcji",
+          "System reputacji powiązany z historią postaci"
         ],
         "correct": 0
       },
@@ -1106,14 +1106,14 @@
       },
       {
         "order": 17,
-        "question": "Co oznacza RDM?",
+        "question": "Co to jest RDA (Random Driver Assault)?",
         "answers": [
-          "Random Death Match",
-          "Role Damage Multiplier",
-          "Real Dynamic Mode",
-          "Roleplay Death Mode"
+          "Losowe wyścigi bez zgody Hosta",
+          "Atak na gracza pojazdem lub bez uzasadnienia fabularnego",
+          "Rola kierowcy w trybie akcji",
+          "Zgłoszenie incydentu drogowego"
         ],
-        "correct": 0
+        "correct": 1
       },
       {
         "order": 18,
@@ -1271,13 +1271,12 @@
             "name": "§4. Słownik pojęć RP (znajomość obowiązkowa)",
             "rules": [
               "**FRP (Fail Roleplay)** — scena lub zachowanie niemożliwe w rzeczywistości, psujące klimat RP.",
-              "**NLR (New Life Rule)** — po śmierci postać traci pamięć. Zakaz powrotu w to samo miejsce przez **5 minut** od śmierci.",
               "**Metagaming (MG)** — przenoszenie wiedzy z zewnątrz gry (Discord, stream, OOC) do świata IC. Ciężkie naruszenie.",
               "**Powergaming (PG)** — wymuszanie akcji na innym graczu bez zgody lub odgrywanie fizycznie niemożliwych czynności.",
-              "**RDM (Random Death Match)** — atak lub zabójstwo gracza bez żadnego uzasadnienia fabularnego.",
-              "**VDM (Vehicle Death Match)** — celowe taranowanie lub rozjeżdżanie graczy pojazdem.",
+              "**RDA (Random Driver/Player Assault)** — atak na gracza pojazdem lub fizyczny bez żadnego uzasadnienia fabularnego.",
+              "**VDA (Vehicle Driver Assault)** — celowe taranowanie gracza pojazdem bez powodu fabularnego.",
               "**Combat Logging (CL)** — celowe rozłączenie z grą podczas aktywnego konfliktu RP. Skutkuje surowym banem.",
-              "**Fear RP** — broń przy głowie = twoja postać boi się o życie — walka i ucieczka są wykluczone.",
+              "**Fear RP** — groźba lub przymus ze strony innej postaci = Twoja postać nie może ignorować sytuacji — musisz reagować realistycznie.",
               "**OOC (Out of Character)** — komunikat poza postacią; używaj nawiasów () lub komendy /b.",
               "**IC (In Character)** — jesteś swoją postacią — mówisz i działasz w świecie RP.",
               "**Void** — unieważnienie akcji RP — uprawnienie wyłącznie Staffu serwera.",
@@ -1321,7 +1320,7 @@
               "Wszelkie akcje kryminalne oraz wybór teamu \"Criminal\" wymagają **zgody Hosta sesji** — bez niej to FRP.",
               "Napad na bank: min. **2**, maks. **3** uczestników z obowiązkowym RP Momentem przez /me.",
               "Napad na sklep: maks. **2** osoby; ten sam sklep nie może być napadnięty ponownie przez **30 minut**.",
-              "Atakowanie cywilów bez fabularnego uzasadnienia (RDM) jest surowo zabronione.",
+              "Atakowanie lub zastraszanie cywilów bez fabularnego uzasadnienia (RDA) jest surowo zabronione.",
               "Zakaz brania zakładników na terenie komisariatu, szpitala oraz remizy strażackiej.",
               "Hostage RP: ofiara musi wyrazić zgodę OOC; na miejscu musi być przynajmniej jeden czynny funkcjonariusz.",
               "W pościgu może uczestniczyć maks. **3 pojazdy** po stronie uciekających; blokowanie dróg bez powodu = FRP.",
@@ -1399,7 +1398,7 @@
             "name": "§10. Kary i sankcje Discord",
             "rules": [
               "Standardowa ścieżka kar: **Upomnienie → Mute → Kick → Ban czasowy → Ban permanentny**.",
-              "Poważne naruszenia (exploit, VDM, Combat Logging) = natychmiastowy ban bez ostrzeżenia.",
+              "Poważne naruszenia (exploit, VDA, Combat Logging) = natychmiastowy ban bez ostrzeżenia.",
               "**3 aktywne ostrzeżenia** → automatyczny mute na 1 godzinę.",
               "**5 aktywnych ostrzeżeń** → automatyczny ban o czasie określonym przez Administratora.",
               "Kary RP: mandat (maks. 5 000$), grzywna sądowa (maks. 50 000$), areszt (maks. 24h RP), zawieszenie PJ (30 dni).",
@@ -2781,7 +2780,7 @@
           "min": 30
         }
       ],
-      "mini_regulamin": "1. Działalność kryminalna musi być zgodna z zasadami FRP.\n2. Nie możesz atakować służb bez powodu (RDM/VDM).\n3. Przestępstwa muszą być RP — z fabułą i motywacją.\n4. Areszty i kary są częścią gry — akceptujesz je bez OOC narzekania.\n5. Nie możesz być jednocześnie w Heist Crew i w służbach.",
+      "mini_regulamin": "1. Działalność kryminalna musi być zgodna z zasadami FRP.\n2. Nie możesz atakować służb bez uzasadnienia fabularnego (RDA/VDA).\n3. Przestępstwa muszą być RP — z fabułą i motywacją.\n4. Areszty i kary są częścią gry — akceptujesz je bez OOC narzekania.\n5. Nie możesz być jednocześnie w Heist Crew i w służbach.",
       "max_pracownikow": 6
     },
     {
@@ -3882,11 +3881,6 @@
         "desc": "Odgrywanie scen lub zachowań, które byłyby niemożliwe lub absurdalne w rzeczywistości. Narusza klimat serwera."
       },
       {
-        "term": "NLR — New Life Rule",
-        "color": "🔴",
-        "desc": "Twoja postać nie pamięta nic z chwili przed śmiercią — nowe życie, brak zemsty. Zakaz powrotu w to samo miejsce przez 5 minut od śmierci."
-      },
-      {
         "term": "Metagaming (MG)",
         "color": "🔴",
         "desc": "Przenoszenie wiedzy z poza gry (Discord, stream, czat OOC) do świata IC. Ciężkie naruszenie zasad fair play."
@@ -3897,14 +3891,14 @@
         "desc": "Wymuszanie na innej postaci działań bez jej zgody lub odgrywanie rzeczy fizycznie niemożliwych do wykonania."
       },
       {
-        "term": "RDM — Random Death Match",
+        "term": "RDA — Random Player Assault",
         "color": "🔴",
-        "desc": "Atak lub zabójstwo gracza bez żadnego uzasadnienia w fabule RP. Zakaz."
+        "desc": "Atak na gracza (fizyczny lub pojazdem) bez żadnego uzasadnienia w fabule RP. Zakaz bezwzględny."
       },
       {
-        "term": "VDM — Vehicle Death Match",
+        "term": "VDA — Vehicle Driver Assault",
         "color": "🔴",
-        "desc": "Celowe taranowanie lub rozjeżdżanie graczy pojazdem bez fabularnego powodu. Zakaz."
+        "desc": "Celowe taranowanie gracza pojazdem bez fabularnego powodu. Zakaz bezwzględny."
       },
       {
         "term": "Combat Logging (CL)",
@@ -3914,7 +3908,7 @@
       {
         "term": "Fear RP",
         "color": "🟡",
-        "desc": "Gdy ktoś przystawia ci broń do głowy — twoja postać boi się o życie. Walka ani ucieczka nie są możliwe."
+        "desc": "Gdy inna postać zagraża Ci fizycznie lub kieruje na Ciebie broń — Twoja postać musi reagować realistycznie (strachem, uległością). Ignorowanie zagrożenia = FRP."
       },
       {
         "term": "IC — In Character",

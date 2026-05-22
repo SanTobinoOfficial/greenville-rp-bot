@@ -68,10 +68,10 @@ const QUESTIONS = [
     tip: 'Cooldown 24h po nieudanym teście. Wykorzystaj ten czas, by lepiej zapoznać się z mini-regulaminem pracy.',
   },
   {
-    q: 'Twój kolega z pracy bije klienta bez żadnego powodu fabularnego. To jest...',
-    options: ['Normalna scena akcji RP', 'Fear RP — klient się bał', 'RDM i/lub FRP — naruszenie regulaminu serwera', 'Dozwolone, jeśli klient wyraził zgodę OOC'],
+    q: 'Twój kolega z pracy atakuje klienta bez żadnego powodu fabularnego. To jest...',
+    options: ['Normalna scena akcji RP', 'Fear RP — klient się bał', 'RDA i/lub FRP — naruszenie regulaminu serwera', 'Dozwolone, jeśli klient wyraził zgodę OOC'],
     answer: 2,
-    tip: 'RDM = atak bez uzasadnienia fabularnego. FRP = zachowanie niemożliwe w rzeczywistości. Oba są zakazane.',
+    tip: 'RDA = atak na gracza bez uzasadnienia fabularnego. FRP = zachowanie niemożliwe w rzeczywistości. Oba są zakazane.',
   },
   {
     q: 'Które zachowanie jest właściwe przy obsłudze klienta IC?',
@@ -98,10 +98,10 @@ const QUESTIONS = [
     tip: 'OOC: piszesz jako gracz, nie postać. Używaj oszczędnie, np. przy realnym problemie technicznym.',
   },
   {
-    q: 'Co to jest "NLR" (New Life Rule)?',
-    options: ['Zakaz zmiany pracy częściej niż raz dziennie', 'Po śmierci postać traci pamięć — zakaz powrotu w to samo miejsce przez 5 minut', 'Nowa postać nie może pracować przez pierwsze 24 godziny', 'Zakaz rozmowy z graczniem, który Cię zabił'],
-    answer: 1,
-    tip: 'NLR: śmierć = reset pamięci. 5 minut zakaz powrotu. Pamiętanie okoliczności śmierci = łamanie NLR.',
+    q: 'Co to jest "Void" i kto może go ogłosić?',
+    options: ['Cofnięcie akcji RP — może ogłosić każdy gracz', 'Przerwa techniczna — ogłasza Host', 'Unieważnienie akcji RP — wyłączne uprawnienie Staffu', 'Koniec sesji — decyduje Host lub Admin'],
+    answer: 2,
+    tip: 'Void = unieważnienie sceny RP. Może ogłosić TYLKO Staff. Gracz stosujący Void samodzielnie łamie regulamin.',
   },
 ];
 
