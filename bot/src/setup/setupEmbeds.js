@@ -62,11 +62,11 @@ async function setupEmbeds(guild) {
   // ── 2. #regulamin — pełny regulamin (6 embedów) ─────────────────────────────
   const regulaminChannel = ch(guild, '❗│regulamin');
   if (regulaminChannel) {
+    // Jeden embed na wiadomość — Discord limit 6000 znaków łącznie na wiadomość
     const embeds = buildRegulaminEmbeds();
-    // Discord pozwala maks. 10 embedów na wiadomość — wysyłamy partiami
-    for (let i = 0; i < embeds.length; i += 10) {
-      await regulaminChannel.send({ embeds: embeds.slice(i, i + 10) }).catch(e =>
-        logger.error('Błąd wysyłania regulaminu (partia):', e)
+    for (const embed of embeds) {
+      await regulaminChannel.send({ embeds: [embed] }).catch(e =>
+        logger.error('Błąd wysyłania regulaminu:', e)
       );
     }
     logger.info('  ✅ #regulamin');

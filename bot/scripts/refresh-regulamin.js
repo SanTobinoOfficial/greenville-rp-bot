@@ -16,8 +16,28 @@ for (const p of envPaths) {
   if (!res.error && process.env.DISCORD_TOKEN) break;
 }
 
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const { buildRegulaminEmbeds, buildPojeciaRpEmbed } = require('../src/setup/regulamin');
+
+// Podmień URL po wgraniu zdjęcia pojazdu na Discord CDN / Imgur
+const ADMIN_CAR_IMG = process.env.ADMIN_CAR_IMAGE_URL || null;
+
+function buildAdminCarEmbed() {
+  const e = new EmbedBuilder()
+    .setColor(0xE74C3C)
+    .setTitle('🔴 Pojazd Administracji — AURORA Greenville RP')
+    .setDescription(
+      '**Czerwony Durant Camion PPV**\n' +
+      'Tablice: **Admin-[numer]**\n\n' +
+      '> Pojazd używany **wyłącznie** przez członków Administracji serwera.\n' +
+      '> Traktowany jak **radiowóz policyjny** — ucieczka i podszywanie się **zabronione**.\n\n' +
+      '⛔ **Podszywanie się pod Administrację = PERMANENTNY BAN** ⛔'
+    )
+    .setFooter({ text: 'AURORA Greenville RP — Pojazdy Administracji' })
+    .setTimestamp();
+  if (ADMIN_CAR_IMG) e.setImage(ADMIN_CAR_IMG);
+  return e;
+}
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 const log = msg => console.log(`[${new Date().toTimeString().slice(0, 8)}] ${msg}`);
@@ -63,7 +83,8 @@ client.once('ready', async () => {
     );
     if (regulaminCh) {
       log(`Znaleziono: ${regulaminCh.name}`);
-      await purgeAndSend(regulaminCh, buildRegulaminEmbeds(), '#regulamin');
+      const regEmbeds = [...buildRegulaminEmbeds(), buildAdminCarEmbed()];
+      await purgeAndSend(regulaminCh, regEmbeds, '#regulamin');
     } else {
       log('⚠️  Nie znaleziono kanału #regulamin');
     }

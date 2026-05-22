@@ -1396,21 +1396,7 @@
         "embed": 8,
         "fields": [
           {
-            "name": "§10. System ekonomii RP",
-            "rules": [
-              "Każdy Mieszkaniec dysponuje **portfelem** (gotówka) oraz **kontem bankowym** (przelewy, automatyczne potrącenia).",
-              "Wynagrodzenia naliczane są automatycznie zgodnie ze stawką danego stanowiska.",
-              "Mandaty i grzywny sądowe potrącane są automatycznie z konta bankowego.",
-              "Kaucja za zwolnienie z aresztu pobierana jest automatycznie.",
-              "Transakcje między graczami (sprzedaż, usługi, wynajem) należy odgrywać przez /me z podaniem kwoty.",
-              "Korumpowanie funkcjonariuszy policji jest FRP — kara dotyczy obu stron transakcji.",
-              "Bug abuse w celu pomnożenia środków = permanentny ban.",
-              "Majątek postaci powinien wynikać z jej historii RP i wykonywanej pracy.",
-              "Wypłata i przelew bankowy możliwe przez komendy /portfel i /przelew."
-            ]
-          },
-          {
-            "name": "§11. Kary i sankcje Discord",
+            "name": "§10. Kary i sankcje Discord",
             "rules": [
               "Standardowa ścieżka kar: **Upomnienie → Mute → Kick → Ban czasowy → Ban permanentny**.",
               "Poważne naruszenia (exploit, VDM, Combat Logging) = natychmiastowy ban bez ostrzeżenia.",
@@ -1429,7 +1415,7 @@
         "embed": 9,
         "fields": [
           {
-            "name": "§12. Postanowienia końcowe",
+            "name": "§11. Postanowienia końcowe",
             "rules": [
               "Regulamin v6.0 wchodzi w życie z chwilą publikacji i zastępuje wszystkie wcześniejsze wersje.",
               "Administracja zastrzega sobie prawo do modyfikacji regulaminu w dowolnym czasie.",
