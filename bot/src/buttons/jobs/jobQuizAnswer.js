@@ -40,7 +40,7 @@ module.exports = {
     }
 
     // Zarejestruj odpowiedź
-    const { isCorrect, tip } = answerQuestion(session, answerLabel);
+    const { isCorrect } = answerQuestion(session, answerLabel);
 
     // ── Koniec testu ─────────────────────────────────────────────────────────
     if (isFinished(session)) {
@@ -118,10 +118,8 @@ module.exports = {
     }
 
     // ── Następne pytanie ─────────────────────────────────────────────────────
-    const feedback = isCorrect ? '✅ Poprawna odpowiedź!' : `❌ Błąd. Wskazówka: *${tip}*`;
-
     const next = buildNextQuestion(session);
-    next.content = feedback;
+    next.content = '';
 
     return interaction.update(next);
   },
