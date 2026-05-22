@@ -128,6 +128,13 @@
       "note": "Booster serwera — do 10 pojazdów + wszystkie przywileje Wspierającego"
     },
     {
+      "name": "Dostęp do limitek",
+      "color": "#F97316",
+      "hoist": false,
+      "mentionable": false,
+      "note": "Dostęp do pojazdów limitowanych — przyznawana przez Administrację na prośbę w tickecie"
+    },
+    {
       "name": "Taksówkarz",
       "color": "#EAB308",
       "hoist": false,
@@ -1333,6 +1340,7 @@
               "Mieszkaniec: maks. **5 pojazdów**, każdy o wartości do **90 000$** (z wyłączeniem pojazdów limitowanych).",
               "Wspierający: do **9** pojazdów wraz z dodatkowymi przywilejami.",
               "Nitro Booster: do **10** pojazdów i pełne przywileje Wspierającego.",
+              "Pojazdy limitowane dostępne wyłącznie po uzyskaniu roli **Dostęp do limitek** — złóż prośbę w tickecie do Administracji.",
               "Każdy pojazd musi być zarejestrowany w #rejestracja-auta przed wyjazdem na sesję.",
               "Nierealistyczne modyfikacje zawieszenia (np. jazda na ogonie) są zakazane.",
               "Zatrzymanie przez policję = obowiązkowe odegranie sytuacji przez /me i stosowanie się do poleceń funkcjonariusza.",
