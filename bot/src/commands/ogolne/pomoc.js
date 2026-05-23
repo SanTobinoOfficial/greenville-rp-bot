@@ -56,6 +56,7 @@ const CMD_META = {
   'avatar':              { opis: 'Wyświetl avatar gracza',                              kat: '📋 Ogólne' },
   'serwer-info':         { opis: 'Informacje o serwerze Discord',                      kat: '📋 Ogólne' },
   'regulamin':           { opis: 'Pokaż regulamin serwera',                            kat: '📋 Ogólne' },
+  'slownik':             { opis: 'Słownik terminologii RP (FRP, MG, BOLO...)',          kat: '📋 Ogólne' },
   'zglos':               { opis: 'Zgłoś problem lub otwórz ticket',                    kat: '📋 Ogólne' },
 };
 
