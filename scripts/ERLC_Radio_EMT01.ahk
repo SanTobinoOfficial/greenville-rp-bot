@@ -88,21 +88,14 @@ Gui, Radio:Font, s7 c555577, Consolas
 Gui, Radio:Add, Text, x8 y362 w244 h14 BackgroundColor%BG% Center, Ctrl+F12 pokaż/ukryj  •  NumpadDot = wolny input
 
 Gui, Radio:Show, x20 y100 w260 h380 NoActivate
-
-; Zarejestruj główne okno do drag
-OnMessage(0x201, "WM_LBUTTONDOWN")
-
 return
 
 ; ============================================================
-;  DRAG — okno bez caption
+;  DRAG — kliknij pasek tytułowy żeby przesunąć okno
 ; ============================================================
 DragBar:
-WM_LBUTTONDOWN(wParam, lParam, msg, hwnd) {
-    global hMain
-    if (hwnd = hMain || DllCall("IsChild", "Ptr", hMain, "Ptr", hwnd))
-        PostMessage, 0xA1, 2, 0,, ahk_id %hMain%
-}
+    PostMessage, 0xA1, 2,,, A
+return
 
 ; ============================================================
 ;  ZAMKNIJ GUI
