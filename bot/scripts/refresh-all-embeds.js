@@ -428,22 +428,55 @@ function erlcRegulamiEmbed() {
 function erlcLiveryGuideEmbed() {
   return new EmbedBuilder()
     .setColor(0xF59E0B)
-    .setTitle('🎨 Liwerki Wisconsin RP — Jak dodać?')
+    .setTitle('🎨 Liwerki Wisconsin RP — Zasoby i instrukcja')
     .setDescription(
-      '**Jak dodać liwerek Wisconsin w ER:LC?**\n```\n1. Wejdź do pojazdu → Customize\n2. Wybierz zakładkę Liveries\n3. Wpisz ID grafiki Roblox (Decal ID)\n4. Zatwierdź\n```\n\n' +
-      '**Gdzie szukać Wisconsin liwerków?**\n' +
-      '> 🔎 **PRC Discord** → #livery-designs (szukaj: Wisconsin)\n' +
-      '> 🔎 **Roblox Library** → "Wisconsin State Patrol livery"\n' +
-      '> 📸 **#liwerki-galeria** — liwerki od graczy naszego serwera\n\n' +
-      '**Wymagania liwerków:**\n' +
-      '✅ **WSP:** niebieski/szary + logo WSP\n' +
-      '✅ **OCSD:** tan/brąz + herb Outagamie County\n' +
-      '✅ **APD:** granatowy + logo Appleton PD\n' +
-      '✅ **EMS:** biały/czerwony + Gold Cross / Fox Valley EMS\n' +
-      '✅ **Fire:** czerwony + numer jednostki AFD\n\n' +
-      '*Własny liwerek? Prześlij Decal ID w #liwerki-galeria do zatwierdzenia.*'
+      '**Jak dodać liwerek Wisconsin w ER:LC?**\n```\n1. Wejdź do pojazdu → Customize\n2. Wybierz zakładkę Liveries\n3. Wpisz ID grafiki Roblox (Decal ID)\n4. Zatwierdź\n```'
     )
-    .setFooter({ text: 'AURORA ER:LC — Instrukcja liwerków Wisconsin' })
+    .addFields(
+      {
+        name: '🗂️ Wzorce wizualne Wisconsin (znalezione w internecie)',
+        value: [
+          '> Poniższe paczki zawierają **oficjalne wzorce liwerków** Wisconsin — kolory, loga, układ.',
+          '> Użyj ich jako referencji przy tworzeniu własnego Roblox Decala.',
+          '> 🚔 **Wisconsin State Patrol** — [pobierz wzorzec (LCPDFR)](https://www.lcpdfr.com/downloads/gta5mods/vehiclestextures/52396-wisconsin-state-patrol-livery-pack/)',
+          '> 🚔 **WSP 2020 FPIU** — [pobierz wzorzec (LCPDFR)](https://www.lcpdfr.com/downloads/gta5mods/vehiclestextures/46820-wisconsin-state-patrol-2020-fpiu-livery/)',
+          '> 🏛️ **Outagamie County Sheriff** — [pobierz wzorzec (LCPDFR)](https://www.lcpdfr.com/downloads/gta5mods/vehiclestextures/46925-outagamie-county-sheriff-wisconsin-2k-4k-livery-pack/)',
+          '> 🚓 **Appleton Police Department** — [pobierz wzorzec (LCPDFR)](https://www.lcpdfr.com/downloads/gta5mods/vehiclestextures/46857-appleton-police-wisconsin-2k4k-livery-pack/)',
+        ].join('\n'),
+        inline: false,
+      },
+      {
+        name: '🎮 Referencja z gry Greenville (Roblox)',
+        value: [
+          '> Wiki gry Greenville pokazuje **dokładny wygląd** WSP, OCSO i FVMPD w Roblox.',
+          '> 📖 [WSP w Greenville Wiki](https://greenville-wisconsin.fandom.com/wiki/Wisconsin_State_Patrol)',
+          '> 📖 [Wszystkie służby Greenville](https://greenville-wisconsin.fandom.com/wiki/Category:Law_Enforcement)',
+        ].join('\n'),
+        inline: false,
+      },
+      {
+        name: '🔎 Gdzie znaleźć gotowe Decal ID dla ER:LC',
+        value: [
+          '> 🛒 **[ERLCX.com](https://erlcx.com/?category=liveries)** — marketplace liwerków ER:LC (szukaj: Wisconsin / State Patrol / Sheriff)',
+          '> 💬 **PRC Discord** → kanał #livery-designs (Police Roleplay Community)',
+          '> 💬 **ER:LC Official Discord** → kanały z liwerkami',
+          '> 📸 **#liwerki-galeria** — liwerki od graczy naszego serwera',
+        ].join('\n'),
+        inline: false,
+      },
+      {
+        name: '✅ Wymagania kolorystyczne liwerków',
+        value: [
+          '**WSP:** granatowy/srebrny + logo Wisconsin State Patrol',
+          '**OCSD:** tan/khaki + herb Outagamie County',
+          '**APD:** granatowy + napis "APPLETON POLICE"',
+          '**EMS:** biały/czerwony + Gold Cross lub Fox Valley EMS',
+          '**Fire:** czerwony + numer jednostki (Appleton Fire #1)',
+        ].join('\n'),
+        inline: false,
+      }
+    )
+    .setFooter({ text: 'AURORA ER:LC — Liwerki Wisconsin | Źródła: LCPDFR.com, Greenville Wiki, ERLCX.com' })
     .setTimestamp();
 }
 
