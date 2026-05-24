@@ -6,6 +6,8 @@ const { COLORS } = require('../../utils/embed');
 // Kategorie komend i ich opisy — mapowanie nazwy komendy → opis + kategoria
 const CMD_META = {
   // ── Postać RP ──
+  'me':                  { opis: 'Opisz czynność swojej postaci (akcja IC/RP)',          kat: '🪪 Postać RP' },
+  'do':                  { opis: 'Opisz otoczenie lub stan sceny (środowisko RP)',        kat: '🪪 Postać RP' },
   'dowod':               { opis: 'Wyświetl swój dowód osobisty',                        kat: '🪪 Postać RP' },
   'profil':              { opis: 'Pełny profil gracza RP',                              kat: '🪪 Postać RP' },
   'statystyki':          { opis: 'Statystyki RP (warny, mandaty, pojazdy...)',           kat: '🪪 Postać RP' },
