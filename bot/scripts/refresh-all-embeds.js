@@ -369,6 +369,121 @@ function zatrudnienieEmbed() {
     .setTimestamp();
 }
 
+function erlcInfoEmbed() {
+  return new EmbedBuilder()
+    .setColor(0x0EA5E9)
+    .setTitle('🎮 ER:LC — Wisconsin RP | AURORA')
+    .setDescription(
+      'Witaj w sekcji **Emergency Response: Liberty County** na serwerze AURORA!\n\n' +
+      'Nasz RP bazuje na **stanie Wisconsin** — obszarze **Outagamie County** i aglomeracji **Fox Valley**.\n\n' +
+      '**Dostępne agencje:**\n' +
+      '> 🚔 **Wisconsin State Patrol (WSP)** — patrol stanowych tras i autostrad\n' +
+      '> 🏛️ **Outagamie County Sheriff (OCSD)** — patrol hrabstwa\n' +
+      '> 🚓 **Appleton Police Department (APD)** — policja miejska\n' +
+      '> 🚑 **Fox Valley EMS** — Gold Cross Ambulance, ratownictwo\n' +
+      '> 🚒 **Appleton Fire Department (AFD)** — Stacja #1\n\n' +
+      '**Jak dołączyć?**\n' +
+      '> 1. Przejdź na 📝 **#dołącz-do-agencji**\n' +
+      '> 2. Uzyskaj rolę **ER:LC Member** + rola agencji\n' +
+      '> 3. Sesje zarządzane przez **Melonly** — link w #linki-erlc\n\n' +
+      '**Obszar działania:** Outagamie County, Wisconsin | Fox Valley | I-41 / US-10'
+    )
+    .addFields(
+      { name: '📡 Kanały radiowe IC', value: '**WSP:** Kanał 1 | **OCSD:** Kanał 2 | **APD:** Kanał 3 | **EMS/Fire:** Kanał 4', inline: false }
+    )
+    .setFooter({ text: 'AURORA Greenville RP — Sekcja ER:LC Wisconsin' })
+    .setTimestamp();
+}
+
+function erlcRegulamiEmbed() {
+  return new EmbedBuilder()
+    .setColor(0xEF4444)
+    .setTitle('❗ Regulamin ER:LC — Wisconsin RP')
+    .addFields(
+      {
+        name: '§1 — Zasady ogólne',
+        value: '1. Obowiązuje pełny RP — FRP, NLR, metagaming są zakazane.\n2. Radio IC używaj wyłącznie w służbie.\n3. Szanuj innych graczy — trolling = ban.',
+        inline: false,
+      },
+      {
+        name: '§2 — Pojazdy służbowe',
+        value: '1. Używaj wyłącznie pojazdów swojej agencji.\n2. Liwerki muszą być zgodne z Wisconsin.\n3. Nie zostawiaj pojazdu bez IC powodu.',
+        inline: false,
+      },
+      {
+        name: '§3 — Zasady agencji',
+        value: '**WSP:** tylko drogi stanowe i I-41\n**OCSD:** drogi hrabstwa poza Appleton\n**APD:** Appleton city limits\n**EMS/Fire:** priorytet ratownictwa — nie ścigaj się z LEO',
+        inline: false,
+      },
+      {
+        name: '§4 — Melonly',
+        value: '1. Sesje zarządzane przez Melonly — wymagane konto.\n2. Nieaktywność >14 dni bez urlopu = usunięcie z agencji.',
+        inline: false,
+      }
+    )
+    .setFooter({ text: 'AURORA Greenville RP — Regulamin ER:LC' })
+    .setTimestamp();
+}
+
+function erlcLiveryGuideEmbed() {
+  return new EmbedBuilder()
+    .setColor(0xF59E0B)
+    .setTitle('🎨 Liwerki Wisconsin RP — Jak dodać?')
+    .setDescription(
+      '**Jak dodać liwerek Wisconsin w ER:LC?**\n```\n1. Wejdź do pojazdu → Customize\n2. Wybierz zakładkę Liveries\n3. Wpisz ID grafiki Roblox (Decal ID)\n4. Zatwierdź\n```\n\n' +
+      '**Gdzie szukać Wisconsin liwerków?**\n' +
+      '> 🔎 **PRC Discord** → #livery-designs (szukaj: Wisconsin)\n' +
+      '> 🔎 **Roblox Library** → "Wisconsin State Patrol livery"\n' +
+      '> 📸 **#liwerki-galeria** — liwerki od graczy naszego serwera\n\n' +
+      '**Wymagania liwerków:**\n' +
+      '✅ **WSP:** niebieski/szary + logo WSP\n' +
+      '✅ **OCSD:** tan/brąz + herb Outagamie County\n' +
+      '✅ **APD:** granatowy + logo Appleton PD\n' +
+      '✅ **EMS:** biały/czerwony + Gold Cross / Fox Valley EMS\n' +
+      '✅ **Fire:** czerwony + numer jednostki AFD\n\n' +
+      '*Własny liwerek? Prześlij Decal ID w #liwerki-galeria do zatwierdzenia.*'
+    )
+    .setFooter({ text: 'AURORA ER:LC — Instrukcja liwerków Wisconsin' })
+    .setTimestamp();
+}
+
+function erlcJoinAgencyEmbed() {
+  return new EmbedBuilder()
+    .setColor(0x0EA5E9)
+    .setTitle('📝 Dołącz do agencji ER:LC')
+    .setDescription(
+      'Aby dołączyć do agencji Wisconsin RP, otwórz ticket w kategorii **💼 Sprawa dot. pracy / służby** i napisz:\n\n' +
+      '> • Wybrana agencja (WSP / OCSD / APD / EMS / Fire)\n' +
+      '> • Nick Roblox\n' +
+      '> • Doświadczenie w ER:LC (opcjonalnie)\n\n' +
+      '**Agencje i ich kompetencje:**\n' +
+      '> 🚔 **Wisconsin State Patrol (WSP)** — autostrady stanowe, I-41\n' +
+      '> 🏛️ **Outagamie County Sheriff (OCSD)** — patrol hrabstwa\n' +
+      '> 🚓 **Appleton Police Department (APD)** — miasto Appleton\n' +
+      '> 🚑 **Fox Valley EMS** — ratownictwo medyczne (Gold Cross)\n' +
+      '> 🚒 **Appleton Fire Department (AFD)** — stacja #1, Central\n\n' +
+      '**Po zatwierdzeniu przez staff:**\n' +
+      '✅ Rola **ER:LC Member** + rola agencji\n' +
+      '✅ Dostęp do kanałów agencji i Melonly'
+    )
+    .setFooter({ text: 'AURORA ER:LC — Rekrutacja do agencji Wisconsin' })
+    .setTimestamp();
+}
+
+function erlcLinksEmbed() {
+  return new EmbedBuilder()
+    .setColor(0x6366F1)
+    .setTitle('🔗 Ważne linki — ER:LC Wisconsin RP')
+    .addFields(
+      { name: '🎮 Gra i platforma', value: '[ER:LC na Roblox](https://www.roblox.com/games/2534724415) — Emergency Response: Liberty County\n[Melonly](https://melonly.xyz) — platforma zarządzania sesjami ER:LC', inline: false },
+      { name: '🎨 Liwerki', value: '[PRC Discord](https://discord.gg/policeroleplaying) — Police Roleplay Community\n[Roblox Library](https://www.roblox.com/catalog) — szukaj: Wisconsin livery', inline: false },
+      { name: '📖 Zasoby ER:LC', value: '[ER:LC Official Discord](https://discord.gg/erlc) — oficjalny serwer\n[ER:LC Wiki](https://er-lc.fandom.com) — pojazdy, mechaniki', inline: false },
+      { name: '🚔 Agencje Wisconsin', value: '[WSP](https://wsp.wi.gov) | [OCSD](https://outagamie.org) | [APD](https://appletonpd.org) | [Gold Cross EMS](https://goldcrossambulance.com) | [AFD](https://appleton.org/fire)', inline: false }
+    )
+    .setFooter({ text: 'AURORA ER:LC — Linki Wisconsin RP' })
+    .setTimestamp();
+}
+
 // ─── main ────────────────────────────────────────────────────────────────────
 
 client.once('ready', async () => {
@@ -512,6 +627,46 @@ client.once('ready', async () => {
       await sluzbyPodaniaCh.send({ embeds: [sluzbyEmbed()], components: [row] })
         .catch(e => log(`  ⚠️  błąd wysyłki: ${e.message}`));
       log('  ✅ #podania-o-służbę');
+    }
+
+    // ── ER:LC — #erlc-info ───────────────────────────────────────────────────
+    const erlcInfoCh = find(guild, 'erlc-info');
+    if (erlcInfoCh) {
+      log(`ER:LC Info → ${erlcInfoCh.name}`);
+      await send(erlcInfoCh, [erlcInfoEmbed()]);
+      log('  ✅ #erlc-info');
+    }
+
+    // ── ER:LC — #erlc-regulamin ──────────────────────────────────────────────
+    const erlcRegCh = find(guild, 'erlc-regulamin');
+    if (erlcRegCh) {
+      log(`ER:LC Regulamin → ${erlcRegCh.name}`);
+      await send(erlcRegCh, [erlcRegulamiEmbed()]);
+      log('  ✅ #erlc-regulamin');
+    }
+
+    // ── ER:LC — #liwerki-instrukcja ──────────────────────────────────────────
+    const erlcLiveryCh = find(guild, 'liwerki-instrukcja', 'liwerki');
+    if (erlcLiveryCh && !norm(erlcLiveryCh.name).includes('galeria')) {
+      log(`ER:LC Liwerki → ${erlcLiveryCh.name}`);
+      await send(erlcLiveryCh, [erlcLiveryGuideEmbed()]);
+      log('  ✅ #liwerki-instrukcja');
+    }
+
+    // ── ER:LC — #dołącz-do-agencji ───────────────────────────────────────────
+    const erlcJoinCh = find(guild, 'dolacz-do-agencji', 'dołącz-do-agencji');
+    if (erlcJoinCh) {
+      log(`ER:LC Dołącz → ${erlcJoinCh.name}`);
+      await send(erlcJoinCh, [erlcJoinAgencyEmbed()]);
+      log('  ✅ #dołącz-do-agencji');
+    }
+
+    // ── ER:LC — #linki-erlc ──────────────────────────────────────────────────
+    const erlcLinksCh = find(guild, 'linki-erlc');
+    if (erlcLinksCh) {
+      log(`ER:LC Linki → ${erlcLinksCh.name}`);
+      await send(erlcLinksCh, [erlcLinksEmbed()]);
+      log('  ✅ #linki-erlc');
     }
 
     log('\n🎉 Wszystkie kanały wypełnione!');
