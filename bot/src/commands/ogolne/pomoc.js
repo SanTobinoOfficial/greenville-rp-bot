@@ -54,6 +54,7 @@ const CMD_META = {
   'pomoc':               { opis: 'Lista komend bota',                                  kat: '📋 Ogólne' },
   'ping':                { opis: 'Sprawdź opóźnienie bota',                            kat: '📋 Ogólne' },
   'czas':                { opis: 'Aktualny czas RP na serwerze',                       kat: '📋 Ogólne' },
+  'pogoda':              { opis: 'Aktualna pogoda RP w Greenville (spójna dla sesji)',  kat: '📋 Ogólne' },
   'userinfo':            { opis: 'Info o użytkowniku Discord i profilu RP',             kat: '📋 Ogólne' },
   'avatar':              { opis: 'Wyświetl avatar gracza',                              kat: '📋 Ogólne' },
   'serwer-info':         { opis: 'Informacje o serwerze Discord',                      kat: '📋 Ogólne' },
