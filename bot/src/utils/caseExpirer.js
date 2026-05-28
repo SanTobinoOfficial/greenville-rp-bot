@@ -8,6 +8,66 @@ const logger = require('./logger');
 const prisma = new PrismaClient();
 let expirerTask = null;
 
+async function expireLicenseSuspensions(client) {
+  try {
+    const now = new Date();
+
+    const expiredLicenses = await prisma.license.findMany({
+      where: {
+        status: 'SUSPENDED',
+        suspendedUntil: { lte: now },
+      },
+      include: {
+        user: { select: { discordId: true } },
+      },
+    });
+
+    if (expiredLicenses.length === 0) return;
+
+    logger.info(`License expirer: znaleziono ${expiredLicenses.length} wygasłych zawieszeń PJ`);
+
+    for (const lic of expiredLicenses) {
+      try {
+        await prisma.license.update({
+          where: { id: lic.id },
+          data: {
+            status:          'ACTIVE',
+            suspendedAt:     null,
+            suspendedUntil:  null,
+            suspendedReason: null,
+          },
+        });
+
+        // Przywróć rolę @Kat. [X] na każdym serwerze bota
+        if (lic.user?.discordId) {
+          const roleName = `Kat. ${lic.kategoria}`;
+          for (const [, guild] of client.guilds.cache) {
+            try {
+              const member = await guild.members.fetch(lic.user.discordId).catch(() => null);
+              if (!member) continue;
+              const role = guild.roles.cache.find(r => r.name === roleName);
+              if (role && !member.roles.cache.has(role.id)) {
+                await member.roles.add(role, `Auto-przywrócenie PJ kat. ${lic.kategoria} po wygaśnięciu zawieszenia`);
+                logger.info(`Auto-przywrócono rolę "${roleName}" graczowi ${lic.user.discordId}`);
+              }
+            } catch (err) {
+              logger.warn(`Nie udało się przywrócić roli "${roleName}" na serwerze ${guild.id}:`, err.message);
+            }
+          }
+        }
+
+        logger.info(`Auto-przywrócono PJ kat. ${lic.kategoria} (licencja ${lic.id}) po wygaśnięciu zawieszenia`);
+      } catch (err) {
+        logger.error(`Błąd przy przywracaniu licencji ${lic.id}:`, err.message);
+      }
+    }
+
+    logger.info(`License expirer: przywrócono ${expiredLicenses.length} licencji → ACTIVE`);
+  } catch (error) {
+    logger.error('Błąd license expirer:', error.message);
+  }
+}
+
 async function expireCases(client) {
   try {
     const now = new Date();
@@ -66,11 +126,17 @@ function startCaseExpirer(client) {
   }
 
   // Pierwsza aktualizacja po 2 minutach (bot musi być gotowy)
-  setTimeout(() => expireCases(client), 2 * 60 * 1000);
+  setTimeout(() => {
+    expireCases(client);
+    expireLicenseSuspensions(client);
+  }, 2 * 60 * 1000);
 
   // Co 10 minut
-  expirerTask = cron.schedule('*/10 * * * *', () => expireCases(client));
-  logger.info('Uruchomiono automatyczne wygasanie przypadków (co 10 minut)');
+  expirerTask = cron.schedule('*/10 * * * *', () => {
+    expireCases(client);
+    expireLicenseSuspensions(client);
+  });
+  logger.info('Uruchomiono automatyczne wygasanie przypadków i zawieszeń PJ (co 10 minut)');
 }
 
-module.exports = { startCaseExpirer, expireCases };
+module.exports = { startCaseExpirer, expireCases, expireLicenseSuspensions };
