@@ -51,6 +51,7 @@ const CMD_META = {
   'bolo':                { opis: 'Wystaw BOLO (Policja)',                               kat: '🚔 Służby' },
   'kod-10':              { opis: 'Wyślij kod radiowy (Służby)',                         kat: '🚔 Służby' },
   'recydywa':            { opis: 'Sprawdź recydywę gracza',                            kat: '🚔 Służby' },
+  'megafon':             { opis: 'Ogłoszenie przez megafon służbowy (On-Duty)',         kat: '🚔 Służby' },
   // ── Ogólne ──
   'pomoc':               { opis: 'Lista komend bota',                                  kat: '📋 Ogólne' },
   'ping':                { opis: 'Sprawdź opóźnienie bota',                            kat: '📋 Ogólne' },
