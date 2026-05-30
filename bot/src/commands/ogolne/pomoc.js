@@ -40,6 +40,7 @@ const CMD_META = {
   'sesja':               { opis: 'Stwórz nową sesję RP',                               kat: '🎪 Sesje RP' },
   'sesja-start':         { opis: 'Rozpocznij sesję',                                   kat: '🎪 Sesje RP' },
   'sesja-koniec':        { opis: 'Zakończ sesję',                                      kat: '🎪 Sesje RP' },
+  'stan-sesji':          { opis: 'Status bieżącej sesji — peacetime, host, gracze',   kat: '🎪 Sesje RP' },
   'peacetime':           { opis: 'Ustaw czas pokoju na sesji',                         kat: '🎪 Sesje RP' },
   'taryfikator':         { opis: 'Pokaż taryfikator kar RP',                           kat: '🎪 Sesje RP' },
   // ── Służby ──
