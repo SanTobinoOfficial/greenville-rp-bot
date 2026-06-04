@@ -6,6 +6,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { COLORS } = require('../../utils/embed');
 const logger = require('../../utils/logger');
+const { logIcAction } = require('../../utils/icLog');
 
 // ── Słowa kluczowe sygnalizujące wypadek samochodowy ─────────────────────────
 const ACCIDENT_KEYWORDS = [
@@ -172,6 +173,8 @@ module.exports = {
     }
 
     // ── Log ───────────────────────────────────────────────────────────────────
+    logIcAction(prisma, interaction.user.id, interaction.channel.id, icName, 'ME', akcja).catch(() => {});
+
     logger.info(
       `/me | ${interaction.user.tag} (${icName}) | "${akcja}"` +
         (isAccident ? ` | wypadek → ${injury ? injury.poziom : 'bez obrażeń'}` : '')

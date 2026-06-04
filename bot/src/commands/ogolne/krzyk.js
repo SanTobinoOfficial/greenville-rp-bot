@@ -5,6 +5,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { isVerified } = require('../../utils/permissions');
 const logger = require('../../utils/logger');
+const { logIcAction } = require('../../utils/icLog');
 
 // Kolor embeda — jaskrawy pomarańcz sygnalizujący głośny krzyk
 const KRZYK_COLOR = 0xFF6B00;
@@ -55,6 +56,8 @@ module.exports = {
         iconURL: interaction.user.displayAvatarURL({ size: 32 }),
       })
       .setTimestamp();
+
+    logIcAction(prisma, interaction.user.id, interaction.channel.id, icName, 'KRZYK', tresc).catch(() => {});
 
     logger.info(`/krzyk | ${interaction.user.tag} (${icName}) | "${tresc}"`);
 

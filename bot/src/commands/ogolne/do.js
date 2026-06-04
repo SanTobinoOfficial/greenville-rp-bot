@@ -6,6 +6,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { COLORS } = require('../../utils/embed');
 const logger = require('../../utils/logger');
+const { logIcAction } = require('../../utils/icLog');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -53,6 +54,8 @@ module.exports = {
         iconURL: interaction.user.displayAvatarURL({ size: 32 }),
       })
       .setTimestamp();
+
+    logIcAction(prisma, interaction.user.id, interaction.channel.id, icName, 'DO', opis).catch(() => {});
 
     logger.info(`/do | ${interaction.user.tag} (${icName}) | "${opis}"`);
 
