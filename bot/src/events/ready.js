@@ -4,6 +4,7 @@ const { ActivityType } = require('discord.js');
 const { startStatsUpdater } = require('../utils/statsUpdater');
 const { startRadio } = require('../music/radioManager');
 const { startCaseExpirer } = require('../utils/caseExpirer');
+const { startSessionReminder } = require('../utils/sessionReminder');
 const logger = require('../utils/logger');
 
 module.exports = {
@@ -28,6 +29,9 @@ module.exports = {
 
     // Uruchom automatyczne wygasanie przypadków moderacyjnych
     startCaseExpirer(client);
+
+    // Uruchom system przypomnień o sesjach RP
+    startSessionReminder(client);
 
     // Uruchom radio 24/7
     try {
