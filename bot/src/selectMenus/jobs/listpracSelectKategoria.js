@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 function getJobs() {
-  const configPath = path.resolve(__dirname, '../../../../../server-config.json');
+  const configPath = path.resolve(__dirname, '../../../../server-config.json');
   const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
   return config.jobs ?? [];
 }

@@ -13,7 +13,7 @@ const fs   = require('fs');
 
 function getJobs() {
   return JSON.parse(fs.readFileSync(
-    path.resolve(__dirname, '../../../../../server-config.json'), 'utf-8'
+    path.resolve(__dirname, '../../../../server-config.json'), 'utf-8'
   )).jobs ?? [];
 }
 

@@ -22,7 +22,7 @@ const KOLOR_HEX = {
 
 function loadTerms() {
   try {
-    const cfgPath = path.join(__dirname, '../../../../../server-config.json');
+    const cfgPath = path.join(__dirname, '../../../../server-config.json');
     const cfg = JSON.parse(require('fs').readFileSync(cfgPath, 'utf8'));
     return cfg.slownik_rp?.terms ?? [];
   } catch {

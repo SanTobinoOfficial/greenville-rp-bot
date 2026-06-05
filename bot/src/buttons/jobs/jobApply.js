@@ -18,7 +18,7 @@ const { isVerified } = require('../../utils/permissions');
 const jobQuizStart = require('./jobQuizStart');
 
 function getConfig() {
-  const configPath = path.resolve(__dirname, '../../../../../server-config.json');
+  const configPath = path.resolve(__dirname, '../../../../server-config.json');
   return JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 }
 function getJobs() { return getConfig().jobs ?? []; }
