@@ -16,7 +16,8 @@ const CMD_META = {
   'moje-pojazdy':        { opis: 'Lista Twoich pojazdów',                               kat: '🚗 Pojazdy' },
   'pojazd-info':         { opis: 'Informacje o konkretnym pojeździe',                   kat: '🚗 Pojazdy' },
   'usun-pojazd':         { opis: 'Usuń pojazd z rejestru',                              kat: '🚗 Pojazdy' },
-  'sprawdz-prawo-jazdy': { opis: 'Sprawdź swoje prawa jazdy',                           kat: '🪪 Prawo jazdy' },
+  'sprawdz-prawo-jazdy': { opis: 'Sprawdź prawa jazdy gracza (Staff)',                  kat: '🪪 Prawo jazdy' },
+  'moje-prawo-jazdy':    { opis: 'Sprawdź swoje prawa jazdy — kategorie i statusy',      kat: '🪪 Prawo jazdy' },
   // ── Mandaty ──
   'historia-mandatow':   { opis: 'Historia Twoich mandatów i grzywien',                 kat: '📜 Mandaty' },
   // ── Telefon RP ──
