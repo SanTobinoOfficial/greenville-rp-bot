@@ -11,7 +11,7 @@ let expirerTask = null;
 
 function getBoloExpiryHours() {
   try {
-    const cfg = require('../../server-config.json');
+    const cfg = require('../../../server-config.json');
     const hours = cfg?.server?.features?.bolo_expiry_hours;
     return (typeof hours === 'number' && hours > 0) ? hours : 48;
   } catch {
