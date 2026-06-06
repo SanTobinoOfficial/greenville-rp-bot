@@ -8,6 +8,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { COLORS } = require('../../utils/embed');
 const { isVerified } = require('../../utils/permissions');
 const logger = require('../../utils/logger');
+const { statusMap } = require('../../utils/characterStateStore');
 
 // ── Predefiniowane stany RP ───────────────────────────────────────────────────
 const STANY = {
@@ -60,9 +61,6 @@ const STANY = {
     opis:   'Gracz jest chwilowo nieobecny — postać nie bierze udziału w RP.',
   },
 };
-
-// Mapa stanu IC: discordId → { stanKey, stanData, customOpis, icName, updatedAt }
-const statusMap = new Map();
 
 // ── Pomocnicza: pobierz imię IC gracza ───────────────────────────────────────
 async function getIcName(prisma, discordId, fallbackMember) {
