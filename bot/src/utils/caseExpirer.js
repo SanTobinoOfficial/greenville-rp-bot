@@ -3,10 +3,21 @@
 
 const cron = require('node-cron');
 const { PrismaClient } = require('@prisma/client');
+const { EmbedBuilder } = require('discord.js');
 const logger = require('./logger');
 
 const prisma = new PrismaClient();
 let expirerTask = null;
+
+function getBoloExpiryHours() {
+  try {
+    const cfg = require('../../server-config.json');
+    const hours = cfg?.server?.features?.bolo_expiry_hours;
+    return (typeof hours === 'number' && hours > 0) ? hours : 48;
+  } catch {
+    return 48;
+  }
+}
 
 async function expireLicenseSuspensions(client) {
   try {
@@ -120,6 +131,66 @@ async function expireCases(client) {
   }
 }
 
+async function expireOldBOLOs(client) {
+  try {
+    const expiryHours = getBoloExpiryHours();
+    const cutoff = new Date(Date.now() - expiryHours * 60 * 60 * 1000);
+
+    const staleBOLOs = await prisma.cadWarrant.findMany({
+      where: {
+        active: true,
+        createdAt: { lte: cutoff },
+      },
+    });
+
+    if (staleBOLOs.length === 0) return;
+
+    logger.info(`BOLO expirer: znaleziono ${staleBOLOs.length} przeterminowanych BOLO (>${expiryHours}h)`);
+
+    await prisma.cadWarrant.updateMany({
+      where: {
+        id: { in: staleBOLOs.map(b => b.id) },
+      },
+      data: { active: false },
+    });
+
+    logger.info(`BOLO expirer: zamknięto ${staleBOLOs.length} przeterminowanych BOLO`);
+
+    // Powiadom kanał BOLO o automatycznym wygaśnięciu
+    for (const [, guild] of client.guilds.cache) {
+      const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
+      const boloChannel = guild.channels.cache.find(
+        c => c.isTextBased() && (
+          norm(c.name).includes('lista-poszukiwanych') ||
+          norm(c.name).includes('policja-czat')
+        )
+      );
+      if (!boloChannel) continue;
+
+      const lines = staleBOLOs.map(b => {
+        const ts = `<t:${Math.floor(new Date(b.createdAt).getTime() / 1000)}:d>`;
+        return `• \`${b.id.slice(-6).toUpperCase()}\` — **${b.targetName}** (wystawione: ${ts})`;
+      }).join('\n');
+
+      const embed = new EmbedBuilder()
+        .setColor(0x808080)
+        .setTitle(`🕐 BOLO — automatyczne wygaśnięcie (${staleBOLOs.length})`)
+        .setDescription(
+          `Poniższe BOLO zostały automatycznie zamknięte po upływie **${expiryHours} godzin** od wystawienia.\n\n${lines}`
+        )
+        .setFooter({ text: 'AURORA Greenville RP — BOLO Expirer' })
+        .setTimestamp();
+
+      await boloChannel.send({ embeds: [embed] }).catch(err => {
+        logger.warn(`BOLO expirer: nie udało się wysłać powiadomienia na ${guild.name}:`, err.message);
+      });
+      break; // wyślij tylko na pierwszy pasujący serwer
+    }
+  } catch (error) {
+    logger.error('Błąd BOLO expirer:', error.message);
+  }
+}
+
 function startCaseExpirer(client) {
   if (expirerTask) {
     expirerTask.stop();
@@ -129,14 +200,16 @@ function startCaseExpirer(client) {
   setTimeout(() => {
     expireCases(client);
     expireLicenseSuspensions(client);
+    expireOldBOLOs(client);
   }, 2 * 60 * 1000);
 
   // Co 10 minut
   expirerTask = cron.schedule('*/10 * * * *', () => {
     expireCases(client);
     expireLicenseSuspensions(client);
+    expireOldBOLOs(client);
   });
-  logger.info('Uruchomiono automatyczne wygasanie przypadków i zawieszeń PJ (co 10 minut)');
+  logger.info('Uruchomiono automatyczne wygasanie przypadków, zawieszeń PJ i BOLO (co 10 minut)');
 }
 
-module.exports = { startCaseExpirer, expireCases, expireLicenseSuspensions };
+module.exports = { startCaseExpirer, expireCases, expireLicenseSuspensions, expireOldBOLOs };

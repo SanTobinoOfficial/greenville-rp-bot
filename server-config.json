@@ -16,7 +16,8 @@
       "verification_web": true,
       "verification_url": "https://greenville-rp-bot.vercel.app/weryfikacja",
       "quiz_pass_threshold": 8,
-      "quiz_total_questions": 10
+      "quiz_total_questions": 10,
+      "bolo_expiry_hours": 48
     }
   },
   "permission_presets": {
