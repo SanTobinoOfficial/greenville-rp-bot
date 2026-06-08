@@ -19,6 +19,125 @@ function getBoloExpiryHours() {
   }
 }
 
+function getMaxDutyHours() {
+  try {
+    const cfg = require('../../../server-config.json');
+    const hours = cfg?.server?.features?.max_duty_hours;
+    return (typeof hours === 'number' && hours > 0) ? hours : 8;
+  } catch {
+    return 8;
+  }
+}
+
+const DUTY_ON_ROLE = {
+  POLICJA:       'Policja On-Duty',
+  EMS:           'EMS On-Duty',
+  STRAZ:         'Straż On-Duty',
+  DOT:           'DOT On-Duty',
+  STRAZ_MIEJSKA: 'Straż Miejska On-Duty',
+  TAKSOWKARZ:    'Taksówkarz On-Duty',
+};
+
+const DUTY_LABEL = {
+  POLICJA:       'Policja',
+  EMS:           'EMS',
+  STRAZ:         'Straż Pożarna',
+  DOT:           'DOT',
+  STRAZ_MIEJSKA: 'Straż Miejska',
+  TAKSOWKARZ:    'Taksówkarz',
+};
+
+const DUTY_EMOJI = {
+  POLICJA:       '🚔',
+  EMS:           '🚑',
+  STRAZ:         '🚒',
+  DOT:           '🚧',
+  STRAZ_MIEJSKA: '🛡️',
+  TAKSOWKARZ:    '🚕',
+};
+
+async function autoOffStaleDuty(client) {
+  try {
+    const maxHours = getMaxDutyHours();
+    const cutoff = new Date(Date.now() - maxHours * 60 * 60 * 1000);
+
+    const staleOnDutyLogs = await prisma.dutyLog.findMany({
+      where: {
+        action: 'ON_DUTY',
+        createdAt: { lte: cutoff },
+      },
+      include: { user: { select: { discordId: true } } },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    if (staleOnDutyLogs.length === 0) return;
+
+    // Dla każdej pary (userId, service) zachowaj tylko najnowszy ON_DUTY
+    const latestOnDuty = new Map();
+    for (const log of staleOnDutyLogs) {
+      latestOnDuty.set(`${log.userId}:${log.service}`, log);
+    }
+
+    let autoOffCount = 0;
+
+    for (const [, onLog] of latestOnDuty) {
+      const closingLog = await prisma.dutyLog.findFirst({
+        where: {
+          userId:    onLog.userId,
+          service:   onLog.service,
+          action:    'OFF_DUTY',
+          createdAt: { gt: onLog.createdAt },
+        },
+      });
+
+      if (closingLog) continue;
+
+      await prisma.dutyLog.create({
+        data: { userId: onLog.userId, service: onLog.service, action: 'OFF_DUTY' },
+      });
+
+      autoOffCount++;
+
+      const onDutyRoleName = DUTY_ON_ROLE[onLog.service];
+      if (!onDutyRoleName || !onLog.user?.discordId) continue;
+
+      for (const [, guild] of client.guilds.cache) {
+        const member = await guild.members.fetch(onLog.user.discordId).catch(() => null);
+        if (!member) continue;
+
+        const role = guild.roles.cache.find(r => r.name === onDutyRoleName);
+        if (role && member.roles.cache.has(role.id)) {
+          await member.roles.remove(role, `Auto-off: służba >=${maxHours}h`).catch(err => {
+            logger.warn(`Auto-duty-timeout: nie usunięto roli "${onDutyRoleName}" dla ${onLog.user.discordId}: ${err.message}`);
+          });
+        }
+
+        const dmEmbed = new EmbedBuilder()
+          .setColor(0xED4245)
+          .setTitle(`${DUTY_EMOJI[onLog.service] ?? '⏰'} Automatyczne zakończenie służby`)
+          .setDescription(
+            `Twoja służba **${DUTY_LABEL[onLog.service] ?? onLog.service}** została automatycznie zakończona, ponieważ trwała dłużej niż **${maxHours} godzin**.\n\nJeśli to błąd, wróć na służbę komendą \`/duty\`.`
+          )
+          .setTimestamp()
+          .setFooter({ text: 'AURORA Greenville RP — System Służb' });
+
+        const discordUser = await client.users.fetch(onLog.user.discordId).catch(() => null);
+        if (discordUser) await discordUser.send({ embeds: [dmEmbed] }).catch(() => {});
+
+        break;
+      }
+
+      logger.info(`Auto-duty-timeout: zakończono służbę ${onLog.service} dla gracza ${onLog.user.discordId} (trwała >${maxHours}h)`);
+    }
+
+    if (autoOffCount > 0) {
+      logger.info(`Auto-duty-timeout: automatycznie zakończono ${autoOffCount} zapomnian${autoOffCount === 1 ? 'ą' : 'ych'} służb po >${maxHours}h`);
+    }
+  } catch (error) {
+    logger.error('Błąd auto-duty-timeout:', error.message);
+  }
+}
+
 async function expireLicenseSuspensions(client) {
   try {
     const now = new Date();
@@ -201,6 +320,7 @@ function startCaseExpirer(client) {
     expireCases(client);
     expireLicenseSuspensions(client);
     expireOldBOLOs(client);
+    autoOffStaleDuty(client);
   }, 2 * 60 * 1000);
 
   // Co 10 minut
@@ -208,8 +328,9 @@ function startCaseExpirer(client) {
     expireCases(client);
     expireLicenseSuspensions(client);
     expireOldBOLOs(client);
+    autoOffStaleDuty(client);
   });
-  logger.info('Uruchomiono automatyczne wygasanie przypadków, zawieszeń PJ i BOLO (co 10 minut)');
+  logger.info('Uruchomiono automatyczne wygasanie przypadków, zawieszeń PJ, BOLO i dyżurów (co 10 minut)');
 }
 
-module.exports = { startCaseExpirer, expireCases, expireLicenseSuspensions, expireOldBOLOs };
+module.exports = { startCaseExpirer, expireCases, expireLicenseSuspensions, expireOldBOLOs, autoOffStaleDuty };
