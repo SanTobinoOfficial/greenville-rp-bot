@@ -94,6 +94,10 @@ module.exports = {
       embed.addFields({ name: '🚨 ALERTY', value: alerts.join('\n'), inline: false });
     }
 
+    if (vehicle.opis) {
+      embed.addFields({ name: '📝 Opis IC pojazdu', value: vehicle.opis, inline: false });
+    }
+
     await interaction.editReply({ embeds: [embed] });
   },
 };
