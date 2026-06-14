@@ -226,6 +226,7 @@ model Ticket {
   status       TicketStatus @default(OPEN)
   agentId      String?
   transcript   String?
+  rating       Int?         // Ocena twórcy ticketu po zamknięciu (1–5)
   createdAt    DateTime     @default(now())
   closedAt     DateTime?
 

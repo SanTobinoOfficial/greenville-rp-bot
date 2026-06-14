@@ -56,6 +56,7 @@ module.exports = {
       byCategory,
       closedForAvg,
       topAgentsRaw,
+      ratingStats,
     ] = await Promise.all([
       // Stan bieżący
       prisma.ticket.count({ where: { status: 'OPEN' } }),
@@ -95,6 +96,13 @@ module.exports = {
         orderBy: { _count: { id: 'desc' } },
         take: 5,
       }),
+
+      // Średnia ocena za wszystkie zamknięte tickety z oceną
+      prisma.ticket.aggregate({
+        where: { status: 'CLOSED', rating: { not: null } },
+        _avg: { rating: true },
+        _count: { rating: true },
+      }),
     ]);
 
     // ── Średni czas zamknięcia ───────────────────────────────────────────────
@@ -127,11 +135,19 @@ module.exports = {
       `📌 Aktywnych łącznie: **${activeTotal}**`,
     ].join('\n');
 
+    // Oceny
+    const ratingAvg = ratingStats._avg.rating;
+    const ratingCount = ratingStats._count.rating;
+    const ratingStr = ratingCount > 0
+      ? `⭐ **${ratingAvg.toFixed(1)}/5** (${ratingCount} ocen)`
+      : '_Brak ocen_';
+
     // Aktywność
     const activityValue = [
       `**Dziś:** otwarto **${todayOpened}** · zamknięto **${todayClosed}**`,
       `**7 dni:** otwarto **${weekOpened}** · zamknięto **${weekClosed}**`,
       `⏱️ Śr. czas zamknięcia (30 dni): **${formatDuration(avgCloseMs)}**`,
+      ratingStr,
     ].join('\n');
 
     // Kategorie

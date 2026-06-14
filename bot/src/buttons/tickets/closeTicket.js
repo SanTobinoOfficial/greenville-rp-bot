@@ -2,7 +2,7 @@
 // Dostępny dla twórcy ticketu oraz staffu
 // Generuje transkrypt, zapisuje do DB, wysyła na #logi-ticketów i usuwa kanał
 
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const logger = require('../../utils/logger');
 const { isStaff } = require('../../utils/permissions');
 
@@ -176,6 +176,34 @@ module.exports = {
     await interaction.channel.send({ embeds: [closeEmbed] }).catch(() => {});
 
     logger.info(`Ticket #${ticketNumber} zamknięty przez ${interaction.user.tag}`);
+
+    // ==================== DM Z PROŚBĄ O OCENĘ ====================
+
+    const ticketOpener = await client.users.fetch(ticket.user.discordId).catch(() => null);
+    if (ticketOpener && !ticketOpener.bot) {
+      const ratingEmbed = new EmbedBuilder()
+        .setColor(0x5865F2)
+        .setTitle('⭐ Oceń obsługę ticketu')
+        .setDescription(
+          `Twój ticket **#${ticketNumber}** _(${ticket.category})_ został zamknięty.\n\n` +
+          `Jak oceniasz jakość obsługi? Twoja opinia pomaga nam się poprawiać.`
+        )
+        .setFooter({ text: 'AURORA Greenville RP • Ocena jest opcjonalna i anonimowa' })
+        .setTimestamp();
+
+      const ratingRow = new ActionRowBuilder().addComponents(
+        [1, 2, 3, 4, 5].map(s =>
+          new ButtonBuilder()
+            .setCustomId(`ticket_rate_${s}_${ticket.id}`)
+            .setLabel(`${s}⭐`)
+            .setStyle(ButtonStyle.Secondary)
+        )
+      );
+
+      await ticketOpener.send({ embeds: [ratingEmbed], components: [ratingRow] }).catch(() => {
+        logger.warn(`Nie udało się wysłać DM z oceną do użytkownika ${ticket.user.discordId}`);
+      });
+    }
 
     // Usuń kanał po 10 sekundach
     setTimeout(async () => {

@@ -158,6 +158,7 @@ const BUTTON_PREFIX_HANDLERS = {
   'license':    'licenses/applyLicense',
   'job':        'jobs/jobApply',                  // job_apply_[jobId], job_cancel, job_quiz_start_[id]
   'jobquiz':    'jobs/jobQuizAnswer',             // jobquiz_A_0_jobId — odpowiedzi testu
+  'ticket':     'tickets/rateTicket',             // ticket_rate_[1-5]_[ticketId]
 };
 
 const MODAL_HANDLERS = {
