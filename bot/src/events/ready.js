@@ -5,6 +5,7 @@ const { startStatsUpdater } = require('../utils/statsUpdater');
 const { startRadio } = require('../music/radioManager');
 const { startCaseExpirer } = require('../utils/caseExpirer');
 const { startSessionReminder } = require('../utils/sessionReminder');
+const { startStateExpirer } = require('../utils/stateExpirer');
 const logger = require('../utils/logger');
 
 module.exports = {
@@ -32,6 +33,9 @@ module.exports = {
 
     // Uruchom system przypomnień o sesjach RP
     startSessionReminder(client);
+
+    // Uruchom automatyczne wygasanie nieaktywnych stanów RP
+    startStateExpirer(client);
 
     // Uruchom radio 24/7
     try {
