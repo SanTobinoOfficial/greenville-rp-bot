@@ -13,6 +13,7 @@ const SERVICE_CONFIG = {
   dot:           { role: 'DOT',            onDutyRole: 'DOT On-Duty',           emoji: '🚧', color: 0xFF7F00 },
   straz_miejska: { role: 'Straż Miejska',  onDutyRole: 'Straż Miejska On-Duty', emoji: '🛡️', color: 0x2ECC71 },
   taksowkarz:    { role: 'Taksówkarz',     onDutyRole: 'Taksówkarz On-Duty',    emoji: '🚕', color: 0xF1C40F },
+  nps:           { role: 'NPS',            onDutyRole: 'NPS On-Duty',           emoji: '🌲', color: 0x228B22 },
 };
 
 module.exports = {
@@ -30,6 +31,7 @@ module.exports = {
           { name: '🚧 DOT',            value: 'dot' },
           { name: '🛡️ Straż Miejska',  value: 'straz_miejska' },
           { name: '🚕 Taksówkarz',     value: 'taksowkarz' },
+          { name: '🌲 NPS',            value: 'nps' },
         )
     ),
 
@@ -111,6 +113,7 @@ module.exports = {
       dot:           'dot-czat',
       straz_miejska: 'sm-czat',
       taksowkarz:    'ogolny',
+      nps:           'nps-czat',
     };
     const fragment = SERVICE_CHANNEL_FRAGMENTS[serviceKey] || 'ogolny';
     const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');

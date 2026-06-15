@@ -15,6 +15,7 @@ const SERVICES = [
   { onDutyRole: 'DOT On-Duty',           emoji: '🚧', label: 'DOT'            },
   { onDutyRole: 'Straż Miejska On-Duty', emoji: '🛡️', label: 'Straż Miejska' },
   { onDutyRole: 'Taksówkarz On-Duty',    emoji: '🚕', label: 'Taksówkarz'     },
+  { onDutyRole: 'NPS On-Duty',           emoji: '🌲', label: 'NPS'             },
 ];
 
 const MAX_NAMES_PER_SERVICE = 6;

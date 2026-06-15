@@ -35,6 +35,7 @@ const ROLES = {
   DOT: 'DOT',
   STRAZ_MIEJSKA: 'Straż Miejska',
   TAKSOWKARZ: 'Taksówkarz',
+  NPS: 'NPS',
 };
 
 /**
@@ -98,7 +99,7 @@ function isVerified(member) {
  * Sprawdza czy użytkownik jest w służbach (Policja, Straż, EMS, DOT, Straż Miejska)
  */
 function isService(member) {
-  const services = [ROLES.POLICJA, ROLES.STRAZ, ROLES.EMS, ROLES.DOT, ROLES.STRAZ_MIEJSKA];
+  const services = [ROLES.POLICJA, ROLES.STRAZ, ROLES.EMS, ROLES.DOT, ROLES.STRAZ_MIEJSKA, ROLES.NPS];
   return services.some(role => member.roles.cache.some(r => r.name === role));
 }
 

@@ -36,6 +36,7 @@ const DUTY_ON_ROLE = {
   DOT:           'DOT On-Duty',
   STRAZ_MIEJSKA: 'Straż Miejska On-Duty',
   TAKSOWKARZ:    'Taksówkarz On-Duty',
+  NPS:           'NPS On-Duty',
 };
 
 const DUTY_LABEL = {
@@ -45,6 +46,7 @@ const DUTY_LABEL = {
   DOT:           'DOT',
   STRAZ_MIEJSKA: 'Straż Miejska',
   TAKSOWKARZ:    'Taksówkarz',
+  NPS:           'National Park Service',
 };
 
 const DUTY_EMOJI = {
@@ -54,6 +56,7 @@ const DUTY_EMOJI = {
   DOT:           '🚧',
   STRAZ_MIEJSKA: '🛡️',
   TAKSOWKARZ:    '🚕',
+  NPS:           '🌲',
 };
 
 async function autoOffStaleDuty(client) {
