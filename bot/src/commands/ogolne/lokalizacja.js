@@ -8,9 +8,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { COLORS } = require('../../utils/embed');
 const { isVerified } = require('../../utils/permissions');
 const logger = require('../../utils/logger');
-
-// Mapa lokalizacji IC: discordId → { lokalizacja, icName, updatedAt }
-const locationMap = new Map();
+const { locationMap } = require('../../utils/locationStore');
 
 // ── Pomocnicza: pobierz imię IC gracza ───────────────────────────────────────
 async function getIcName(prisma, discordId, fallbackMember) {
