@@ -6,6 +6,7 @@ const { startRadio } = require('../music/radioManager');
 const { startCaseExpirer } = require('../utils/caseExpirer');
 const { startSessionReminder } = require('../utils/sessionReminder');
 const { startStateExpirer } = require('../utils/stateExpirer');
+const { startDailyBriefing } = require('../utils/dailyBriefing');
 const logger = require('../utils/logger');
 
 module.exports = {
@@ -36,6 +37,9 @@ module.exports = {
 
     // Uruchom automatyczne wygasanie nieaktywnych stanów RP
     startStateExpirer(client);
+
+    // Uruchom dzienny briefing poranny (09:00 czasu polskiego)
+    startDailyBriefing(client);
 
     // Uruchom radio 24/7
     try {
