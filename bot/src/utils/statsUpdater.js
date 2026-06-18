@@ -1,10 +1,44 @@
-// Aktualizator statystyk głosowych (kanały Mieszkańcy/Boty)
+// Aktualizator statystyk głosowych (kanały Mieszkańcy/Boty/Sesja)
 // Uruchamiany co 10 minut przez cron
 
 const cron = require('node-cron');
+const { PrismaClient } = require('@prisma/client');
 const logger = require('./logger');
 
+const prisma = new PrismaClient();
 let statsTask = null;
+
+/**
+ * Zwraca nową nazwę kanału sesji na podstawie stanu aktywnych/nadchodzących sesji.
+ */
+async function resolveSessionChannelName() {
+  const now = new Date();
+
+  const ongoing = await prisma.session.findFirst({
+    where: { status: 'ONGOING' },
+    select: { id: true },
+  });
+
+  if (ongoing) return '🟢│Sesja: TRWA';
+
+  // Nadchodząca w ciągu najbliższych 2 godzin
+  const soon = await prisma.session.findFirst({
+    where: {
+      status: 'UPCOMING',
+      date: { gte: now, lte: new Date(now.getTime() + 2 * 60 * 60 * 1000) },
+    },
+    orderBy: { date: 'asc' },
+    select: { date: true },
+  });
+
+  if (soon) {
+    const diffMin = Math.round((soon.date.getTime() - now.getTime()) / 60000);
+    const label = diffMin < 60 ? `za ${diffMin} min` : `za ${Math.round(diffMin / 60)}h`;
+    return `🟡│Sesja: ${label}`;
+  }
+
+  return '🔴│Sesja: Brak';
+}
 
 /**
  * Aktualizuje nazwy kanałów statystyk
@@ -28,12 +62,22 @@ async function updateStats(client) {
     // Liczba botów
     const botCount = guild.members.cache.filter(m => m.user.bot).size;
 
+    // Status sesji RP
+    const sesjaName = await resolveSessionChannelName();
+
     // Znajdź kanały głosowe statystyk
     const mieszkancyChannel = guild.channels.cache.find(
       c => c.name.startsWith('👥│Mieszkańcy') && c.type === 2 // ChannelType.GuildVoice
     );
     const botyChannel = guild.channels.cache.find(
       c => c.name.startsWith('🤖│Boty') && c.type === 2
+    );
+    const sesjaChannel = guild.channels.cache.find(
+      c => (
+        c.name.startsWith('🟢│Sesja') ||
+        c.name.startsWith('🔴│Sesja') ||
+        c.name.startsWith('🟡│Sesja')
+      ) && c.type === 2
     );
 
     if (mieszkancyChannel) {
@@ -42,8 +86,11 @@ async function updateStats(client) {
     if (botyChannel) {
       await botyChannel.setName(`🤖│Boty: ${botCount}`);
     }
+    if (sesjaChannel && sesjaChannel.name !== sesjaName) {
+      await sesjaChannel.setName(sesjaName);
+    }
 
-    logger.debug(`Statystyki zaktualizowane: Mieszkańcy=${mieszkancyCount}, Boty=${botCount}`);
+    logger.debug(`Statystyki zaktualizowane: Mieszkańcy=${mieszkancyCount}, Boty=${botCount}, Sesja="${sesjaName}"`);
   } catch (error) {
     logger.error('Błąd aktualizacji statystyk:', error.message);
   }
