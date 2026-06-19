@@ -1,7 +1,8 @@
 // Komenda /cad — zarządzanie wezwaniami CAD (Computer-Aided Dispatch)
-// Subkomendy: lista | zamknij
-// lista  — wyświetla aktywne wezwania 911 czekające na obsługę
-// zamknij — zamyka wezwanie CAD po numerze z opcjonalną notatką
+// Subkomendy: lista | przyjmij | zamknij
+// lista    — wyświetla aktywne wezwania 911 czekające na obsługę
+// przyjmij — akceptuje wezwanie (PENDING → ACTIVE) i zapisuje dysponowaną jednostkę
+// zamknij  — zamyka wezwanie CAD po numerze z opcjonalną notatką
 // Dostępna dla: Policja, EMS, Straż, DOT, Straż Miejska, Staff
 
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
@@ -27,7 +28,7 @@ const MAX_CALLS_LISTED = 20;
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('cad')
-    .setDescription('System CAD — zarządzaj wezwaniami 911 (lista / zamknij)')
+    .setDescription('System CAD — zarządzaj wezwaniami 911 (lista / przyjmij / zamknij)')
     .addSubcommand(sub =>
       sub.setName('lista')
         .setDescription('Wyświetl aktywne wezwania 911 oczekujące na obsługę')
@@ -35,6 +36,23 @@ module.exports = {
           opt.setName('wszystkie')
             .setDescription('Pokaż też zamknięte wezwania (domyślnie: tylko aktywne)')
             .setRequired(false)
+        )
+    )
+    .addSubcommand(sub =>
+      sub.setName('przyjmij')
+        .setDescription('Przyjmij wezwanie CAD — potwierdzasz dysponowanie Twojej jednostki')
+        .addIntegerOption(opt =>
+          opt.setName('numer')
+            .setDescription('Numer CAD wezwania (np. 42) — widoczny na /cad lista')
+            .setRequired(true)
+            .setMinValue(1)
+        )
+        .addStringOption(opt =>
+          opt.setName('sygnatura')
+            .setDescription('Sygnatura jednostki (np. "P-1", "EMS-3") — domyślnie Twój nick')
+            .setRequired(false)
+            .setMinLength(1)
+            .setMaxLength(30)
         )
     )
     .addSubcommand(sub =>
@@ -135,7 +153,7 @@ module.exports = {
         .setColor(headerColor)
         .setTitle(`📡 Dyspozytornia CAD — ${showAll ? 'Wszystkie wezwania' : 'Aktywne wezwania'}`)
         .setDescription(summaryParts.join('  •  '))
-        .setFooter({ text: 'AURORA Greenville RP — użyj /cad zamknij [numer] aby zamknąć wezwanie' })
+        .setFooter({ text: 'AURORA Greenville RP — /cad przyjmij [numer] • /cad zamknij [numer]' })
         .setTimestamp();
 
       // Dziel na max 1024 znaków na pole
@@ -151,6 +169,98 @@ module.exports = {
 
       logger.info(`/cad lista — ${interaction.user.tag} — ${calls.length} wezwań`);
       return interaction.editReply({ embeds: [embed] });
+    }
+
+    // ── PRZYJMIJ ──────────────────────────────────────────────────────────────
+    if (sub === 'przyjmij') {
+      const numer     = interaction.options.getInteger('numer');
+      const sygnatura = (interaction.options.getString('sygnatura') ?? interaction.member.displayName).trim();
+
+      let call;
+      try {
+        call = await prisma.cadCall.findUnique({ where: { number: numer } });
+      } catch (err) {
+        logger.error('cad przyjmij: błąd bazy danych:', err);
+        return interaction.editReply({ content: '❌ Błąd podczas pobierania wezwania. Spróbuj ponownie.' });
+      }
+
+      if (!call) {
+        return interaction.editReply({
+          content: `❌ Nie znaleziono wezwania CAD o numerze **#${numer}**.\nUżyj \`/cad lista\` aby zobaczyć aktywne wezwania.`,
+        });
+      }
+
+      if (call.status === 'CLOSED') {
+        return interaction.editReply({
+          content: `⚠️ Wezwanie CAD **#${numer}** jest już zamknięte — nie można go przyjąć.`,
+        });
+      }
+
+      const alreadyDispatched = call.dispatchedTo.includes(sygnatura);
+      if (alreadyDispatched) {
+        return interaction.editReply({
+          content: `⚠️ Jednostka **${sygnatura}** jest już przypisana do CAD **#${numer}**.`,
+        });
+      }
+
+      const wasAlreadyActive = call.status === 'ACTIVE';
+
+      await prisma.cadCall.update({
+        where: { number: numer },
+        data: {
+          status:       'ACTIVE',
+          dispatchedTo: { set: [...call.dispatchedTo, sygnatura] },
+          updatedAt:    new Date(),
+        },
+      });
+
+      const prio = PRIORITY_META[call.priority] ?? PRIORITY_META.MEDIUM;
+
+      logger.info(
+        `CAD przyjęte: #${numer} (${call.nature}) przez ${interaction.user.tag} | jednostka: ${sygnatura}`
+      );
+
+      const confirmEmbed = new EmbedBuilder()
+        .setColor(0x3B82F6)
+        .setTitle(`🔵 CAD #${numer} — Przyjęte`)
+        .setDescription(
+          wasAlreadyActive
+            ? `Dołączyłeś/aś do aktywnego wezwania jako **${sygnatura}**.`
+            : `Wezwanie przekazane do **${sygnatura}** — status zmieniony na AKTYWNE.`
+        )
+        .addFields(
+          { name: '📡 Rodzaj',                  value: call.nature,                                          inline: true  },
+          { name: `${prio.emoji} Priorytet`,    value: prio.label,                                           inline: true  },
+          { name: '📍 Lokalizacja',              value: call.location,                                        inline: false },
+          { name: '🚨 Dysponowane jednostki',   value: [...call.dispatchedTo, sygnatura].join(', '),         inline: false },
+          { name: '🕐 Przyjęto',                 value: `<t:${Math.floor(Date.now() / 1000)}:T>`,            inline: true  },
+        )
+        .setFooter({ text: 'AURORA Greenville RP — Dyspozytornia CAD | /cad zamknij po zakończeniu' })
+        .setTimestamp();
+
+      // Powiadom kanał dyspozytorni o przyjęciu wezwania
+      const norm = s =>
+        s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
+      const dispatchChannel = interaction.guild.channels.cache.find(
+        c => c.isTextBased() && norm(c.name).includes('dyspozytorni')
+      );
+
+      if (dispatchChannel && dispatchChannel.id !== interaction.channelId) {
+        const notifEmbed = new EmbedBuilder()
+          .setColor(0x3B82F6)
+          .setTitle(`🔵 CAD #${numer} PRZYJĘTE — ${sygnatura}`)
+          .addFields(
+            { name: '📡 Rodzaj',  value: call.nature,   inline: true },
+            { name: '📍 Lok.',    value: call.location, inline: true },
+            { name: '🚨 Jednostka', value: sygnatura,   inline: true },
+          )
+          .setFooter({ text: 'AURORA Greenville RP — Dyspozytornia CAD' })
+          .setTimestamp();
+
+        await dispatchChannel.send({ embeds: [notifEmbed] }).catch(() => {});
+      }
+
+      return interaction.editReply({ embeds: [confirmEmbed] });
     }
 
     // ── ZAMKNIJ ───────────────────────────────────────────────────────────────
