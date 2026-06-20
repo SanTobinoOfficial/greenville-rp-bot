@@ -10,6 +10,20 @@ module.exports = {
 
   async execute(interaction, client, prisma) {
     try {
+      // ==================== AUTOCOMPLETE ====================
+      if (interaction.isAutocomplete()) {
+        const command = client.commands.get(interaction.commandName);
+        if (command?.autocomplete) {
+          try {
+            await command.autocomplete(interaction);
+          } catch (error) {
+            logger.error(`Błąd autocomplete /${interaction.commandName}:`, error);
+            await interaction.respond([]).catch(() => {});
+          }
+        }
+        return;
+      }
+
       // ==================== SLASH COMMANDS ====================
       if (interaction.isChatInputCommand()) {
         const command = client.commands.get(interaction.commandName);
