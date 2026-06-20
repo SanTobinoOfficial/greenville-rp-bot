@@ -29,9 +29,18 @@ async function checkUpcomingSessions(client) {
         signups: {
           include: { user: { select: { discordId: true } } },
         },
-        host: { select: { discordId: true } },
       },
     });
+
+    // Resolve host Discord IDs separately (hostId is User.id, not discordId)
+    const hostDbIds  = [...new Set(sessions.map(s => s.hostId))];
+    const hostUsers  = hostDbIds.length
+      ? await prisma.user.findMany({
+          where:  { id: { in: hostDbIds } },
+          select: { id: true, discordId: true },
+        })
+      : [];
+    const hostMap = new Map(hostUsers.map(u => [u.id, u.discordId]));
 
     for (const session of sessions) {
       if (reminded.has(session.id)) continue;
@@ -56,7 +65,8 @@ async function checkUpcomingSessions(client) {
 
       const signupCount = session.signups.length;
       const unixTs = Math.floor(session.date.getTime() / 1000);
-      const hostMention = session.host?.discordId ? `<@${session.host.discordId}>` : 'Nieznany';
+      const hostDiscordId = hostMap.get(session.hostId);
+      const hostMention = hostDiscordId ? `<@${hostDiscordId}>` : 'Nieznany';
 
       const playerMentions = session.signups
         .filter(s => s.user?.discordId)
