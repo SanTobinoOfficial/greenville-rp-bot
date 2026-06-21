@@ -8,12 +8,13 @@ const { isStaff, ROLES } = require('../../utils/permissions');
 const logger = require('../../utils/logger');
 
 const SERVICE_META = {
-  POLICJA:       { label: 'Policja',       emoji: '🚔', color: 0x003087 },
-  EMS:           { label: 'EMS',           emoji: '🚑', color: 0xED4245 },
-  STRAZ:         { label: 'Straż Pożarna', emoji: '🚒', color: 0xFEE75C },
-  DOT:           { label: 'DOT',           emoji: '🚧', color: 0xFF7F00 },
-  STRAZ_MIEJSKA: { label: 'Straż Miejska', emoji: '🛡️', color: 0x2ECC71 },
-  TAKSOWKARZ:    { label: 'Taksówkarz',    emoji: '🚕', color: 0xF1C40F },
+  POLICJA:       { label: 'Policja',              emoji: '🚔', color: 0x003087 },
+  EMS:           { label: 'EMS',                  emoji: '🚑', color: 0xED4245 },
+  STRAZ:         { label: 'Straż Pożarna',        emoji: '🚒', color: 0xFEE75C },
+  DOT:           { label: 'DOT',                  emoji: '🚧', color: 0xFF7F00 },
+  STRAZ_MIEJSKA: { label: 'Straż Miejska',        emoji: '🛡️', color: 0x2ECC71 },
+  TAKSOWKARZ:    { label: 'Taksówkarz',           emoji: '🚕', color: 0xF1C40F },
+  NPS:           { label: 'National Park Service', emoji: '🌲', color: 0x16A34A },
 };
 
 // Oblicza łączny czas służby (w minutach) z listy wpisów DutyLog dla jednego serwisu
@@ -101,12 +102,13 @@ module.exports = {
             .setDescription('Wybierz służbę')
             .setRequired(true)
             .addChoices(
-              { name: '🚔 Policja',       value: 'POLICJA' },
-              { name: '🚑 EMS',           value: 'EMS' },
-              { name: '🚒 Straż Pożarna', value: 'STRAZ' },
-              { name: '🚧 DOT',           value: 'DOT' },
-              { name: '🛡️ Straż Miejska', value: 'STRAZ_MIEJSKA' },
-              { name: '🚕 Taksówkarz',    value: 'TAKSOWKARZ' },
+              { name: '🚔 Policja',              value: 'POLICJA' },
+              { name: '🚑 EMS',                  value: 'EMS' },
+              { name: '🚒 Straż Pożarna',        value: 'STRAZ' },
+              { name: '🚧 DOT',                  value: 'DOT' },
+              { name: '🛡️ Straż Miejska',        value: 'STRAZ_MIEJSKA' },
+              { name: '🚕 Taksówkarz',           value: 'TAKSOWKARZ' },
+              { name: '🌲 National Park Service', value: 'NPS' },
             )
         )
         .addIntegerOption(opt =>

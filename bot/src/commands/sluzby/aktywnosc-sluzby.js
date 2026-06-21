@@ -8,12 +8,13 @@ const { isStaff, ROLES } = require('../../utils/permissions');
 const logger = require('../../utils/logger');
 
 const SERVICE_META = {
-  POLICJA:       { label: 'Policja',       emoji: '🚔', color: 0x003087, roleName: ROLES.POLICJA },
-  EMS:           { label: 'EMS',           emoji: '🚑', color: 0xED4245, roleName: ROLES.EMS },
-  STRAZ:         { label: 'Straż Pożarna', emoji: '🚒', color: 0xFEE75C, roleName: ROLES.STRAZ },
-  DOT:           { label: 'DOT',           emoji: '🚧', color: 0xFF7F00, roleName: ROLES.DOT },
-  STRAZ_MIEJSKA: { label: 'Straż Miejska', emoji: '🛡️', color: 0x2ECC71, roleName: ROLES.STRAZ_MIEJSKA },
-  TAKSOWKARZ:    { label: 'Taksówkarz',    emoji: '🚕', color: 0xF1C40F, roleName: ROLES.TAKSOWKARZ },
+  POLICJA:       { label: 'Policja',              emoji: '🚔', color: 0x003087, roleName: ROLES.POLICJA },
+  EMS:           { label: 'EMS',                  emoji: '🚑', color: 0xED4245, roleName: ROLES.EMS },
+  STRAZ:         { label: 'Straż Pożarna',        emoji: '🚒', color: 0xFEE75C, roleName: ROLES.STRAZ },
+  DOT:           { label: 'DOT',                  emoji: '🚧', color: 0xFF7F00, roleName: ROLES.DOT },
+  STRAZ_MIEJSKA: { label: 'Straż Miejska',        emoji: '🛡️', color: 0x2ECC71, roleName: ROLES.STRAZ_MIEJSKA },
+  TAKSOWKARZ:    { label: 'Taksówkarz',           emoji: '🚕', color: 0xF1C40F, roleName: ROLES.TAKSOWKARZ },
+  NPS:           { label: 'National Park Service', emoji: '🌲', color: 0x16A34A, roleName: ROLES.NPS },
 };
 
 // Oblicza łączny czas służby (minuty) z par ON→OFF; aktywna służba liczy się do teraz
@@ -49,12 +50,13 @@ module.exports = {
         .setDescription('Służba do sprawdzenia')
         .setRequired(true)
         .addChoices(
-          { name: '🚔 Policja',       value: 'POLICJA' },
-          { name: '🚑 EMS',           value: 'EMS' },
-          { name: '🚒 Straż Pożarna', value: 'STRAZ' },
-          { name: '🚧 DOT',           value: 'DOT' },
-          { name: '🛡️ Straż Miejska', value: 'STRAZ_MIEJSKA' },
-          { name: '🚕 Taksówkarz',    value: 'TAKSOWKARZ' },
+          { name: '🚔 Policja',              value: 'POLICJA' },
+          { name: '🚑 EMS',                  value: 'EMS' },
+          { name: '🚒 Straż Pożarna',        value: 'STRAZ' },
+          { name: '🚧 DOT',                  value: 'DOT' },
+          { name: '🛡️ Straż Miejska',        value: 'STRAZ_MIEJSKA' },
+          { name: '🚕 Taksówkarz',           value: 'TAKSOWKARZ' },
+          { name: '🌲 National Park Service', value: 'NPS' },
         )
     )
     .addIntegerOption(opt =>
