@@ -8,6 +8,7 @@ const { startSessionReminder } = require('../utils/sessionReminder');
 const { startStateExpirer } = require('../utils/stateExpirer');
 const { startDailyBriefing } = require('../utils/dailyBriefing');
 const { startDutyReminder } = require('../utils/dutyReminder');
+const { startBirthdayChecker } = require('../utils/birthdayChecker');
 const logger = require('../utils/logger');
 
 module.exports = {
@@ -44,6 +45,9 @@ module.exports = {
 
     // Uruchom system przypomnień o zapomnianym dyżurze służby
     startDutyReminder(client);
+
+    // Uruchom codzienne sprawdzanie urodzin IC postaci (10:00)
+    startBirthdayChecker(client);
 
     // Uruchom radio 24/7
     try {
