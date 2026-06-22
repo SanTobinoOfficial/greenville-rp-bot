@@ -189,6 +189,26 @@ async function expireLicenseSuspensions(client) {
           }
         }
 
+        // DM powiadomienie o przywróceniu licencji
+        if (lic.user?.discordId) {
+          try {
+            const discordUser = await client.users.fetch(lic.user.discordId).catch(() => null);
+            if (discordUser) {
+              const dmEmbed = new EmbedBuilder()
+                .setColor(0x57F287)
+                .setTitle('✅ Prawo jazdy przywrócone')
+                .setDescription(
+                  `Twoje prawo jazdy **kategorii ${lic.kategoria}** zostało automatycznie przywrócone po zakończeniu okresu zawieszenia.\n\nMożesz ponownie prowadzić pojazdy wymagające tej kategorii.`
+                )
+                .setFooter({ text: 'AURORA Greenville RP — Wydział Komunikacji' })
+                .setTimestamp();
+              await discordUser.send({ embeds: [dmEmbed] }).catch(() => {});
+            }
+          } catch {
+            // DM może być zablokowany
+          }
+        }
+
         logger.info(`Auto-przywrócono PJ kat. ${lic.kategoria} (licencja ${lic.id}) po wygaśnięciu zawieszenia`);
       } catch (err) {
         logger.error(`Błąd przy przywracaniu licencji ${lic.id}:`, err.message);
